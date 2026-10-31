@@ -47,6 +47,8 @@ for lang in ("es_es", "en_us"):
 items_java = read(os.path.join(JAVA, "ModItems.java"))
 item_ids = re.findall(r'register\("(\w+)"', items_java)
 colors = re.findall(r'^\s+\w+\("(\w+)",\s*0x', read(os.path.join(JAVA, "RouletteColor.java")), re.M)
+enum_colors = list(colors)
+colors = colors + ["random"]
 lang_es = json.loads(read(os.path.join(RES, "assets", MOD, "lang", "es_es.json")))
 lang_en = json.loads(read(os.path.join(RES, "assets", MOD, "lang", "en_us.json")))
 for name in item_ids:
@@ -72,12 +74,35 @@ for c in colors:
 # 4) claves de traducción usadas en Java existen en ambos idiomas
 used = set()
 for jf in glob.glob(os.path.join(JAVA, "**", "*.java"), recursive=True):
-    used |= set(re.findall(r'"((?:message|death|command|itemGroup)\.dedsafio3[\w.]*)"', read(jf)))
+    found = set(re.findall(r'"((?:message|death|command|itemGroup|gui|key|modifier|color)\.dedsafio3[\w.]*)"', read(jf)))
+    used |= {k for k in found if not k.endswith(".")}  # las que acaban en "." son prefijos dinámicos, se revisan abajo
 used.add(f"itemGroup.{MOD}")
 for k in sorted(used):
     for lang_name, lang in (("es_es", lang_es), ("en_us", lang_en)):
         if k not in lang:
             err(f"[{lang_name}] falta clave usada en Java: {k}")
+
+# 4b) claves dinámicas: colores, modificadores, dificultades, pestañas
+mods = re.findall(r'^\s+[A-Z_]+\("(\w+)"\)', read(os.path.join(JAVA, "WorldModifier.java")), re.M)
+tabs = re.findall(r'\b[A-Z]+\("([a-z]+)"\)', read(os.path.join(JAVA, "client", "DedsafioMenuScreen.java")))
+dyn = [f"color.{MOD}.{c}" for c in enum_colors] + [f"modifier.{MOD}.{m}" for m in mods] \
+    + [f"gui.{MOD}.difficulty.{i}" for i in range(4)] + [f"gui.{MOD}.tab.{t}" for t in tabs]
+if len(mods) != 3:
+    err(f"se esperaban 3 modificadores en WorldModifier.java, hay {len(mods)}")
+if len(tabs) != 3:
+    err(f"se esperaban 3 pestañas en DedsafioMenuScreen.java, hay {len(tabs)}")
+for k in dyn:
+    for lang_name, lang in (("es_es", lang_es), ("en_us", lang_en)):
+        if k not in lang:
+            err(f"[{lang_name}] falta clave dinámica: {k}")
+# claves de red: ids de payload únicos
+ids = []
+for jf in glob.glob(os.path.join(JAVA, "*Payload.java")):
+    ids += re.findall(r'Dedsafio3\.id\("(\w+)"\)', read(jf))
+if len(ids) != len(set(ids)):
+    err(f"ids de payload repetidos: {ids}")
+# claves de lang sin uso aparente (aviso, no error)
+print(f"payloads: {len(ids)} | modificadores: {len(mods)} | pestañas: {len(tabs)}")
 
 # 5) fotogramas de muerte (FRAME_COUNT en DeathOverlay)
 m = re.search(r"FRAME_COUNT\s*=\s*(\d+)", read(os.path.join(JAVA, "client", "DeathOverlay.java")))

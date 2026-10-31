@@ -16,12 +16,15 @@ public class Dedsafio3 implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		// El orden importa: los bloques antes que los ítems (el grupo creativo los usa).
+		DedsafioConfig.load();
 		ModBlocks.register();
 		ModItems.register();
 		ModNetworking.register();
 		TotemHandler.register();
 		DeathAnimation.register();
 		Roulette.register();
+		WorldModifier.register();
+		MenuService.register();
 		ModCommands.register();
 		LOGGER.info("Dedsafio 3 (fan mod) cargado.");
 	}

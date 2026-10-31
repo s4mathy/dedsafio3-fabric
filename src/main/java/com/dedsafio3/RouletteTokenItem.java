@@ -7,7 +7,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-/** Ficha de ruleta: al usarla gira una ruleta de color aleatorio. */
+/** Ficha de ruleta: al usarla gira la rueda de colores (el color lo decide la rueda). */
 public class RouletteTokenItem extends TooltipItem {
 	public RouletteTokenItem(Settings settings) {
 		super(settings);
@@ -20,8 +20,7 @@ public class RouletteTokenItem extends TooltipItem {
 			return TypedActionResult.success(stack);
 		}
 		if (user instanceof ServerPlayerEntity player) {
-			RouletteColor color = RouletteColor.byOrdinal(player.getRandom().nextInt(RouletteColor.values().length));
-			if (Roulette.spin(player, color) && !player.isCreative()) {
+			if (Roulette.spin(player, null) && !player.isCreative()) {
 				stack.decrement(1);
 			}
 		}

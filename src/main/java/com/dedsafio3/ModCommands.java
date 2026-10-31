@@ -17,8 +17,10 @@ import java.util.List;
 /**
  * Comandos de administración (nivel 2):
  * <pre>
- *   /dedsafio ruleta &lt;color&gt; [jugadores]   gira una ruleta
- *   /dedsafio muerte [jugadores]           reproduce la animación de muerte sin matar
+ *   /dedsafio menu                          abre el menú interactivo (también con la tecla K)
+ *   /dedsafio ruleta &lt;color|random&gt; [jugadores]   gira la rueda (random = la rueda decide)
+ *   /dedsafio muerte [jugadores]            reproduce la animación de muerte sin matar
+ *   /dedsafio quitar_modificaciones          quita todas las modificaciones del mundo
  * </pre>
  */
 public final class ModCommands {
@@ -29,22 +31,34 @@ public final class ModCommands {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
 				dispatcher.register(CommandManager.literal("dedsafio")
 						.requires(source -> source.hasPermissionLevel(2))
+						.then(CommandManager.literal("menu")
+								.executes(context -> {
+									MenuService.send(context.getSource().getPlayerOrThrow(), true);
+									return 1;
+								}))
 						.then(CommandManager.literal("ruleta")
 								.then(CommandManager.argument("color", StringArgumentType.word())
-										.suggests((context, builder) -> CommandSource.suggestMatching(RouletteColor.ids(), builder))
+										.suggests((context, builder) -> CommandSource.suggestMatching(RouletteColor.idsWithRandom(), builder))
 										.executes(context -> spin(context, List.of(context.getSource().getPlayerOrThrow())))
 										.then(CommandManager.argument("jugadores", EntityArgumentType.players())
 												.executes(context -> spin(context, EntityArgumentType.getPlayers(context, "jugadores"))))))
 						.then(CommandManager.literal("muerte")
 								.executes(context -> deathPreview(context, List.of(context.getSource().getPlayerOrThrow())))
 								.then(CommandManager.argument("jugadores", EntityArgumentType.players())
-										.executes(context -> deathPreview(context, EntityArgumentType.getPlayers(context, "jugadores")))))));
+										.executes(context -> deathPreview(context, EntityArgumentType.getPlayers(context, "jugadores")))))
+						.then(CommandManager.literal("quitar_modificaciones")
+								.executes(context -> {
+									WorldModifier.clearAll(context.getSource().getServer());
+									context.getSource().sendFeedback(() -> Text.translatable("message.dedsafio3.truce"), true);
+									return 1;
+								}))));
 	}
 
 	private static int spin(CommandContext<ServerCommandSource> context, Collection<ServerPlayerEntity> players) throws CommandSyntaxException {
 		String colorId = StringArgumentType.getString(context, "color");
-		RouletteColor color = RouletteColor.byId(colorId);
-		if (color == null) {
+		boolean random = colorId.equalsIgnoreCase("random");
+		RouletteColor color = random ? null : RouletteColor.byId(colorId);
+		if (!random && color == null) {
 			context.getSource().sendError(Text.translatable("command.dedsafio3.unknown_color", colorId));
 			return 0;
 		}
@@ -55,7 +69,8 @@ public final class ModCommands {
 			}
 		}
 		int count = started;
-		context.getSource().sendFeedback(() -> Text.translatable("command.dedsafio3.spin", count, Text.translatable(color.blockTranslationKey())), true);
+		Text colorName = random ? Text.translatable("gui.dedsafio3.random") : Text.translatable(color.nameKey());
+		context.getSource().sendFeedback(() -> Text.translatable("command.dedsafio3.spin", count, colorName), true);
 		return started;
 	}
 

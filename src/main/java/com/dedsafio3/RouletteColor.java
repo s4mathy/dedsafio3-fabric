@@ -2,10 +2,11 @@ package com.dedsafio3;
 
 import net.minecraft.block.MapColor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/** Las seis ruletas de colores. El orden (ordinal) se usa en los paquetes de red. */
+/** Los seis colores de la rueda. El orden (ordinal) se usa en los paquetes de red. */
 public enum RouletteColor {
 	RED("red", 0xE53935, MapColor.RED),
 	ORANGE("orange", 0xFB8C00, MapColor.ORANGE),
@@ -36,7 +37,12 @@ public enum RouletteColor {
 		return mapColor;
 	}
 
-	/** Clave de traducción del nombre del bloque (se usa como título de la ruleta). */
+	/** Clave de traducción del nombre del color ("Rojo", "Naranja"...). */
+	public String nameKey() {
+		return "color." + Dedsafio3.MOD_ID + "." + id;
+	}
+
+	/** Clave de traducción del bloque de ruleta de este color. */
 	public String blockTranslationKey() {
 		return "block." + Dedsafio3.MOD_ID + ".roulette_" + id;
 	}
@@ -55,7 +61,10 @@ public enum RouletteColor {
 		return all[Math.floorMod(ordinal, all.length)];
 	}
 
-	public static List<String> ids() {
-		return Arrays.stream(values()).map(RouletteColor::id).toList();
+	/** Ids de colores más "random" (para sugerencias de comandos). */
+	public static List<String> idsWithRandom() {
+		List<String> list = new ArrayList<>(Arrays.stream(values()).map(RouletteColor::id).toList());
+		list.add("random");
+		return list;
 	}
 }

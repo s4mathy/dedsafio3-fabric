@@ -16,7 +16,7 @@ public final class DeathAnimation {
 
 	public static void register() {
 		ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
-			if (entity instanceof ServerPlayerEntity dead) {
+			if (entity instanceof ServerPlayerEntity dead && DedsafioConfig.get().deathAnimation) {
 				ServerWorld world = dead.getServerWorld();
 				worldEffects(world, dead);
 				broadcast(dead);

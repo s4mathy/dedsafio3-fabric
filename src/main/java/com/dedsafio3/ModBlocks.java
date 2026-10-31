@@ -1,7 +1,7 @@
 package com.dedsafio3;
 
 import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
+import net.minecraft.block.MapColor;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -13,30 +13,33 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public final class ModBlocks {
+	/** Ruletas de color fijo. */
 	public static final Map<RouletteColor, RouletteBlock> ROULETTES = new EnumMap<>(RouletteColor.class);
+	/** Ruleta de colores: la rueda decide el color. */
+	public static RouletteBlock ROULETTE_RANDOM;
 
 	private ModBlocks() {
 	}
 
-	public static void register() {
-		for (RouletteColor color : RouletteColor.values()) {
-			String name = "roulette_" + color.id();
-			RouletteBlock block = Registry.register(
-					Registries.BLOCK,
-					Dedsafio3.id(name),
-					new RouletteBlock(color, AbstractBlock.Settings.create()
-							.mapColor(color.mapColor())
-							.strength(2.5f, 6.0f)
-							.sounds(BlockSoundGroup.METAL)
-							.luminance(state -> 8)
-							.pistonBehavior(PistonBehavior.NORMAL))
-			);
-			ROULETTES.put(color, block);
-			Registry.register(Registries.ITEM, Dedsafio3.id(name), new BlockItem(block, new Item.Settings()));
-		}
+	private static AbstractBlock.Settings settings(MapColor mapColor) {
+		return AbstractBlock.Settings.create()
+				.mapColor(mapColor)
+				.strength(2.5f, 6.0f)
+				.sounds(BlockSoundGroup.METAL)
+				.luminance(state -> 8)
+				.pistonBehavior(PistonBehavior.NORMAL);
 	}
 
-	public static Block get(RouletteColor color) {
-		return ROULETTES.get(color);
+	private static RouletteBlock registerBlock(String name, RouletteColor color, MapColor mapColor) {
+		RouletteBlock block = Registry.register(Registries.BLOCK, Dedsafio3.id(name), new RouletteBlock(color, settings(mapColor)));
+		Registry.register(Registries.ITEM, Dedsafio3.id(name), new BlockItem(block, new Item.Settings()));
+		return block;
+	}
+
+	public static void register() {
+		ROULETTE_RANDOM = registerBlock("roulette_random", null, MapColor.GOLD);
+		for (RouletteColor color : RouletteColor.values()) {
+			ROULETTES.put(color, registerBlock("roulette_" + color.id(), color, color.mapColor()));
+		}
 	}
 }

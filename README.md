@@ -1,50 +1,48 @@
 # Dedsafio 3 (fan mod) — Fabric 1.21.1
 
-Mod de fans inspirado en Dedsafio 3. Es un proyecto no oficial: los premios, números y texturas son **diseño propio**
-(no tengo la lista oficial de la serie), pensado para que lo ajustes fácilmente.
+Mod de fans inspirado en Dedsafio 3 (serie hardcore PvE en la que una ruleta diaria anuncia modificaciones que hacen el
+mundo cada vez más difícil). Es un proyecto no oficial: los premios, números y texturas son **diseño propio** y todo es
+editable desde el menú.
 
 ## Compilar
 
-Requisitos: **JDK 21**. Desde la carpeta del proyecto:
+Requisitos: **JDK 21**. `./gradlew build` (Linux/macOS) o `gradlew.bat build` (Windows). El `.jar` queda en
+`build/libs/dedsafio3-1.0.0.jar` (no uses el `-sources`). Ponlo en `mods/` junto a **Fabric API**.
+Este repo también compila solo en GitHub Actions y publica el `.jar` en **Releases → latest**.
 
-```
-./gradlew build        # Linux / macOS
-gradlew.bat build      # Windows
-```
+## Menú interactivo (tecla **K** o `/dedsafio menu`)
 
-El `.jar` queda en `build/libs/dedsafio3-1.0.0.jar` (no uses el `-sources`). Ponlo en `mods/` junto a **Fabric API**.
-Para probarlo en desarrollo: `./gradlew runClient`.
+Solo para operadores (nivel 2) o el anfitrión del mundo local. Cada cambio lo valida y aplica el servidor.
 
-> Si Gradle no resuelve alguna versión, revisa `gradle.properties` (`yarn_mappings`, `loader_version`, `fabric_version`)
-> contra <https://fabricmc.net/develop/> para 1.21.1.
+- **General:** dificultad del mundo (pacífico/fácil/normal/difícil), PvP, mantener inventario, animación de muerte,
+  tótems activos, espera entre giros y duración del giro.
+- **Ruletas:** peso de cada color en la rueda (0 = desactivado) y botón de giro por color o aleatorio.
+- **Mundo:** modificaciones persistentes (mobs más fuertes, sin regeneración natural, noche eterna), quitar todas y
+  probar la animación de muerte. Se guardan en `config/dedsafio3.json`.
 
-## Contenido
+## Ruleta circular
 
-**Ítems** (pestaña creativa "Dedsafio 3")
-- Dedita, Dedita de Plata, Dedita de Oro (moneda; 9 de una = 1 de la siguiente, y al revés).
-- Ficha de Ruleta: clic derecho gira una ruleta de color aleatorio.
-- Tótem Rojo / Azul / Dorado: evitan la muerte desde cualquier casilla del inventario y dan efectos.
-- Espada Caótica: cada golpe aplica un efecto aleatorio.
+La rueda tiene un sector por color; el ángulo de cada sector es proporcional a su peso. Gira, frena y el puntero (arriba)
+elige el color; el servidor aplica entonces un premio de ese color. Hay una **Ruleta de Colores** (la rueda decide) y seis
+ruletas de color fijo (la rueda siempre cae en su color). La **Ficha de Ruleta** gira la rueda aleatoria.
 
-**Ruletas** (6 bloques: roja, naranja, amarilla, verde, azul, morada)
-- Clic derecho → animación de tira que se desplaza y frena (5 s) con sonido; el premio se aplica al terminar.
-- 37 premios en total, cada color con su temática (roja = castigos, naranja = fuego, amarilla = botín, verde = mejoras, azul = agua/ayuda, morada = azar).
+Colores (temática propia): rojo = castigos y modificaciones del mundo, naranja = fuego, amarillo = botín, verde = mejoras y
+tregua (quita las modificaciones), azul = agua y ayuda, morado = azar.
 
-**Animación de muerte**
-- Quien muere: destello rojo, pantalla oscura, calavera animada de 12 fotogramas y "HAS MUERTO".
-- Los demás jugadores: aviso compacto arriba con el nombre. Partículas de almas y sonido en el sitio de la muerte.
+## Otros contenidos
 
-**Comandos** (nivel 2)
-- `/dedsafio ruleta <color> [jugadores]`
-- `/dedsafio muerte [jugadores]` — prueba la animación sin matar.
+- **Ítems:** Dedita, Dedita de Plata, Dedita de Oro; Ficha de Ruleta; Tótem Rojo/Azul/Dorado (evitan la muerte desde
+  cualquier casilla); Espada Caótica (efecto aleatorio por golpe).
+- **Animación de muerte:** calavera animada a pantalla completa para quien muere y aviso para los demás.
+- **Comandos (nivel 2):** `/dedsafio menu`, `/dedsafio ruleta <color|random> [jugadores]`, `/dedsafio muerte [jugadores]`,
+  `/dedsafio quitar_modificaciones`.
 
 ## Personalizar
 
-- **Premios:** `src/main/java/com/dedsafio3/Roulette.java`. Una línea por premio:
-  `add(RouletteColor.RED, "id", peso, (jugador, mundo) -> ...)`. Añade su traducción
-  `roulette.dedsafio3.<color>.<id>` en `tools/generate_assets.py` (diccionario `PRIZES`) y ejecuta el script.
-- **Texturas:** las actuales son placeholders generados por `tools/generate_assets.py`. Sustituye los PNG de
-  `src/main/resources/assets/dedsafio3/textures/` por los tuyos (mismos nombres). Para la animación de muerte basta con
-  reemplazar `textures/gui/death/frame_00..11.png` (64x64) o cambiar `FRAME_COUNT` en `DeathOverlay.java`.
-- **Regenerar recursos:** `python3 tools/generate_assets.py` (necesita Pillow). `python3 tools/verify.py` comprueba que
-  idiomas, modelos y premios estén sincronizados.
+- **Premios:** `src/main/java/com/dedsafio3/Roulette.java`, una línea por premio:
+  `add(RouletteColor.RED, "id", peso, (jugador, mundo) -> ...)`. Añade su traducción en `tools/generate_assets.py`
+  (`PRIZES`) y ejecuta `python3 tools/generate_assets.py`.
+- **Modificaciones del mundo:** `WorldModifier.java`.
+- **Texturas:** sustituye los PNG de `src/main/resources/assets/dedsafio3/textures/` (mismos nombres). Animación de muerte:
+  `textures/gui/death/frame_00..11.png` (64x64).
+- `python3 tools/verify.py` comprueba que idiomas, modelos y premios estén sincronizados.

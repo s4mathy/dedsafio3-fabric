@@ -2,59 +2,79 @@ package com.dedsafio3.client;
 
 import com.dedsafio3.RouletteColor;
 import com.dedsafio3.RoulettePayload;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BufferRenderer;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
+import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Animación de la ruleta: una tira de casillas que se desplaza y frena hasta dejar
- * la casilla ganadora bajo el marcador central.
+ * Rueda circular de colores. Los sectores tienen un ángulo proporcional a su peso, la rueda gira y frena
+ * hasta dejar el color ganador bajo el puntero (arriba). Al terminar muestra el color y su premio.
  */
 public final class RouletteOverlay {
-	private static final int CELL_W = 78;
-	private static final int CELL_H = 40;
-	private static final long HOLD_MS = 2200;
+	private static final long HOLD_MS = 3200;
 	private static final long FADE_MS = 400;
+	private static final float SECTOR_GAP_DEG = 1.6f;
+	private static final int FULL_TURNS = 4;
 
 	private static boolean active;
 	private static long startMs;
 	private static long spinMs;
-	private static int rgb;
-	private static Text title = Text.empty();
-	private static final List<Text> LABELS = new ArrayList<>();
+	private static final List<Integer> COLORS = new ArrayList<>();
+	private static final List<Float> STARTS = new ArrayList<>(); // grados, inicio de cada sector
+	private static final List<Float> ENDS = new ArrayList<>();
 	private static int winner;
-	private static float jitter;
-	private static int lastCell;
+	private static float finalRotation;
+	private static Text prizeText = Text.empty();
+	private static Text colorText = Text.empty();
+	private static int lastSector;
 	private static boolean finishedSoundPlayed;
 
 	private RouletteOverlay() {
 	}
 
 	public static void start(RoulettePayload payload) {
-		RouletteColor color = RouletteColor.byOrdinal(payload.color());
-		rgb = color.rgb();
-		title = Text.translatable(color.blockTranslationKey());
-		LABELS.clear();
-		for (String key : payload.keys()) {
-			LABELS.add(Text.translatable(key));
+		COLORS.clear();
+		STARTS.clear();
+		ENDS.clear();
+		COLORS.addAll(payload.colors());
+		float total = 0f;
+		for (int weight : payload.weights()) {
+			total += Math.max(1, weight);
 		}
-		winner = Math.max(0, Math.min(payload.winner(), LABELS.size() - 1));
+		float acc = 0f;
+		for (int weight : payload.weights()) {
+			float width = Math.max(1, weight) / total * 360f;
+			STARTS.add(acc);
+			ENDS.add(acc + width);
+			acc += width;
+		}
+		winner = Math.max(0, Math.min(payload.winner(), COLORS.size() - 1));
+		float target = STARTS.get(winner) + payload.frac() * (ENDS.get(winner) - STARTS.get(winner));
+		// El punto 'target' de la rueda debe quedar bajo el puntero (ángulo 0, arriba).
+		finalRotation = 360f * FULL_TURNS - target;
 		spinMs = payload.spinTicks() * 50L;
-		// La casilla ganadora no siempre queda exactamente centrada, como en una ruleta real.
-		jitter = (MinecraftClient.getInstance().world != null
-				? MinecraftClient.getInstance().world.random.nextFloat() - 0.5f : 0f) * CELL_W * 0.6f;
+		RouletteColor color = RouletteColor.byOrdinal(COLORS.get(winner));
+		colorText = Text.translatable(color.nameKey());
+		prizeText = Text.translatable(payload.prizeKey());
 		startMs = Util.getMeasuringTimeMs();
-		lastCell = -1;
+		lastSector = -1;
 		finishedSoundPlayed = false;
-		active = !LABELS.isEmpty();
+		active = !COLORS.isEmpty() && COLORS.size() == STARTS.size();
 	}
 
 	public static void render(DrawContext ctx) {
@@ -74,68 +94,60 @@ public final class RouletteOverlay {
 		int sh = ctx.getScaledWindowHeight();
 
 		float progress = Math.min(1f, elapsed / (float) spinMs);
-		float eased = 1f - (float) Math.pow(1f - progress, 3);
-		float target = winner * CELL_W + CELL_W / 2f + jitter;
-		float offset = eased * target;
+		float eased = 1f - (float) Math.pow(1f - progress, 4);
+		float rotation = finalRotation * eased;
 
 		float alpha = elapsed > total - FADE_MS ? (total - elapsed) / (float) FADE_MS : 1f;
-		int a = Math.max(4, (int) (alpha * 255));
+		int a = Math.max(4, Math.min(255, (int) (alpha * 255)));
 
-		int panelW = Math.min(sw - 20, 380);
-		int x0 = (sw - panelW) / 2;
-		int x1 = x0 + panelW;
-		int yTitle = Math.max(8, sh / 8);
-		int y0 = yTitle + 16;
-		int y1 = y0 + CELL_H;
-		int center = sw / 2;
+		float radius = Math.min(72f, Math.min(sw, sh) * 0.28f);
+		float cx = sw / 2f;
+		float cy = sh / 2f - 6f;
 
-		// Título y marco.
-		ctx.drawCenteredTextWithShadow(font, title, center, yTitle, argb(a, rgb));
-		ctx.fill(x0 - 3, y0 - 3, x1 + 3, y1 + 3, argb((int) (a * 0.85f), 0x101010));
-		ctx.fill(x0 - 3, y0 - 3, x1 + 3, y0 - 1, argb(a, rgb));
-		ctx.fill(x0 - 3, y1 + 1, x1 + 3, y1 + 3, argb(a, rgb));
-
-		// Tira de casillas (recortada al marco).
-		int current = (int) Math.floor(offset / CELL_W);
-		ctx.enableScissor(x0, y0, x1, y1);
-		for (int i = 0; i < LABELS.size(); i++) {
-			int left = Math.round(center - offset + i * CELL_W);
-			if (left + CELL_W < x0 || left > x1) {
-				continue;
-			}
-			int shade = (i % 2 == 0) ? 0x000000 : 0x202020;
-			int base = darken(rgb, 0.55f);
-			ctx.fill(left + 1, y0, left + CELL_W - 1, y1, argb((int) (a * 0.9f), blend(base, shade)));
-
-			List<OrderedText> lines = font.wrapLines(LABELS.get(i), CELL_W - 8);
-			int lineCount = Math.min(3, lines.size());
-			int textY = y0 + (CELL_H - lineCount * 9) / 2;
-			for (int l = 0; l < lineCount; l++) {
-				ctx.drawCenteredTextWithShadow(font, lines.get(l), left + CELL_W / 2, textY + l * 9, argb(a, 0xFFFFFF));
-			}
-			if (progress >= 1f && i == winner) {
-				int gold = argb(a, 0xFFD54F);
-				ctx.fill(left + 1, y0, left + CELL_W - 1, y0 + 2, gold);
-				ctx.fill(left + 1, y1 - 2, left + CELL_W - 1, y1, gold);
-				ctx.fill(left + 1, y0, left + 3, y1, gold);
-				ctx.fill(left + CELL_W - 3, y0, left + CELL_W - 1, y1, gold);
+		// Sector bajo el puntero (para el "tic").
+		float under = (((-rotation) % 360f) + 360f) % 360f;
+		int current = 0;
+		for (int i = 0; i < STARTS.size(); i++) {
+			if (under >= STARTS.get(i) && under < ENDS.get(i)) {
+				current = i;
+				break;
 			}
 		}
-		ctx.disableScissor();
 
-		// Marcador central.
-		ctx.fill(center - 1, y0 - 8, center + 1, y1 + 8, argb(a, 0xFFFFFF));
-		ctx.fill(center - 4, y0 - 8, center + 4, y0 - 6, argb(a, 0xFFFFFF));
-		ctx.fill(center - 4, y1 + 6, center + 4, y1 + 8, argb(a, 0xFFFFFF));
-
-		// Resultado.
+		// Fondo y rueda.
+		fan(ctx, cx, cy, radius + 9f, 0f, 360f, argb((int) (a * 0.75f), 0x000000));
+		for (int i = 0; i < COLORS.size(); i++) {
+			float a0 = rotation + STARTS.get(i);
+			float a1 = rotation + ENDS.get(i);
+			float gap = Math.min(SECTOR_GAP_DEG, (a1 - a0) * 0.25f);
+			int rgb = RouletteColor.byOrdinal(COLORS.get(i)).rgb();
+			boolean dim = progress >= 1f && i != winner;
+			fan(ctx, cx, cy, radius, a0 + gap, a1 - gap, argb(a, dim ? shade(rgb, 0.45f) : rgb));
+		}
+		// Aro dorado, resaltado del ganador, cubo central.
+		ring(ctx, cx, cy, radius, radius + 4f, 0f, 360f, argb(a, 0xD4AF37));
 		if (progress >= 1f) {
-			ctx.drawCenteredTextWithShadow(font, LABELS.get(winner), center, y1 + 14, argb(a, 0xFFD54F));
+			ring(ctx, cx, cy, radius - 6f, radius, rotation + STARTS.get(winner), rotation + ENDS.get(winner), argb(a, 0xFFFFFF));
+		}
+		fan(ctx, cx, cy, radius * 0.16f, 0f, 360f, argb(a, 0xD4AF37));
+		fan(ctx, cx, cy, radius * 0.08f, 0f, 360f, argb(a, 0x202020));
+
+		// Puntero (arriba).
+		triangle(ctx, cx, cy - radius + 8f, cx - 9f, cy - radius - 16f, cx + 9f, cy - radius - 16f, argb(a, 0x000000));
+		triangle(ctx, cx, cy - radius + 5f, cx - 7f, cy - radius - 14f, cx + 7f, cy - radius - 14f, argb(a, 0xFFFFFF));
+
+		// Textos.
+		ctx.drawCenteredTextWithShadow(font, Text.translatable("gui.dedsafio3.wheel_title"),
+				(int) cx, (int) (cy - radius - 30f), argb(a, 0xFFFFFF));
+		if (progress >= 1f) {
+			int rgb = RouletteColor.byOrdinal(COLORS.get(winner)).rgb();
+			ctx.drawCenteredTextWithShadow(font, colorText, (int) cx, (int) (cy + radius + 14f), argb(a, rgb));
+			ctx.drawCenteredTextWithShadow(font, prizeText, (int) cx, (int) (cy + radius + 26f), argb(a, 0xFFD54F));
 		}
 
-		// Sonidos: "tic" al cambiar de casilla y fanfarria al final.
-		if (progress < 1f && current != lastCell) {
-			lastCell = current;
+		// Sonidos: "tic" al cruzar de sector y fanfarria al final.
+		if (progress < 1f && current != lastSector) {
+			lastSector = current;
 			float pitch = 0.8f + 0.7f * eased;
 			mc.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.ENTITY_ITEM_PICKUP, pitch, 0.5f));
 		}
@@ -145,21 +157,82 @@ public final class RouletteOverlay {
 		}
 	}
 
+	// ------------------------------------------------------------------ dibujo de formas
+
+	/** Sector circular relleno. Los ángulos están en grados, en sentido horario desde arriba. */
+	private static void fan(DrawContext ctx, float cx, float cy, float r, float a0, float a1, int argb) {
+		if (a1 <= a0) {
+			return;
+		}
+		ctx.draw();
+		Matrix4f m = ctx.getMatrices().peek().getPositionMatrix();
+		int steps = Math.max(1, (int) Math.ceil((a1 - a0) / 4f));
+		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.TRIANGLE_FAN, VertexFormats.POSITION_COLOR);
+		put(buf, m, cx, cy, argb);
+		for (int i = 0; i <= steps; i++) {
+			float angle = a0 + (a1 - a0) * i / steps;
+			put(buf, m, px(cx, r, angle), py(cy, r, angle), argb);
+		}
+		flush(buf);
+	}
+
+	/** Anillo (o arco de anillo) entre dos radios. */
+	private static void ring(DrawContext ctx, float cx, float cy, float rIn, float rOut, float a0, float a1, int argb) {
+		if (a1 <= a0) {
+			return;
+		}
+		ctx.draw();
+		Matrix4f m = ctx.getMatrices().peek().getPositionMatrix();
+		int steps = Math.max(1, (int) Math.ceil((a1 - a0) / 4f));
+		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
+		for (int i = 0; i <= steps; i++) {
+			float angle = a0 + (a1 - a0) * i / steps;
+			put(buf, m, px(cx, rOut, angle), py(cy, rOut, angle), argb);
+			put(buf, m, px(cx, rIn, angle), py(cy, rIn, angle), argb);
+		}
+		flush(buf);
+	}
+
+	private static void triangle(DrawContext ctx, float x1, float y1, float x2, float y2, float x3, float y3, int argb) {
+		ctx.draw();
+		Matrix4f m = ctx.getMatrices().peek().getPositionMatrix();
+		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION_COLOR);
+		put(buf, m, x1, y1, argb);
+		put(buf, m, x2, y2, argb);
+		put(buf, m, x3, y3, argb);
+		flush(buf);
+	}
+
+	private static float px(float cx, float r, float angleDeg) {
+		return cx + (float) (Math.sin(Math.toRadians(angleDeg)) * r);
+	}
+
+	private static float py(float cy, float r, float angleDeg) {
+		return cy - (float) (Math.cos(Math.toRadians(angleDeg)) * r);
+	}
+
+	private static void put(BufferBuilder buf, Matrix4f m, float x, float y, int argb) {
+		buf.vertex(m, x, y, 0f).color((argb >> 16) & 0xFF, (argb >> 8) & 0xFF, argb & 0xFF, (argb >>> 24) & 0xFF);
+	}
+
+	private static void flush(BufferBuilder buf) {
+		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.disableCull();
+		BufferRenderer.drawWithGlobalProgram(buf.end());
+		RenderSystem.enableCull();
+		RenderSystem.disableBlend();
+	}
+
 	private static int argb(int alpha, int rgb) {
-		return (alpha << 24) | (rgb & 0xFFFFFF);
+		return (Math.max(0, Math.min(255, alpha)) << 24) | (rgb & 0xFFFFFF);
 	}
 
-	private static int darken(int color, float factor) {
-		int r = (int) (((color >> 16) & 0xFF) * factor);
-		int g = (int) (((color >> 8) & 0xFF) * factor);
-		int b = (int) ((color & 0xFF) * factor);
-		return (r << 16) | (g << 8) | b;
-	}
-
-	private static int blend(int base, int add) {
-		int r = Math.min(255, ((base >> 16) & 0xFF) + ((add >> 16) & 0xFF));
-		int g = Math.min(255, ((base >> 8) & 0xFF) + ((add >> 8) & 0xFF));
-		int b = Math.min(255, (base & 0xFF) + (add & 0xFF));
+	private static int shade(int rgb, float f) {
+		int r = (int) (((rgb >> 16) & 0xFF) * f);
+		int g = (int) (((rgb >> 8) & 0xFF) * f);
+		int b = (int) ((rgb & 0xFF) * f);
 		return (r << 16) | (g << 8) | b;
 	}
 }

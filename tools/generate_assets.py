@@ -44,6 +44,9 @@ PRIZES = {
         "hunger": ("Hambre y náuseas", "Hunger and nausea"),
         "wither": ("Marchitamiento", "Withering"),
         "weakness": ("Debilidad y fatiga", "Weakness and fatigue"),
+        "mobs_stronger": ("Mobs más fuertes (mundo)", "Stronger mobs (world)"),
+        "no_regen": ("Sin regeneración natural (mundo)", "No natural regeneration (world)"),
+        "eternal_night": ("Noche eterna (mundo)", "Eternal night (world)"),
     },
     "orange": {
         "ignite": ("Prendido en llamas", "Set on fire"),
@@ -69,6 +72,7 @@ PRIZES = {
         "feast": ("16 panes", "16 bread"),
         "saturation": ("Saturación", "Saturation"),
         "bees": ("Enjambre de abejas", "Bee swarm"),
+        "truce": ("Tregua: se quitan las modificaciones", "Truce: world modifiers removed"),
     },
     "blue": {
         "water_breathing": ("Respirar bajo el agua", "Water breathing"),
@@ -93,6 +97,87 @@ COLOR_NAMES = {
     "green": ("Verde", "Green"), "blue": ("Azul", "Blue"), "purple": ("Morada", "Purple"),
 }
 
+COLOR_PLAIN = {
+    "red": ("Rojo", "Red"), "orange": ("Naranja", "Orange"), "yellow": ("Amarillo", "Yellow"),
+    "green": ("Verde", "Green"), "blue": ("Azul", "Blue"), "purple": ("Morado", "Purple"),
+}
+
+MODIFIERS = {
+    "mobs_stronger": ("Mobs más fuertes", "Stronger mobs"),
+    "no_regen": ("Sin regeneración natural", "No natural regeneration"),
+    "eternal_night": ("Noche eterna", "Eternal night"),
+}
+
+GUI_ES = {
+    "gui.dedsafio3.title": "Menú de Dedsafio 3",
+    "gui.dedsafio3.tab.general": "General",
+    "gui.dedsafio3.tab.wheels": "Ruletas",
+    "gui.dedsafio3.tab.world": "Mundo",
+    "gui.dedsafio3.difficulty": "Dificultad del mundo",
+    "gui.dedsafio3.difficulty.0": "Pacífico",
+    "gui.dedsafio3.difficulty.1": "Fácil",
+    "gui.dedsafio3.difficulty.2": "Normal",
+    "gui.dedsafio3.difficulty.3": "Difícil",
+    "gui.dedsafio3.pvp": "PvP",
+    "gui.dedsafio3.keep_inventory": "Mantener inventario",
+    "gui.dedsafio3.death_animation": "Animación de muerte",
+    "gui.dedsafio3.totems": "Tótems activos",
+    "gui.dedsafio3.cooldown": "Espera entre giros (s)",
+    "gui.dedsafio3.spin": "Duración del giro (s)",
+    "gui.dedsafio3.on": "Sí",
+    "gui.dedsafio3.off": "No",
+    "gui.dedsafio3.wheels_hint": "Peso de cada color en la rueda (0 = desactivado)",
+    "gui.dedsafio3.spin_button": "Girar",
+    "gui.dedsafio3.spin_random": "Girar rueda aleatoria",
+    "gui.dedsafio3.random": "aleatoria",
+    "gui.dedsafio3.wheel_title": "RULETA",
+    "gui.dedsafio3.modifiers": "Modificaciones del mundo",
+    "gui.dedsafio3.clear_modifiers": "Quitar todas las modificaciones",
+    "gui.dedsafio3.death_preview": "Probar animación de muerte",
+    "gui.dedsafio3.close": "Cerrar",
+    "key.dedsafio3.menu": "Abrir menú de Dedsafio",
+    "key.categories.dedsafio3": "Dedsafio 3",
+    "message.dedsafio3.no_permission": "No tienes permiso para usar el menú.",
+    "message.dedsafio3.no_colors": "Todos los colores de la rueda están desactivados.",
+    "message.dedsafio3.modifier_on": "§cModificación del mundo: %s",
+    "message.dedsafio3.truce": "§aTregua: se quitaron todas las modificaciones del mundo.",
+}
+
+GUI_EN = {
+    "gui.dedsafio3.title": "Dedsafio 3 Menu",
+    "gui.dedsafio3.tab.general": "General",
+    "gui.dedsafio3.tab.wheels": "Roulettes",
+    "gui.dedsafio3.tab.world": "World",
+    "gui.dedsafio3.difficulty": "World difficulty",
+    "gui.dedsafio3.difficulty.0": "Peaceful",
+    "gui.dedsafio3.difficulty.1": "Easy",
+    "gui.dedsafio3.difficulty.2": "Normal",
+    "gui.dedsafio3.difficulty.3": "Hard",
+    "gui.dedsafio3.pvp": "PvP",
+    "gui.dedsafio3.keep_inventory": "Keep inventory",
+    "gui.dedsafio3.death_animation": "Death animation",
+    "gui.dedsafio3.totems": "Totems enabled",
+    "gui.dedsafio3.cooldown": "Cooldown between spins (s)",
+    "gui.dedsafio3.spin": "Spin duration (s)",
+    "gui.dedsafio3.on": "On",
+    "gui.dedsafio3.off": "Off",
+    "gui.dedsafio3.wheels_hint": "Weight of each color on the wheel (0 = disabled)",
+    "gui.dedsafio3.spin_button": "Spin",
+    "gui.dedsafio3.spin_random": "Spin random wheel",
+    "gui.dedsafio3.random": "random",
+    "gui.dedsafio3.wheel_title": "ROULETTE",
+    "gui.dedsafio3.modifiers": "World modifiers",
+    "gui.dedsafio3.clear_modifiers": "Remove all modifiers",
+    "gui.dedsafio3.death_preview": "Preview death animation",
+    "gui.dedsafio3.close": "Close",
+    "key.dedsafio3.menu": "Open Dedsafio menu",
+    "key.categories.dedsafio3": "Dedsafio 3",
+    "message.dedsafio3.no_permission": "You don't have permission to use the menu.",
+    "message.dedsafio3.no_colors": "All wheel colors are disabled.",
+    "message.dedsafio3.modifier_on": "§cWorld modifier: %s",
+    "message.dedsafio3.truce": "§aTruce: all world modifiers were removed.",
+}
+
 LANG_BASE = {
     "es_es": {
         "itemGroup.dedsafio3": "Dedsafio 3",
@@ -115,8 +200,8 @@ LANG_BASE = {
         "message.dedsafio3.busy": "Ya hay una ruleta girando, espera un momento.",
         "death.dedsafio3.you": "HAS MUERTO",
         "death.dedsafio3.other": "%s ha muerto",
-        "command.dedsafio3.unknown_color": "Color desconocido: %s (usa red, orange, yellow, green, blue o purple)",
-        "command.dedsafio3.spin": "%2$s iniciada para %1$s jugador(es)",
+        "command.dedsafio3.unknown_color": "Color desconocido: %s (usa red, orange, yellow, green, blue, purple o random)",
+        "command.dedsafio3.spin": "Rueda (%2$s) iniciada para %1$s jugador(es)",
         "command.dedsafio3.death": "Animación de muerte enviada (%s jugador(es))",
     },
     "en_us": {
@@ -140,8 +225,8 @@ LANG_BASE = {
         "message.dedsafio3.busy": "A roulette is already spinning, wait a moment.",
         "death.dedsafio3.you": "YOU DIED",
         "death.dedsafio3.other": "%s has died",
-        "command.dedsafio3.unknown_color": "Unknown color: %s (use red, orange, yellow, green, blue or purple)",
-        "command.dedsafio3.spin": "%2$s started for %1$s player(s)",
+        "command.dedsafio3.unknown_color": "Unknown color: %s (use red, orange, yellow, green, blue, purple or random)",
+        "command.dedsafio3.spin": "Wheel (%2$s) started for %1$s player(s)",
         "command.dedsafio3.death": "Death animation sent (%s player(s))",
     },
 }
@@ -152,6 +237,16 @@ def build_lang():
     for color, (es, en) in COLOR_NAMES.items():
         langs["es_es"][f"block.{MOD}.roulette_{color}"] = f"Ruleta {es}"
         langs["en_us"][f"block.{MOD}.roulette_{color}"] = f"{en} Roulette"
+    langs["es_es"][f"block.{MOD}.roulette_random"] = "Ruleta de Colores"
+    langs["en_us"][f"block.{MOD}.roulette_random"] = "Color Roulette"
+    for color, (es, en) in COLOR_PLAIN.items():
+        langs["es_es"][f"color.{MOD}.{color}"] = es
+        langs["en_us"][f"color.{MOD}.{color}"] = en
+    for mod, (es, en) in MODIFIERS.items():
+        langs["es_es"][f"modifier.{MOD}.{mod}"] = es
+        langs["en_us"][f"modifier.{MOD}.{mod}"] = en
+    langs["es_es"].update(GUI_ES)
+    langs["en_us"].update(GUI_EN)
     for color, prizes in PRIZES.items():
         for pid, (es, en) in prizes.items():
             langs["es_es"][f"roulette.{MOD}.{color}.{pid}"] = es
@@ -328,6 +423,50 @@ def make_roulette_side(rgb, seed):
     return img
 
 
+def make_random_top():
+    """Rueda con los 6 colores de la serie."""
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 255))
+    names = list(COLORS)
+    cx = cy = 7.5
+    for y in range(16):
+        for x in range(16):
+            dx, dy = x - cx, y - cy
+            r = math.hypot(dx, dy)
+            if r > 7.6:
+                px(img, x, y, (40, 40, 48))
+            elif r > 6.6:
+                px(img, x, y, (212, 175, 55))
+            elif r < 1.8:
+                px(img, x, y, (255, 213, 79))
+            elif r < 2.8:
+                px(img, x, y, (30, 30, 30))
+            else:
+                ang = (math.degrees(math.atan2(dy, dx)) + 360) % 360
+                px(img, x, y, COLORS[names[int(ang // 60)]][0])
+    return img
+
+
+def make_random_side():
+    rnd = random.Random(99)
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 255))
+    for y in range(16):
+        for x in range(16):
+            n = rnd.randint(-5, 5)
+            base = 46 + n
+            px(img, x, y, (base, base, base + 8))
+    names = list(COLORS)
+    for x in range(16):
+        c = COLORS[names[(x * 6) // 16]][0]
+        px(img, x, 0, c)
+        px(img, x, 15, c)
+        px(img, x, 1, shade(c, 0.6))
+        px(img, x, 14, shade(c, 0.6))
+    for x in (3, 7, 11):
+        px(img, x, 7, (255, 213, 79))
+        px(img, x, 8, (255, 213, 79))
+    return img
+
+
 # ----------------------------------------------------------------------------- animación de muerte
 def make_death_frame(f, total=12):
     """Calavera que aparece (frames 0-4), brilla en rojo y queda latiendo."""
@@ -465,6 +604,31 @@ def main():
             }],
         })
 
+    # --- ruleta aleatoria (la rueda decide el color)
+    save_png(make_random_top(), "textures", "block", "roulette_random_top.png")
+    save_png(make_random_side(), "textures", "block", "roulette_random_side.png")
+    write_json(os.path.join(ASSETS, "models", "block", "roulette_random.json"), {
+        "parent": "minecraft:block/cube_bottom_top",
+        "textures": {
+            "top": f"{MOD}:block/roulette_random_top",
+            "side": f"{MOD}:block/roulette_random_side",
+            "bottom": f"{MOD}:block/roulette_random_side",
+        },
+    })
+    write_json(os.path.join(ASSETS, "models", "item", "roulette_random.json"),
+               {"parent": f"{MOD}:block/roulette_random"})
+    write_json(os.path.join(ASSETS, "blockstates", "roulette_random.json"),
+               {"variants": {"": {"model": f"{MOD}:block/roulette_random"}}})
+    write_json(os.path.join(DATA, "loot_table", "blocks", "roulette_random.json"), {
+        "type": "minecraft:block",
+        "pools": [{
+            "rolls": 1.0,
+            "bonus_rolls": 0.0,
+            "entries": [{"type": "minecraft:item", "name": f"{MOD}:roulette_random"}],
+            "conditions": [{"condition": "minecraft:survives_explosion"}],
+        }],
+    })
+
     # --- modelos de ítems
     for name in ITEMS:
         parent = "minecraft:item/handheld" if name == "espada_caotica" else "minecraft:item/generated"
@@ -478,7 +642,7 @@ def main():
     # --- tags
     write_json(os.path.join(ROOT, "data", "minecraft", "tags", "block", "mineable", "pickaxe.json"), {
         "replace": False,
-        "values": [f"{MOD}:roulette_{c}" for c in COLORS],
+        "values": [f"{MOD}:roulette_{c}" for c in list(COLORS) + ["random"]],
     })
 
     # --- recetas
@@ -499,6 +663,10 @@ def main():
                recipe_shapeless(["minecraft:totem_of_undying", do, "minecraft:golden_apple"], f"{MOD}:totem_dorado"))
     write_json(os.path.join(R, "espada_caotica.json"),
                recipe_shapeless(["minecraft:diamond_sword", do, do, "minecraft:ender_pearl"], f"{MOD}:espada_caotica"))
+    write_json(os.path.join(R, "roulette_random.json"), recipe_shaped(
+        ["III", "GDG", "III"],
+        {"I": "minecraft:iron_ingot", "G": "minecraft:gold_ingot", "D": "minecraft:amethyst_shard"},
+        f"{MOD}:roulette_random"))
     for color, (_rgb, dye) in COLORS.items():
         write_json(os.path.join(R, f"roulette_{color}.json"), recipe_shaped(
             ["III", "GDG", "III"],

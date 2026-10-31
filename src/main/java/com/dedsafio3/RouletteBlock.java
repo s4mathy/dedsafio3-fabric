@@ -12,13 +12,17 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-/** Bloque de ruleta: clic derecho para girar. */
+/**
+ * Bloque de ruleta: clic derecho para girar la rueda.
+ * Con color fijo, la rueda siempre cae en ese color; sin color ("random") lo decide la rueda según los pesos del menú.
+ */
 public class RouletteBlock extends Block {
 	public static final MapCodec<RouletteBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-			Codec.STRING.fieldOf("color").forGetter(block -> block.color.id()),
+			Codec.STRING.fieldOf("color").forGetter(block -> block.color == null ? "random" : block.color.id()),
 			createSettingsCodec()
 	).apply(instance, (colorId, settings) -> new RouletteBlock(RouletteColor.byId(colorId), settings)));
 
+	/** {@code null} = ruleta aleatoria. */
 	private final RouletteColor color;
 
 	public RouletteBlock(RouletteColor color, Settings settings) {

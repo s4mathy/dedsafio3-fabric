@@ -8,21 +8,26 @@ import net.minecraft.network.packet.CustomPayload;
 import java.util.List;
 
 /**
- * Servidor -> cliente: inicia la animación de la ruleta.
+ * Servidor -> cliente: inicia la animación de la rueda circular.
  *
- * @param color    ordinal de {@link RouletteColor}
- * @param keys     claves de traducción de cada casilla que se desplaza
- * @param winner   índice de la casilla ganadora dentro de {@code keys}
+ * @param colors    ordinales de {@link RouletteColor} que aparecen en la rueda (en orden)
+ * @param weights   peso de cada sector (el ángulo de cada color es proporcional a su peso)
+ * @param winner    índice (dentro de {@code colors}) del color ganador
+ * @param frac      posición (0..1) dentro del sector ganador donde se detiene el puntero
  * @param spinTicks duración del giro en ticks
+ * @param prizeKey  clave de traducción del premio que se mostrará al terminar
  */
-public record RoulettePayload(int color, List<String> keys, int winner, int spinTicks) implements CustomPayload {
+public record RoulettePayload(List<Integer> colors, List<Integer> weights, int winner, float frac,
+							  int spinTicks, String prizeKey) implements CustomPayload {
 	public static final CustomPayload.Id<RoulettePayload> ID = new CustomPayload.Id<>(Dedsafio3.id("roulette"));
 
 	public static final PacketCodec<RegistryByteBuf, RoulettePayload> CODEC = PacketCodec.tuple(
-			PacketCodecs.INTEGER, RoulettePayload::color,
-			PacketCodecs.STRING.collect(PacketCodecs.toList()), RoulettePayload::keys,
+			PacketCodecs.INTEGER.collect(PacketCodecs.toList()), RoulettePayload::colors,
+			PacketCodecs.INTEGER.collect(PacketCodecs.toList()), RoulettePayload::weights,
 			PacketCodecs.INTEGER, RoulettePayload::winner,
+			PacketCodecs.FLOAT, RoulettePayload::frac,
 			PacketCodecs.INTEGER, RoulettePayload::spinTicks,
+			PacketCodecs.STRING, RoulettePayload::prizeKey,
 			RoulettePayload::new
 	);
 

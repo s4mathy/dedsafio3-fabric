@@ -12,6 +12,9 @@ public final class TotemHandler {
 
 	public static void register() {
 		ServerLivingEntityEvents.ALLOW_DEATH.register((entity, source, amount) -> {
+			if (!DedsafioConfig.get().totemsEnabled) {
+				return true;
+			}
 			if (!(entity instanceof ServerPlayerEntity player)) {
 				return true;
 			}
