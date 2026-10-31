@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "dedsafio3",
+  "version": "${version}",
+  "name": "Dedsafio 3 (fan mod)",
+  "description": "Mod de fans inspirado en Dedsafio 3: ruletas de colores, deditas, tótems, espada caótica y animación de muerte.",
+  "authors": ["Fan project"],
+  "license": "All-Rights-Reserved",
+  "icon": "assets/dedsafio3/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.dedsafio3.Dedsafio3"],
+    "client": ["com.dedsafio3.client.Dedsafio3Client"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

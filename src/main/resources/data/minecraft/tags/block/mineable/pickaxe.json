@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "dedsafio3:roulette_red",
+    "dedsafio3:roulette_orange",
+    "dedsafio3:roulette_yellow",
+    "dedsafio3:roulette_green",
+    "dedsafio3:roulette_blue",
+    "dedsafio3:roulette_purple"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "dedsafio3:dedita_oro"
+    }
+  ],
+  "result": {
+    "id": "dedsafio3:dedita_plata",
+    "count": 9
+  }
+}

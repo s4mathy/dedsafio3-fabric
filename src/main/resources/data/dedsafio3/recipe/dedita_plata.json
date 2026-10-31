@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "dedsafio3:dedita"
+    },
+    {
+      "item": "dedsafio3:dedita"
+    },
+    {
+      "item": "dedsafio3:dedita"
+    },
+    {
+      "item": "dedsafio3:dedita"
+    },
+    {
+      "item": "dedsafio3:dedita"
+    },
+    {
+      "item": "dedsafio3:dedita"
+    },
+    {
+      "item": "dedsafio3:dedita"
+    },
+    {
+      "item": "dedsafio3:dedita"
+    },
+    {
+      "item": "dedsafio3:dedita"
+    }
+  ],
+  "result": {
+    "id": "dedsafio3:dedita_plata",
+    "count": 1
+  }
+}

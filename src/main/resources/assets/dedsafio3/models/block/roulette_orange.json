@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "dedsafio3:block/roulette_orange_top",
+    "side": "dedsafio3:block/roulette_orange_side",
+    "bottom": "dedsafio3:block/roulette_orange_side"
+  }
+}

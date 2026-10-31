@@ -1,0 +1,43 @@
+name: Build mod
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build
+        run: |
+          chmod +x gradlew
+          ./gradlew build --no-daemon
+
+      - name: Upload jar as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dedsafio3-jar
+          path: |
+            build/libs/*.jar
+            !build/libs/*-sources.jar
+
+      - name: Publish release "latest" with the jar
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          JAR=$(ls build/libs/*.jar | grep -v -- '-sources' | head -n 1)
+          gh release delete latest --cleanup-tag --yes || true
+          gh release create latest "$JAR" \
+            --title "Dedsafio 3 (fan mod) - build automático" \
+            --notes "Mod para Fabric 1.21.1. Requiere Fabric API. Descarga el .jar de abajo y ponlo en la carpeta mods."
