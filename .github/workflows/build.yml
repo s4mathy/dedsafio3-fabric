@@ -53,6 +53,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # El paso anterior deja el árbol vacío (rama huérfana de logs): se recuperan los archivos necesarios.
+          git checkout "$GITHUB_SHA" -- gradle.properties RELEASE_NOTES.md
           VERSION=$(grep '^mod_version=' gradle.properties | cut -d= -f2)
           JAR=$(ls build/libs/*.jar | grep -v -- '-sources' | head -n 1)
           for TAG in "v$VERSION" latest; do
