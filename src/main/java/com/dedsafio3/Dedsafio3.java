@@ -1,6 +1,7 @@
 package com.dedsafio3;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,8 @@ public class Dedsafio3 implements ModInitializer {
 	public void onInitialize() {
 		// El orden importa: los bloques antes que los ítems (el grupo creativo los usa).
 		DedsafioConfig.load();
+		ServerLifecycleEvents.SERVER_STARTING.register(DedsafioConfig::loadWorld);
+		ServerLifecycleEvents.SERVER_STOPPED.register(server -> DedsafioConfig.unloadWorld());
 		ModEffects.register();
 		ModEntities.register();
 		ModBlocks.register();

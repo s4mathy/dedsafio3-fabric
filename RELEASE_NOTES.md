@@ -1,6 +1,7 @@
-## Dedsafio 3 (fan mod) 1.2.3 — Fabric 1.21.1
+## Dedsafio 3 (fan mod) 1.2.4 — Fabric 1.21.1
 
 Requiere **Fabric API**. Ponlo en `mods/` junto con `fabric-api`.
 
-- Al empezar un Momento Reviil con cuenta atrás, el chat avisa que no podrás ver tus corazones mientras dure.
-- Los jugadores que no lleguen al búnker/refugio reciben ahora **56 rayos** (antes 38), uno cada 0,5 s.
+- Los cambios de dificultad y las modificaciones del mundo ahora se guardan **por mundo** (archivo `dedsafio3_world.json` dentro de la carpeta del mundo): no pasan a los demás mundos que crees. La configuración general (ruletas, pesos, etc.) sigue siendo global.
+- El búnker no empieza su cuenta atrás para desaparecer (10-15 s) hasta que dejan de caer los rayos de quienes no llegaron.
+- Si alguien que estaba afuera logra entrar al búnker, ya no le cae ningún rayo más.

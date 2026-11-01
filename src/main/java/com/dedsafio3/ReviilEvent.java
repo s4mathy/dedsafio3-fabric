@@ -65,6 +65,8 @@ public final class ReviilEvent {
 	/** Próximo meteorito dirigido a cada jugador (tick del servidor). */
 	private static final Map<UUID, Long> DIRECT_AT = new HashMap<>();
 	private static long removeAt = -1;
+	/** El búnker espera a que dejen de caer rayos antes de empezar la cuenta atrás para desaparecer. */
+	private static boolean removalPending;
 
 	private ReviilEvent() {
 	}
@@ -106,6 +108,7 @@ public final class ReviilEvent {
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
 			running = false;
 			BOLTS.clear();
+			removalPending = false;
 			BUNKER.clear();
 			DIRECT_AT.clear();
 			BACKUP.clear();
@@ -220,6 +223,11 @@ public final class ReviilEvent {
 					continue;
 				}
 				ServerWorld world = player.getServerWorld();
+				// Si logra llegar al búnker, deja de caerle ningún rayo más.
+				if (world == bunkerWorld && bunkerBox != null && bunkerBox.contains(player.getPos())) {
+					it.remove();
+					continue;
+				}
 				LightningEntity bolt = EntityType.LIGHTNING_BOLT.create(world);
 				if (bolt != null) {
 					bolt.refreshPositionAfterTeleport(player.getX(), player.getY(), player.getZ());
@@ -233,6 +241,11 @@ public final class ReviilEvent {
 					entry.setValue(entry.getValue() - 1);
 				}
 			}
+		}
+		if (removalPending && BOLTS.isEmpty()) {
+			// Cuando ya no caen rayos, el búnker desaparece entre 10 y 15 segundos después.
+			removalPending = false;
+			removeAt = server.getTicks() + 200 + server.getOverworld().getRandom().nextInt(101);
 		}
 		if (removeAt >= 0 && server.getTicks() >= removeAt) {
 			restoreBunker();
@@ -250,6 +263,7 @@ public final class ReviilEvent {
 		DIRECT_AT.clear();
 		BACKUP.clear();
 		backupWorld = null;
+		removalPending = false;
 		removeAt = -1;
 	}
 
@@ -310,10 +324,7 @@ public final class ReviilEvent {
 
 	private static void finish(MinecraftServer server) {
 		running = false;
-		if (!BACKUP.isEmpty()) {
-			// El búnker desaparece entre 10 y 15 segundos después de terminar el momento.
-			removeAt = server.getTicks() + 200 + server.getOverworld().getRandom().nextInt(101);
-		}
+		removalPending = !BACKUP.isEmpty();
 		if (bar != null) {
 			bar.clearPlayers();
 			bar = null;
