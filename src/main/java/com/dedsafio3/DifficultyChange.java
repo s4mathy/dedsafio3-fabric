@@ -10,7 +10,7 @@ import java.util.Set;
 
 /**
  * Cambios de dificultad, nuevos mobs y el Momento Reviil de la serie. Cada uno se activa o desactiva desde el menú (K).
- * Al activarlo sale la ruleta naranja con su nombre; el botón "Avisar" solo lo anuncia en el chat.
+ * Al activarlo sale la ruleta con su nombre (naranja; roja para los Momentos Reviil); el botón "Avisar" solo lo anuncia en el chat.
  */
 public enum DifficultyChange {
 	BLAZES("blazes", Kind.DIFFICULTY),
@@ -24,7 +24,17 @@ public enum DifficultyChange {
 	NO_HONEY("no_honey", Kind.DIFFICULTY),
 	MAGMA_DEADLY("magma_deadly", Kind.DIFFICULTY),
 	ZOMBIE_CLIMB("zombie_climb", Kind.DIFFICULTY),
-	REVIIL("reviil", Kind.MOMENT);
+	REVIIL("reviil", Kind.MOMENT),
+	// --- v1.2.0
+	DACTILO_BEBE("dactilo_bebe", Kind.MOB),
+	CREEPER_MAGMA("creeper_magma", Kind.MOB),
+	DROMORAPTOR_AZUL("dromoraptor_azul", Kind.MOB),
+	ZOMBIE_ELITE("zombie_elite", Kind.DIFFICULTY),
+	HEROBRINE("herobrine", Kind.DIFFICULTY),
+	NARVAL("narval", Kind.DIFFICULTY),
+	COBWEB_SPIDER("cobweb_spider", Kind.DIFFICULTY),
+	REVIIL_LUNA("reviil_luna", Kind.MOMENT),
+	REVIIL_METEOROS("reviil_meteoros", Kind.MOMENT);
 
 	public enum Kind {
 		DIFFICULTY, MOB, MOMENT
@@ -76,17 +86,17 @@ public enum DifficultyChange {
 	}
 
 	public boolean isActive() {
-		if (this == REVIIL) {
-			return ReviilEvent.isRunning();
+		if (this == REVIIL || this == REVIIL_METEOROS) {
+			return ReviilEvent.isRunning(this == REVIIL_METEOROS ? ReviilEvent.Type.METEORS : ReviilEvent.Type.BEAM);
 		}
 		return DedsafioConfig.get().changes.contains(id);
 	}
 
 	/** Activa o desactiva sin ruleta ni aviso. {@code source} solo lo usa el Momento Reviil (para ubicar el búnker). */
 	public void setActive(MinecraftServer server, boolean on, ServerPlayerEntity source) {
-		if (this == REVIIL) {
+		if (this == REVIIL || this == REVIIL_METEOROS) {
 			if (on) {
-				ReviilEvent.start(server, source);
+				ReviilEvent.start(server, source, this == REVIIL_METEOROS ? ReviilEvent.Type.METEORS : ReviilEvent.Type.BEAM);
 			} else {
 				ReviilEvent.stop(server);
 			}
@@ -105,8 +115,13 @@ public enum DifficultyChange {
 		if (isActive() || WAITING.contains(this)) {
 			return;
 		}
+		// Solo puede haber un Momento Reviil con cuenta atrás a la vez.
+		if ((this == REVIIL || this == REVIIL_METEOROS) && ReviilEvent.isRunning()) {
+			return;
+		}
 		WAITING.add(this);
-		Roulette.announce(server, RouletteColor.ORANGE, wheelKey(), () -> {
+		RouletteColor wheelColor = kind == Kind.MOMENT ? RouletteColor.RED : RouletteColor.ORANGE;
+		Roulette.announce(server, wheelColor, wheelKey(), () -> {
 			WAITING.remove(this);
 			setActive(server, true, source);
 			broadcastNotice(server);

@@ -1,6 +1,10 @@
 package com.dedsafio3.client;
 
+import com.dedsafio3.DactiloEntity;
 import com.dedsafio3.Dedsafio3;
+import com.dedsafio3.HerobrineEntity;
+import com.dedsafio3.MagmaCreeperEntity;
+import com.dedsafio3.NarvalEntity;
 import com.dedsafio3.ModEntities;
 import com.dedsafio3.NuclearCreeperEntity;
 import com.dedsafio3.ReptilianEntity;
@@ -9,7 +13,9 @@ import net.minecraft.client.render.entity.BipedEntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.IronGolemEntityRenderer;
 import net.minecraft.client.render.entity.MobEntityRenderer;
+import net.minecraft.client.render.entity.model.ChickenEntityModel;
 import net.minecraft.client.render.entity.model.CreeperEntityModel;
+import net.minecraft.client.render.entity.model.DolphinEntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
@@ -31,6 +37,10 @@ public final class ModRenderers {
 	public static void register() {
 		EntityRendererRegistry.register(ModEntities.NUCLEAR_CREEPER, NuclearCreeperRenderer::new);
 		EntityRendererRegistry.register(ModEntities.PLUMOSAURIO, PlumosaurioRenderer::new);
+		EntityRendererRegistry.register(ModEntities.MAGMA_CREEPER, MagmaCreeperRenderer::new);
+		EntityRendererRegistry.register(ModEntities.DACTILO, DactiloRenderer::new);
+		EntityRendererRegistry.register(ModEntities.NARVAL, NarvalRenderer::new);
+		EntityRendererRegistry.register(ModEntities.HEROBRINE, HerobrineRenderer::new);
 		ModEntities.REPTILIANS.values().forEach(type -> EntityRendererRegistry.register(type, ReptilianRenderer::new));
 	}
 
@@ -66,9 +76,70 @@ public final class ModRenderers {
 		}
 	}
 
+	private static class MagmaCreeperRenderer extends MobEntityRenderer<MagmaCreeperEntity, CreeperEntityModel<MagmaCreeperEntity>> {
+		MagmaCreeperRenderer(EntityRendererFactory.Context context) {
+			super(context, new CreeperEntityModel<>(context.getPart(EntityModelLayers.CREEPER)), 0.5f);
+		}
+
+		@Override
+		public Identifier getTexture(MagmaCreeperEntity entity) {
+			return texture("creeper_magma");
+		}
+	}
+
+	private static class DactiloRenderer extends MobEntityRenderer<DactiloEntity, ChickenEntityModel<DactiloEntity>> {
+		DactiloRenderer(EntityRendererFactory.Context context) {
+			super(context, new ChickenEntityModel<>(context.getPart(EntityModelLayers.CHICKEN)), 0.3f);
+		}
+
+		@Override
+		public Identifier getTexture(DactiloEntity entity) {
+			return texture("dactilo_bebe");
+		}
+
+		@Override
+		protected void scale(DactiloEntity entity, MatrixStack matrices, float amount) {
+			matrices.scale(1.4f, 1.4f, 1.4f);
+		}
+	}
+
+	private static class NarvalRenderer extends MobEntityRenderer<NarvalEntity, DolphinEntityModel<NarvalEntity>> {
+		NarvalRenderer(EntityRendererFactory.Context context) {
+			super(context, new DolphinEntityModel<>(context.getPart(EntityModelLayers.DOLPHIN)), 0.5f);
+		}
+
+		@Override
+		public Identifier getTexture(NarvalEntity entity) {
+			return texture("narval");
+		}
+
+		@Override
+		protected void scale(NarvalEntity entity, MatrixStack matrices, float amount) {
+			matrices.scale(1.4f, 1.4f, 1.4f);
+		}
+	}
+
+	private static class HerobrineRenderer extends BipedEntityRenderer<HerobrineEntity, BipedEntityModel<HerobrineEntity>> {
+		HerobrineRenderer(EntityRendererFactory.Context context) {
+			super(context, new BipedEntityModel<>(context.getPart(EntityModelLayers.ZOMBIE)), 0.5f);
+		}
+
+		@Override
+		public Identifier getTexture(HerobrineEntity entity) {
+			return texture("herobrine");
+		}
+	}
+
 	private static class ReptilianRenderer extends BipedEntityRenderer<ReptilianEntity, BipedEntityModel<ReptilianEntity>> {
 		ReptilianRenderer(EntityRendererFactory.Context context) {
 			super(context, new BipedEntityModel<>(context.getPart(EntityModelLayers.ZOMBIE)), 0.5f);
+		}
+
+		@Override
+		protected void scale(ReptilianEntity entity, MatrixStack matrices, float amount) {
+			if (entity.kind() == ReptilianEntity.Kind.SALVAJE) {
+				matrices.scale(0.6f, 0.6f, 0.6f); // el Salvaje es una criatura pequeña
+			}
 		}
 
 		@Override

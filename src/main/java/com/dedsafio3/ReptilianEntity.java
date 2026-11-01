@@ -1,6 +1,10 @@
 package com.dedsafio3;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.particle.BlockStateParticleEffect;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -30,17 +34,18 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
 
 /**
- * Los reptisaurios y el Dromoraptor Rojo comparten clase; {@link Kind} decide estadísticas, arma y veneno.
+ * Los reptisaurios y los Dromoraptores (rojo y azul) comparten clase; {@link Kind} decide estadísticas, arma y veneno.
  * El Salvaje y el Dromoraptor atacan con garras; el Guerrero y el de Lanza cuerpo a cuerpo con veneno;
  * el Arquero dispara flechas envenenadas ("Veneno Primitivo").
  */
 public class ReptilianEntity extends HostileEntity implements RangedAttackMob {
 	public enum Kind {
-		SALVAJE("reptisaurio_salvaje", 30.0, 7.0, 0.30, false, null),
+		SALVAJE("reptisaurio_salvaje", 22.0, 6.0, 0.32, false, null),
 		GUERRERO("reptisaurio_guerrero", 40.0, 8.0, 0.27, true, Items.STONE_AXE),
 		ARQUERO("reptisaurio_arquero", 24.0, 3.0, 0.25, true, Items.BOW),
 		LANZA("reptisaurio_lanza", 36.0, 9.0, 0.27, true, Items.TRIDENT),
-		DROMORAPTOR("dromoraptor_rojo", 34.0, 10.0, 0.38, false, null);
+		DROMORAPTOR("dromoraptor_rojo", 34.0, 10.0, 0.38, false, null),
+		DROMORAPTOR_AZUL("dromoraptor_azul", 28.0, 8.0, 0.42, false, null);
 
 		public final String id;
 		final double health;
@@ -60,6 +65,9 @@ public class ReptilianEntity extends HostileEntity implements RangedAttackMob {
 	}
 
 	private final Kind kind;
+	/** Reptisaurio Salvaje: enterrado, acecha bajo tierra (invisible e invulnerable) hasta salir a atacar. */
+	private boolean burrowed;
+	private int burrowCooldown = 60;
 
 	public ReptilianEntity(EntityType<? extends HostileEntity> type, World world, Kind kind) {
 		super(type, world);
@@ -95,6 +103,52 @@ public class ReptilianEntity extends HostileEntity implements RangedAttackMob {
 		// Se desplazan en manada: si atacan a uno, avisan a los demás.
 		targetSelector.add(1, new RevengeGoal(this, ReptilianEntity.class).setGroupRevenge());
 		targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
+		if (kind != Kind.SALVAJE || getWorld().isClient || !(getWorld() instanceof ServerWorld world)) {
+			return;
+		}
+		LivingEntity target = getTarget();
+		if (burrowCooldown > 0) {
+			burrowCooldown--;
+		}
+		if (!burrowed) {
+			// Si te acercas demasiado, se entierra.
+			if (target != null && burrowCooldown == 0 && squaredDistanceTo(target) < 100.0 && squaredDistanceTo(target) > 16.0
+					&& isOnGround()) {
+				burrowed = true;
+				setInvisible(true);
+				setInvulnerable(true);
+				setSilent(true);
+				playSound(SoundEvents.BLOCK_GRAVEL_BREAK, 1.0f, 0.6f);
+			}
+			return;
+		}
+		if (target == null || !target.isAlive() || squaredDistanceTo(target) > 1600.0) {
+			surface();
+			burrowCooldown = 100;
+			return;
+		}
+		// Acecha bajo tierra: avanza hacia el objetivo dejando tierra levantada.
+		getNavigation().startMovingTo(target, 1.6);
+		world.spawnParticles(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.DIRT.getDefaultState()),
+				getX(), getY() + 0.1, getZ(), 4, 0.25, 0.05, 0.25, 0.02);
+		if (squaredDistanceTo(target) < 6.25) {
+			surface();
+			burrowCooldown = 160;
+			playSound(SoundEvents.BLOCK_GRAVEL_BREAK, 1.2f, 0.9f);
+			tryAttack(target);
+		}
+	}
+
+	private void surface() {
+		burrowed = false;
+		setInvisible(false);
+		setInvulnerable(false);
+		setSilent(false);
 	}
 
 	@Override

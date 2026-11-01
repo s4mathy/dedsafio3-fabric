@@ -87,7 +87,7 @@ public final class DedsafioConfig {
 		if (changes == null) {
 			changes = new ArrayList<>();
 		}
-		changes.removeIf(id -> DifficultyChange.byId(id) == null || id.equals("reviil"));
+		changes.removeIf(id -> DifficultyChange.byId(id) == null || id.equals("reviil") || id.equals("reviil_meteoros"));
 		reviilSeconds = Math.max(20, Math.min(180, reviilSeconds));
 	}
 }

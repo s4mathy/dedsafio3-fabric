@@ -574,14 +574,51 @@ CHANGES = {
                      "Deadly magma", "Magma Blocks now deal 3,000,000,000,000,000,000,000,000,000,000,000,000,000 damage if you touch any of their faces."),
     "zombie_climb": ("difficulty", "Zombis trepadores", "Los zombies tienen probabilidad de escalar paredes.",
                      "Climbing zombies", "Zombies have a chance to climb walls."),
-    "reviil": ("moment", "Momento Reviil",
+    "reviil": ("moment", "Momento Reviil: Rayo",
                "¡Reviil nos está observando y quiere lanzar un rayo mortal! Eón lo vio justo a tiempo y ha construido un Búnker para refugiarse de él. "
                "Antes que termine el contador TODOS deben estar dentro o morirán. Además, lanzó un conjuro para intercambiar aleatoriamente las "
                "posiciones de todos los humanos y que no puedan observar su vida.",
-               "Reviil Moment",
+               "Reviil Moment: Beam",
                "Reviil is watching us and wants to launch a deadly beam! Eón saw it just in time and built a Bunker to shelter from it. "
                "Before the counter ends EVERYONE must be inside or they will die. He also cast a spell to randomly swap the positions of "
                "all humans so they cannot observe their life."),
+    # --- v1.2.0 (Dedsafio 4, jueves 24.SEP.26)
+    "dactilo_bebe": ("mob", "Dáctylo Bebé",
+                     "Criatura que surca los cielos del Centro de Quiu. Dispara proyectiles que taparán tu visión durante algunos segundos.",
+                     "Baby Dactyl",
+                     "Creature that soars the skies of the Quiu Center. Shoots projectiles that will cover your vision for a few seconds."),
+    "creeper_magma": ("mob", "Creeper de Magma", "Al explotar, pone Lava en su posición.",
+                      "Magma Creeper", "When it explodes, it leaves Lava where it stood."),
+    "dromoraptor_azul": ("mob", "Dromoraptor Azul",
+                         "Se ha visto una nueva criatura en el Centro de Quiu: Dromoraptor Azul. Depredador extremadamente veloz que se desplaza en manada. "
+                         "Aparece en la Sabana del Centro de Quiu.",
+                         "Blue Dromoraptor",
+                         "A new creature has been seen in the Quiu Center: Blue Dromoraptor. An extremely fast predator that moves in packs. "
+                         "Spawns in the Savanna of the Quiu Center."),
+    "zombie_elite": ("difficulty", "Zombis de élite",
+                     "Ahora TODOS los Zombies pueden escalar y spawnean con una Espada de Hierro con Filo V.",
+                     "Elite zombies", "Now ALL Zombies can climb and spawn with an Iron Sword with Sharpness V."),
+    "herobrine": ("difficulty", "Herobrine", "Herobrine fue añadido al servidor.",
+                  "Herobrine", "Herobrine was added to the server."),
+    "narval": ("difficulty", "Narvales en el Overworld",
+               "¡Los Narvales han conseguido salir del Centro de Quiu! Ahora los Narvales aparecen en los Océanos del Overworld.",
+               "Narwhals in the Overworld",
+               "The Narwhals have managed to leave the Quiu Center! Narwhals now spawn in the Overworld Oceans."),
+    "cobweb_spider": ("difficulty", "Arañas en la telaraña",
+                      "Al romper una Tela de Araña existe la probabilidad de que salga una Araña de Cueva.",
+                      "Spiders in the web", "Breaking a Cobweb has a chance of releasing a Cave Spider."),
+    "reviil_luna": ("moment", "Momento Reviil: Maldición lunar",
+                    "¡Vaya horrible noche para tener una maldición! El primer jugador en mirar a la Luna recibirá daño instantáneo y morirá. "
+                    "Este cambio permanecerá activo hasta que alguien muera por esa razón. Luego será desactivado.",
+                    "Reviil Moment: Moon Curse",
+                    "What a horrible night to have a curse! The first player to look at the Moon will take instant damage and die. "
+                    "This change stays active until someone dies for that reason. Then it is deactivated."),
+    "reviil_meteoros": ("moment", "Momento Reviil: Meteoritos",
+                        "¡Reviil ha invocado una lluvia de meteoritos y ha DESACTIVADO el Nether! Eón ha creado un refugio para resistir. "
+                        "Deben llegar antes que termine el tiempo… o morirán.",
+                        "Reviil Moment: Meteors",
+                        "Reviil has summoned a meteor shower and DISABLED the Nether! Eón has built a shelter to hold out. "
+                        "You must get there before time runs out… or you will die."),
 }
 
 TITLES = {
@@ -597,12 +634,17 @@ ENTITY_NAMES = {  # id -> (es, en): coinciden con los ids de ModEntities / Repti
     "reptisaurio_arquero": ("Reptisaurio Arquero", "Archer Reptisaur"),
     "reptisaurio_lanza": ("Reptisaurio con Lanza", "Spear Reptisaur"),
     "dromoraptor_rojo": ("Dromoraptor Rojo", "Red Dromoraptor"),
+    "dromoraptor_azul": ("Dromoraptor Azul", "Blue Dromoraptor"),
+    "creeper_magma": ("Creeper de Magma", "Magma Creeper"),
+    "dactilo_bebe": ("Dáctylo Bebé", "Baby Dactyl"),
+    "narval": ("Narval", "Narwhal"),
+    "herobrine": ("Herobrine", "Herobrine"),
 }
 
 V111_GUI = {
     "es_es": {
-        "gui.dedsafio3.tab.changes": "Cambios 1.1.1",
-        "gui.dedsafio3.changes_hint": "Activar gira la ruleta naranja para todos · Avisar solo escribe en el chat",
+        "gui.dedsafio3.tab.changes": "Cambios",
+        "gui.dedsafio3.changes_hint": "Activar gira la ruleta naranja (roja en los Momentos Reviil) · Avisar solo escribe en el chat",
         "gui.dedsafio3.notify": "Avisar",
         "gui.dedsafio3.notify_tip": "Anuncia este cambio en el chat, sin ruleta",
         "gui.dedsafio3.reviil_seconds": "Contador del Momento Reviil (s)",
@@ -614,10 +656,14 @@ V111_GUI = {
         "message.dedsafio3.reviil_cancel": "§7El Momento Reviil fue cancelado.",
         "message.dedsafio3.reviil_strike": "§4¡El rayo de Reviil ha caído!",
         "effect.dedsafio3.veneno_primitivo": "Veneno Primitivo",
+        "message.dedsafio3.reviil_meteor_bar": "Lluvia de meteoritos: ¡llega al refugio en %s s!",
+        "message.dedsafio3.reviil_meteor_bunker": "§c¡Momento Reviil! Llueven meteoritos y el Nether está DESACTIVADO. Eón construyó un refugio en %s, %s, %s. ¡Lleguen antes de que acabe el tiempo!",
+        "message.dedsafio3.nether_disabled": "§cEl Nether está desactivado.",
+        "message.dedsafio3.reviil_moon_death": "§5%s miró a la Luna y la maldición de Reviil se cumplió. Maldición lunar desactivada.",
     },
     "en_us": {
-        "gui.dedsafio3.tab.changes": "Changes 1.1.1",
-        "gui.dedsafio3.changes_hint": "Enabling spins the orange wheel for everyone · Notify only writes in chat",
+        "gui.dedsafio3.tab.changes": "Changes",
+        "gui.dedsafio3.changes_hint": "Enabling spins the orange wheel (red for Reviil Moments) · Notify only writes in chat",
         "gui.dedsafio3.notify": "Notify",
         "gui.dedsafio3.notify_tip": "Announces this change in chat, without the wheel",
         "gui.dedsafio3.reviil_seconds": "Reviil Moment countdown (s)",
@@ -629,6 +675,10 @@ V111_GUI = {
         "message.dedsafio3.reviil_cancel": "§7The Reviil Moment was cancelled.",
         "message.dedsafio3.reviil_strike": "§4Reviil's beam has struck!",
         "effect.dedsafio3.veneno_primitivo": "Primitive Poison",
+        "message.dedsafio3.reviil_meteor_bar": "Meteor shower: reach the shelter in %s s!",
+        "message.dedsafio3.reviil_meteor_bunker": "§cReviil Moment! Meteors are raining and the Nether is DISABLED. Eón built a shelter at %s, %s, %s. Get there before time runs out!",
+        "message.dedsafio3.nether_disabled": "§cThe Nether is disabled.",
+        "message.dedsafio3.reviil_moon_death": "§5%s looked at the Moon and Reviil's curse was fulfilled. Moon curse deactivated.",
     },
 }
 
@@ -701,6 +751,42 @@ def make_nuclear_creeper():
     fill(img, 11, 12, 13, 15, (20, 20, 20))
     fill(img, 10, 14, 11, 16, (20, 20, 20))
     fill(img, 13, 14, 14, 16, (20, 20, 20))
+    return img
+
+
+def make_magma_creeper():
+    """Creeper (64x32) de roca oscura con grietas de lava y cara naranja."""
+    img = skin((64, 32), (58, 28, 24), 10, 81)
+    rnd = random.Random(82)
+    for _ in range(260):
+        x, y = rnd.randrange(64), rnd.randrange(32)
+        px(img, x, y, (235, 110, 25) if rnd.random() < 0.7 else (255, 190, 50))
+    fill(img, 8, 8, 16, 16, (70, 32, 26))
+    for ex in (9, 13):
+        fill(img, ex, 10, ex + 2, 12, (255, 170, 40))
+    fill(img, 11, 12, 13, 15, (255, 140, 30))
+    fill(img, 10, 14, 11, 16, (255, 140, 30))
+    fill(img, 13, 14, 14, 16, (255, 140, 30))
+    return img
+
+
+def make_dactilo():
+    """Modelo de gallina (64x32): plumaje marrón anaranjado con pico amarillo."""
+    img = skin((64, 32), (201, 138, 60), 14, 91)
+    fill(img, 14, 0, 20, 6, (140, 90, 40))          # cresta/cabeza
+    fill(img, 14, 4, 20, 6, (255, 200, 60))         # pico
+    for x in (15, 18):
+        px(img, x, 3, (20, 20, 20))
+    return img
+
+
+def make_narval():
+    """Delfín (64x64) gris azulado con manchas claras."""
+    img = skin((64, 64), (124, 143, 168), 10, 101)
+    rnd = random.Random(102)
+    for _ in range(500):
+        x, y = rnd.randrange(64), rnd.randrange(64)
+        px(img, x, y, (233, 228, 208))
     return img
 
 
@@ -871,6 +957,12 @@ def main():
     save_png(make_biped((50, 120, 100), 12, 43, (200, 190, 140), None, (255, 240, 120)), "textures", "entity", "reptisaurio_arquero.png")
     save_png(make_biped((110, 122, 50), 12, 44, (90, 90, 60), (200, 160, 40), (255, 80, 40)), "textures", "entity", "reptisaurio_lanza.png")
     save_png(make_biped((172, 52, 36), 16, 45, (120, 28, 20), (240, 150, 60), (255, 240, 80)), "textures", "entity", "dromoraptor_rojo.png")
+    save_png(make_biped((38, 84, 170), 16, 46, (20, 50, 110), (150, 210, 255), (255, 240, 80)), "textures", "entity", "dromoraptor_azul.png")
+    save_png(make_magma_creeper(), "textures", "entity", "creeper_magma.png")
+    save_png(make_dactilo(), "textures", "entity", "dactilo_bebe.png")
+    save_png(make_narval(), "textures", "entity", "narval.png")
+    # Herobrine: humanoide gris oscuro propio (no es la skin de Steve) con ojos blancos.
+    save_png(make_biped((54, 58, 64), 8, 47, (40, 44, 50), None, (255, 255, 255)), "textures", "entity", "herobrine.png")
     save_png(make_poison_icon(), "textures", "mob_effect", "veneno_primitivo.png")
     for eid in ENTITY_NAMES:
         write_json(os.path.join(ASSETS, "models", "item", f"spawn_{eid}.json"), {"parent": "minecraft:item/template_spawn_egg"})

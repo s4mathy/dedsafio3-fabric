@@ -19,6 +19,10 @@ import java.util.Map;
 public final class ModEntities {
 	public static EntityType<NuclearCreeperEntity> NUCLEAR_CREEPER;
 	public static EntityType<PlumosaurioEntity> PLUMOSAURIO;
+	public static EntityType<MagmaCreeperEntity> MAGMA_CREEPER;
+	public static EntityType<DactiloEntity> DACTILO;
+	public static EntityType<NarvalEntity> NARVAL;
+	public static EntityType<HerobrineEntity> HEROBRINE;
 	public static final Map<ReptilianEntity.Kind, EntityType<ReptilianEntity>> REPTILIANS = new EnumMap<>(ReptilianEntity.Kind.class);
 	/** Huevos de aparición (para el modo creativo). */
 	public static final List<Item> EGGS = new ArrayList<>();
@@ -48,12 +52,35 @@ public final class ModEntities {
 		egg("plumosaurio", PLUMOSAURIO, 0x7B3FA0, 0xC9A0DC);
 
 		for (ReptilianEntity.Kind kind : ReptilianEntity.Kind.values()) {
+			boolean small = kind == ReptilianEntity.Kind.SALVAJE;
 			EntityType<ReptilianEntity> type = register(kind.id, EntityType.Builder
 					.<ReptilianEntity>create((t, world) -> new ReptilianEntity(t, world, kind), SpawnGroup.MONSTER)
-					.dimensions(0.6f, 1.95f).maxTrackingRange(8));
+					.dimensions(small ? 0.5f : 0.6f, small ? 1.1f : 1.95f).maxTrackingRange(8));
 			FabricDefaultAttributeRegistry.register(type, ReptilianEntity.attributes(kind));
 			REPTILIANS.put(kind, type);
-			egg(kind.id, type, kind == ReptilianEntity.Kind.DROMORAPTOR ? 0xB03020 : 0x3E6B2A, 0x1A2A12);
+			int primary = kind == ReptilianEntity.Kind.DROMORAPTOR ? 0xB03020
+					: kind == ReptilianEntity.Kind.DROMORAPTOR_AZUL ? 0x2E6FD0 : 0x3E6B2A;
+			egg(kind.id, type, primary, 0x1A2A12);
 		}
+
+		MAGMA_CREEPER = register("creeper_magma", EntityType.Builder.create(MagmaCreeperEntity::new, SpawnGroup.MONSTER)
+				.dimensions(0.6f, 1.7f).makeFireImmune().maxTrackingRange(8));
+		FabricDefaultAttributeRegistry.register(MAGMA_CREEPER, MagmaCreeperEntity.attributes());
+		egg("creeper_magma", MAGMA_CREEPER, 0xD2501A, 0x3A0F0F);
+
+		DACTILO = register("dactilo_bebe", EntityType.Builder.create(DactiloEntity::new, SpawnGroup.MONSTER)
+				.dimensions(0.8f, 0.7f).maxTrackingRange(10));
+		FabricDefaultAttributeRegistry.register(DACTILO, DactiloEntity.attributes());
+		egg("dactilo_bebe", DACTILO, 0xC98A3C, 0x5A3B1A);
+
+		NARVAL = register("narval", EntityType.Builder.create(NarvalEntity::new, SpawnGroup.WATER_CREATURE)
+				.dimensions(0.9f, 0.7f).maxTrackingRange(10));
+		FabricDefaultAttributeRegistry.register(NARVAL, NarvalEntity.attributes());
+		egg("narval", NARVAL, 0x7C8FA8, 0xE9E4D0);
+
+		HEROBRINE = register("herobrine", EntityType.Builder.create(HerobrineEntity::new, SpawnGroup.MONSTER)
+				.dimensions(0.6f, 1.8f).makeFireImmune().maxTrackingRange(10));
+		FabricDefaultAttributeRegistry.register(HEROBRINE, HerobrineEntity.attributes());
+		egg("herobrine", HEROBRINE, 0x2B2B2B, 0xFFFFFF);
 	}
 }

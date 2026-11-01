@@ -34,7 +34,9 @@ public final class ModSpawner {
 		/** Bajo tierra, sin cielo encima. */
 		CAVE,
 		/** Suelo libre cerca del jugador (Nether). */
-		FLOOR
+		FLOOR,
+		/** Agua del océano, a media profundidad. */
+		WATER
 	}
 
 	private record Rule(DifficultyChange change, RegistryKey<World> dimension, Mode mode, int cap, int min, int max,
@@ -99,6 +101,21 @@ public final class ModSpawner {
 		rule(DifficultyChange.DROMORAPTOR_ROJO, World.OVERWORLD, Mode.SURFACE, 8, 3, 5, 0.25, true, ModSpawner::dryLands,
 				List.of(ModEntities.REPTILIANS.get(ReptilianEntity.Kind.DROMORAPTOR)));
 
+		rule(DifficultyChange.DROMORAPTOR_AZUL, World.OVERWORLD, Mode.SURFACE, 8, 3, 5, 0.25, true,
+				(w, p) -> w.getBiome(p).isIn(BiomeTags.IS_SAVANNA) || w.getBiome(p).matchesKey(BiomeKeys.PLAINS),
+				List.of(ModEntities.REPTILIANS.get(ReptilianEntity.Kind.DROMORAPTOR_AZUL)));
+		rule(DifficultyChange.DACTILO_BEBE, World.OVERWORLD, Mode.SURFACE, 4, 1, 2, 0.3, true,
+				(w, p) -> w.isDay() && (w.getBiome(p).isIn(BiomeTags.IS_SAVANNA) || w.getBiome(p).isIn(BiomeTags.IS_JUNGLE)
+						|| w.getBiome(p).matchesKey(BiomeKeys.PLAINS)),
+				List.of(ModEntities.DACTILO));
+		rule(DifficultyChange.CREEPER_MAGMA, World.OVERWORLD, Mode.SURFACE, 4, 1, 2, 0.35, true,
+				(w, p) -> !w.isDay() || w.getBiome(p).isIn(BiomeTags.IS_BADLANDS),
+				List.of(ModEntities.MAGMA_CREEPER));
+		rule(DifficultyChange.NARVAL, World.OVERWORLD, Mode.WATER, 3, 1, 2, 0.3, false,
+				(w, p) -> w.getBiome(p).isIn(BiomeTags.IS_OCEAN), List.of(ModEntities.NARVAL));
+		rule(DifficultyChange.HEROBRINE, World.OVERWORLD, Mode.SURFACE, 1, 1, 1, 0.04, true,
+				(w, p) -> !w.isDay(), List.of(ModEntities.HEROBRINE));
+
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			if (server.getTicks() % 40 != 0) {
 				return;
@@ -155,6 +172,16 @@ public final class ModSpawner {
 		int z = MathHelper.floor(player.getZ() + Math.sin(angle) * dist);
 		if (!w.getChunkManager().isChunkLoaded(x >> 4, z >> 4)) {
 			return null;
+		}
+
+		if (rule.mode() == Mode.WATER) {
+			BlockPos wp = new BlockPos(x, Math.max(w.getBottomY() + 4, w.getSeaLevel() - 4), z);
+			if (!w.getFluidState(wp).isIn(net.minecraft.registry.tag.FluidTags.WATER)
+					|| !w.getFluidState(wp.up()).isIn(net.minecraft.registry.tag.FluidTags.WATER)
+					|| w.getClosestPlayer(wp.getX() + 0.5, wp.getY(), wp.getZ() + 0.5, 20.0, false) != null) {
+				return null;
+			}
+			return rule.spot().test(w, wp) ? wp : null;
 		}
 
 		BlockPos pos = null;

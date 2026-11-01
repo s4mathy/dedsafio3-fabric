@@ -5,6 +5,12 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.registry.RegistryKeys;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -32,6 +38,22 @@ public final class ChangeHooks {
 				serverWorld.createExplosion(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 2.5f,
 						World.ExplosionSourceType.TNT);
 			}
+			// Al romper una telaraña puede salir una Araña de Cueva.
+			if (DifficultyChange.COBWEB_SPIDER.isActive() && state.isOf(Blocks.COBWEB) && world instanceof ServerWorld serverWorld
+					&& world.getRandom().nextFloat() < 0.3f) {
+				EntityType.CAVE_SPIDER.spawn(serverWorld, pos, SpawnReason.TRIGGERED);
+			}
+		});
+
+		// Todos los zombis nacen con Espada de Hierro con Filo V.
+		ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
+			if (DifficultyChange.ZOMBIE_ELITE.isActive() && entity instanceof ZombieEntity zombie
+					&& zombie.age == 0 && zombie.getMainHandStack().isEmpty()) {
+				ItemStack sword = new ItemStack(Items.IRON_SWORD);
+				sword.addEnchantment(world.getRegistryManager().getWrapperOrThrow(RegistryKeys.ENCHANTMENT)
+						.getOrThrow(Enchantments.SHARPNESS), 5);
+				zombie.equipStack(EquipmentSlot.MAINHAND, sword);
+			}
 		});
 
 		// Ya no se puede conseguir miel ni panales de miel de las colmenas.
@@ -50,7 +72,8 @@ public final class ChangeHooks {
 
 	private static void tickWorld(ServerWorld world) {
 		boolean magma = DifficultyChange.MAGMA_DEADLY.isActive();
-		boolean climb = DifficultyChange.ZOMBIE_CLIMB.isActive();
+		boolean elite = DifficultyChange.ZOMBIE_ELITE.isActive();
+		boolean climb = DifficultyChange.ZOMBIE_CLIMB.isActive() || elite;
 		if (!magma && !climb) {
 			return;
 		}
@@ -60,8 +83,8 @@ public final class ChangeHooks {
 			}
 			if (climb && world.getTime() % 2 == 0) {
 				for (ZombieEntity zombie : world.getEntitiesByClass(ZombieEntity.class, player.getBoundingBox().expand(24.0), z -> true)) {
-					// Un 40 % de los zombis (fijo por zombi) sabe escalar.
-					if (Math.floorMod(zombie.getUuid().hashCode(), 10) < 4
+					// Un 40 % de los zombis (fijo por zombi) sabe escalar; con los zombis élite, todos.
+					if ((elite || Math.floorMod(zombie.getUuid().hashCode(), 10) < 4)
 							&& zombie.horizontalCollision && zombie.getTarget() != null) {
 						Vec3d v = zombie.getVelocity();
 						zombie.setVelocity(v.x, 0.24, v.z);
