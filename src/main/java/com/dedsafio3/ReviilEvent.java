@@ -1,6 +1,7 @@
 package com.dedsafio3;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Block;
@@ -59,6 +60,10 @@ public final class ReviilEvent {
 	/** Bloques originales de donde se levantó el búnker, para devolverlos al desaparecer. */
 	private static final Map<BlockPos, BlockState> BACKUP = new HashMap<>();
 	private static ServerWorld backupWorld;
+	/** Bloques del búnker tal como deben estar (paredes y luces); se reparan si algo los rompe. */
+	private static final Map<BlockPos, BlockState> BUNKER = new HashMap<>();
+	/** Próximo meteorito dirigido a cada jugador (tick del servidor). */
+	private static final Map<UUID, Long> DIRECT_AT = new HashMap<>();
 	private static long removeAt = -1;
 
 	private ReviilEvent() {
@@ -81,6 +86,9 @@ public final class ReviilEvent {
 			if (type == Type.METEORS && left > 0) {
 				tickMeteors(server);
 			}
+			if (left % 5 == 0) {
+				repairBunker();
+			}
 			if (left <= 0) {
 				strike(server);
 				return;
@@ -92,10 +100,14 @@ public final class ReviilEvent {
 		});
 		ServerTickEvents.END_SERVER_TICK.register(ReviilEvent::tickMoon);
 		ServerTickEvents.END_SERVER_TICK.register(ReviilEvent::tickAfter);
+		// Nadie puede romper el búnker mientras dura el momento.
+		PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> !(running && BUNKER.containsKey(pos)));
 		ServerLifecycleEvents.SERVER_STOPPING.register(server -> restoreBunker());
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
 			running = false;
 			BOLTS.clear();
+			BUNKER.clear();
+			DIRECT_AT.clear();
 			BACKUP.clear();
 			removeAt = -1;
 			bar = null;
@@ -168,8 +180,12 @@ public final class ReviilEvent {
 				continue;
 			}
 			net.minecraft.util.math.random.Random random = bunkerWorld.getRandom();
-			// 4 de cada 10 meteoritos caen justo encima del jugador.
-			boolean direct = random.nextFloat() < 0.4f;
+			// A cada jugador le cae un meteorito encima solo cada 5-10 s, para poder moverse.
+			long now = server.getTicks();
+			boolean direct = now >= DIRECT_AT.getOrDefault(player.getUuid(), 0L);
+			if (direct) {
+				DIRECT_AT.put(player.getUuid(), now + 100 + random.nextInt(100));
+			}
 			double spread = direct ? 3.0 : 36.0;
 			double x = player.getX() + (random.nextDouble() - 0.5) * spread;
 			double z = player.getZ() + (random.nextDouble() - 0.5) * spread;
@@ -208,6 +224,8 @@ public final class ReviilEvent {
 					bolt.refreshPositionAfterTeleport(player.getX(), player.getY(), player.getZ());
 					world.spawnEntity(bolt);
 				}
+				// Daño enorme en cada rayo: hace saltar el tótem de inmediato (uno por rayo).
+				player.damage(world.getDamageSources().lightningBolt(), 1000.0f);
 				if (entry.getValue() <= 1) {
 					it.remove();
 				} else {
@@ -227,9 +245,23 @@ public final class ReviilEvent {
 				backupWorld.setBlockState(entry.getKey(), entry.getValue(), Block.NOTIFY_ALL);
 			}
 		}
+		BUNKER.clear();
+		DIRECT_AT.clear();
 		BACKUP.clear();
 		backupWorld = null;
 		removeAt = -1;
+	}
+
+	/** Devuelve a su sitio cualquier bloque del búnker que una explosión haya roto. */
+	private static void repairBunker() {
+		if (backupWorld == null) {
+			return;
+		}
+		for (Map.Entry<BlockPos, BlockState> entry : BUNKER.entrySet()) {
+			if (!backupWorld.getBlockState(entry.getKey()).equals(entry.getValue())) {
+				backupWorld.setBlockState(entry.getKey(), entry.getValue(), Block.NOTIFY_ALL);
+			}
+		}
 	}
 
 	/** Maldición lunar: el primero que mire a la Luna muere y el cambio se desactiva. */
@@ -249,6 +281,15 @@ public final class ReviilEvent {
 			}
 			if (player.getRotationVec(1.0f).dotProduct(moon) > 0.96 && world.isSkyVisible(player.getBlockPos().up())) {
 				player.damage(world.getDamageSources().magic(), 1000.0f);
+				if (player.isAlive()) {
+					// Sobrevivió gracias a un tótem: se le devuelve la vida completa y se asegura que se vean los corazones.
+					player.setHealth(player.getMaxHealth());
+					if (!running) {
+						for (ServerPlayerEntity other : server.getPlayerManager().getPlayerList()) {
+							ServerPlayNetworking.send(other, new ReviilPayload(0));
+						}
+					}
+				}
 				server.getPlayerManager().broadcast(Text.translatable("message.dedsafio3.reviil_moon_death", player.getDisplayName()), false);
 				DifficultyChange.REVIIL_LUNA.setActive(server, false, null);
 				MenuService.refreshAll(server);
@@ -339,6 +380,9 @@ public final class ReviilEvent {
 					BlockPos at = origin.add(x, y, z);
 					BACKUP.put(at, world.getBlockState(at));
 					world.setBlockState(at, state, Block.NOTIFY_LISTENERS);
+					if (!state.isAir()) {
+						BUNKER.put(at.toImmutable(), state);
+					}
 				}
 			}
 		}
