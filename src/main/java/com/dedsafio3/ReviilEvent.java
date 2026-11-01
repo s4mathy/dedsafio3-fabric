@@ -10,6 +10,7 @@ import net.minecraft.entity.LightningEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.ServerBossBar;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -24,6 +25,10 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,6 +52,14 @@ public final class ReviilEvent {
 	private static ServerBossBar bar;
 	private static ServerWorld bunkerWorld;
 	private static Box bunkerBox;
+	/** Rayos que le faltan por caer a cada jugador que no llegó al búnker. */
+	private static final Map<UUID, Integer> BOLTS = new HashMap<>();
+	private static final int BOLT_COUNT = 38;
+	private static final int BOLT_INTERVAL_TICKS = 10; // 0,5 s
+	/** Bloques originales de donde se levantó el búnker, para devolverlos al desaparecer. */
+	private static final Map<BlockPos, BlockState> BACKUP = new HashMap<>();
+	private static ServerWorld backupWorld;
+	private static long removeAt = -1;
 
 	private ReviilEvent() {
 	}
@@ -78,8 +91,13 @@ public final class ReviilEvent {
 			}
 		});
 		ServerTickEvents.END_SERVER_TICK.register(ReviilEvent::tickMoon);
+		ServerTickEvents.END_SERVER_TICK.register(ReviilEvent::tickAfter);
+		ServerLifecycleEvents.SERVER_STOPPING.register(server -> restoreBunker());
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
 			running = false;
+			BOLTS.clear();
+			BACKUP.clear();
+			removeAt = -1;
 			bar = null;
 			bunkerWorld = null;
 			bunkerBox = null;
@@ -92,6 +110,7 @@ public final class ReviilEvent {
 			return;
 		}
 		type = which;
+		restoreBunker(); // si el búnker anterior seguía en pie, se quita antes de construir otro
 		if (source == null || source.isRemoved()) {
 			List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
 			if (players.isEmpty()) {
@@ -149,19 +168,68 @@ public final class ReviilEvent {
 				continue;
 			}
 			net.minecraft.util.math.random.Random random = bunkerWorld.getRandom();
-			double x = player.getX() + (random.nextDouble() - 0.5) * 36.0;
-			double z = player.getZ() + (random.nextDouble() - 0.5) * 36.0;
+			// 4 de cada 10 meteoritos caen justo encima del jugador.
+			boolean direct = random.nextFloat() < 0.4f;
+			double spread = direct ? 3.0 : 36.0;
+			double x = player.getX() + (random.nextDouble() - 0.5) * spread;
+			double z = player.getZ() + (random.nextDouble() - 0.5) * spread;
 			double y = Math.min(player.getY() + 50.0, bunkerWorld.getTopY() - 2);
-			if (bunkerBox.contains(x, bunkerBox.minY + 1, z)) {
+			if (bunkerBox.expand(1.5, 0, 1.5).contains(x, bunkerBox.minY + 1, z)) {
 				continue; // el búnker no recibe impactos directos
 			}
 			net.minecraft.entity.projectile.AbstractFireballEntity ball = EntityType.FIREBALL.create(bunkerWorld);
 			if (ball != null) {
 				ball.refreshPositionAndAngles(x, y, z, 0f, 0f);
 				ball.setVelocity(random.nextDouble() * 0.2 - 0.1, -1.1, random.nextDouble() * 0.2 - 0.1);
+				// Explosión más fuerte que la de un fireball normal (potencia 3) para que haga daño de verdad.
+				NbtCompound nbt = new NbtCompound();
+				ball.writeNbt(nbt);
+				nbt.putByte("ExplosionPower", (byte) 3);
+				ball.readNbt(nbt);
 				bunkerWorld.spawnEntity(ball);
 			}
 		}
+	}
+
+	/** Rayos con cooldown (38 por jugador, uno cada 0,5 s) y retirada del búnker. */
+	private static void tickAfter(MinecraftServer server) {
+		if (!BOLTS.isEmpty() && server.getTicks() % BOLT_INTERVAL_TICKS == 0) {
+			Iterator<Map.Entry<UUID, Integer>> it = BOLTS.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<UUID, Integer> entry = it.next();
+				ServerPlayerEntity player = server.getPlayerManager().getPlayer(entry.getKey());
+				if (player == null || !player.isAlive()) {
+					it.remove();
+					continue;
+				}
+				ServerWorld world = player.getServerWorld();
+				LightningEntity bolt = EntityType.LIGHTNING_BOLT.create(world);
+				if (bolt != null) {
+					bolt.refreshPositionAfterTeleport(player.getX(), player.getY(), player.getZ());
+					world.spawnEntity(bolt);
+				}
+				if (entry.getValue() <= 1) {
+					it.remove();
+				} else {
+					entry.setValue(entry.getValue() - 1);
+				}
+			}
+		}
+		if (removeAt >= 0 && server.getTicks() >= removeAt) {
+			restoreBunker();
+		}
+	}
+
+	/** Quita el búnker devolviendo los bloques que había antes. */
+	private static void restoreBunker() {
+		if (backupWorld != null) {
+			for (Map.Entry<BlockPos, BlockState> entry : BACKUP.entrySet()) {
+				backupWorld.setBlockState(entry.getKey(), entry.getValue(), Block.NOTIFY_ALL);
+			}
+		}
+		BACKUP.clear();
+		backupWorld = null;
+		removeAt = -1;
 	}
 
 	/** Maldición lunar: el primero que mire a la Luna muere y el cambio se desactiva. */
@@ -200,6 +268,10 @@ public final class ReviilEvent {
 
 	private static void finish(MinecraftServer server) {
 		running = false;
+		if (!BACKUP.isEmpty()) {
+			// El búnker desaparece entre 10 y 15 segundos después de terminar el momento.
+			removeAt = server.getTicks() + 200 + server.getOverworld().getRandom().nextInt(101);
+		}
 		if (bar != null) {
 			bar.clearPlayers();
 			bar = null;
@@ -247,17 +319,13 @@ public final class ReviilEvent {
 			if (!player.isAlive() || player.isCreative() || player.isSpectator() || box.contains(player.getPos())) {
 				continue;
 			}
-			LightningEntity bolt = EntityType.LIGHTNING_BOLT.create(world);
-			if (bolt != null) {
-				bolt.refreshPositionAfterTeleport(player.getX(), player.getY(), player.getZ());
-				world.spawnEntity(bolt);
-			}
-			player.damage(world.getDamageSources().lightningBolt(), 1000.0f);
+			BOLTS.put(player.getUuid(), BOLT_COUNT);
 		}
 	}
 
 	/** Búnker de 9x5x9 con puertas en los cuatro lados y sea lanterns en las esquinas. */
 	private static void buildBunker(ServerWorld world, BlockPos origin) {
+		backupWorld = world;
 		BlockState wall = Blocks.DEEPSLATE_BRICKS.getDefaultState();
 		BlockState lamp = Blocks.SEA_LANTERN.getDefaultState();
 		BlockState air = Blocks.AIR.getDefaultState();
@@ -268,7 +336,9 @@ public final class ReviilEvent {
 					boolean door = y >= 1 && y <= 2 && ((x == 4 && (z == 0 || z == 8)) || (z == 4 && (x == 0 || x == 8)));
 					boolean light = y == 3 && (x == 1 || x == 7) && (z == 1 || z == 7);
 					BlockState state = light ? lamp : (shell && !door ? wall : air);
-					world.setBlockState(origin.add(x, y, z), state, Block.NOTIFY_LISTENERS);
+					BlockPos at = origin.add(x, y, z);
+					BACKUP.put(at, world.getBlockState(at));
+					world.setBlockState(at, state, Block.NOTIFY_LISTENERS);
 				}
 			}
 		}
