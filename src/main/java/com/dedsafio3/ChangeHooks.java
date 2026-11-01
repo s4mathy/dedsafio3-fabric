@@ -70,7 +70,7 @@ public final class ChangeHooks {
 					&& item.getOwner() == null && item.getStack().isIn(ItemTags.SAPLINGS)) {
 				item.discard();
 			} else if (entity instanceof CreeperEntity creeper && DifficultyChange.CREEPER_ELECTRIC.isActive()
-					&& creeper.age == 0 && !creeper.isCharged()) {
+					&& creeper.age == 0) {
 				NbtCompound nbt = new NbtCompound();
 				creeper.writeNbt(nbt);
 				nbt.putBoolean("powered", true);
