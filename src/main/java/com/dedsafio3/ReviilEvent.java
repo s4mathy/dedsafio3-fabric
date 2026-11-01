@@ -55,7 +55,7 @@ public final class ReviilEvent {
 	private static Box bunkerBox;
 	/** Rayos que le faltan por caer a cada jugador que no llegó al búnker. */
 	private static final Map<UUID, Integer> BOLTS = new HashMap<>();
-	private static final int BOLT_COUNT = 38;
+	private static final int BOLT_COUNT = 56;
 	private static final int BOLT_INTERVAL_TICKS = 10; // 0,5 s
 	/** Bloques originales de donde se levantó el búnker, para devolverlos al desaparecer. */
 	private static final Map<BlockPos, BlockState> BACKUP = new HashMap<>();
@@ -158,6 +158,7 @@ public final class ReviilEvent {
 		world.playSound(null, center, SoundEvents.ENTITY_WITHER_SPAWN, SoundCategory.HOSTILE, 4.0f, 0.7f);
 		server.getPlayerManager().broadcast(Text.translatable(which == Type.METEORS ? "message.dedsafio3.reviil_meteor_bunker" : "message.dedsafio3.reviil_bunker",
 				center.getX(), center.getY(), center.getZ()), false);
+		server.getPlayerManager().broadcast(Text.translatable("message.dedsafio3.reviil_hearts_hidden"), false);
 		if (which == Type.BEAM) {
 			swapPositions(world);
 		}
@@ -207,7 +208,7 @@ public final class ReviilEvent {
 		}
 	}
 
-	/** Rayos con cooldown (38 por jugador, uno cada 0,5 s) y retirada del búnker. */
+	/** Rayos con cooldown (56 por jugador, uno cada 0,5 s) y retirada del búnker. */
 	private static void tickAfter(MinecraftServer server) {
 		if (!BOLTS.isEmpty() && server.getTicks() % BOLT_INTERVAL_TICKS == 0) {
 			Iterator<Map.Entry<UUID, Integer>> it = BOLTS.entrySet().iterator();

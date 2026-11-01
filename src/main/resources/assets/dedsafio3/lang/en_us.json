@@ -86,6 +86,7 @@
   "message.dedsafio3.reviil_meteor_bar": "Meteor shower: reach the shelter in %s s!",
   "message.dedsafio3.reviil_meteor_bunker": "§cReviil Moment! Meteors are raining and the Nether is DISABLED. Eón built a shelter at %s, %s, %s. Get there before time runs out!",
   "message.dedsafio3.nether_disabled": "§cThe Nether is disabled.",
+  "message.dedsafio3.reviil_hearts_hidden": "§7While the Reviil Moment lasts you will not be able to see your hearts.",
   "message.dedsafio3.reviil_moon_death": "§5%s looked at the Moon and Reviil's curse was fulfilled. Moon curse deactivated.",
   "change.dedsafio3.title.difficulty": "Difficulty Change",
   "change.dedsafio3.title.mob": "New Mob",

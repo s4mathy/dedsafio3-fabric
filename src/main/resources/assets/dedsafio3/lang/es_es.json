@@ -86,6 +86,7 @@
   "message.dedsafio3.reviil_meteor_bar": "Lluvia de meteoritos: ¡llega al refugio en %s s!",
   "message.dedsafio3.reviil_meteor_bunker": "§c¡Momento Reviil! Llueven meteoritos y el Nether está DESACTIVADO. Eón construyó un refugio en %s, %s, %s. ¡Lleguen antes de que acabe el tiempo!",
   "message.dedsafio3.nether_disabled": "§cEl Nether está desactivado.",
+  "message.dedsafio3.reviil_hearts_hidden": "§7Mientras dure el Momento Reviil no podrás ver tus corazones.",
   "message.dedsafio3.reviil_moon_death": "§5%s miró a la Luna y la maldición de Reviil se cumplió. Maldición lunar desactivada.",
   "change.dedsafio3.title.difficulty": "Cambio de Dificultad",
   "change.dedsafio3.title.mob": "Nuevo Mob",

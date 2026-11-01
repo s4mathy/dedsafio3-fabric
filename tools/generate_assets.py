@@ -659,6 +659,7 @@ V111_GUI = {
         "message.dedsafio3.reviil_meteor_bar": "Lluvia de meteoritos: ¡llega al refugio en %s s!",
         "message.dedsafio3.reviil_meteor_bunker": "§c¡Momento Reviil! Llueven meteoritos y el Nether está DESACTIVADO. Eón construyó un refugio en %s, %s, %s. ¡Lleguen antes de que acabe el tiempo!",
         "message.dedsafio3.nether_disabled": "§cEl Nether está desactivado.",
+        "message.dedsafio3.reviil_hearts_hidden": "§7Mientras dure el Momento Reviil no podrás ver tus corazones.",
         "message.dedsafio3.reviil_moon_death": "§5%s miró a la Luna y la maldición de Reviil se cumplió. Maldición lunar desactivada.",
     },
     "en_us": {
@@ -678,6 +679,7 @@ V111_GUI = {
         "message.dedsafio3.reviil_meteor_bar": "Meteor shower: reach the shelter in %s s!",
         "message.dedsafio3.reviil_meteor_bunker": "§cReviil Moment! Meteors are raining and the Nether is DISABLED. Eón built a shelter at %s, %s, %s. Get there before time runs out!",
         "message.dedsafio3.nether_disabled": "§cThe Nether is disabled.",
+        "message.dedsafio3.reviil_hearts_hidden": "§7While the Reviil Moment lasts you will not be able to see your hearts.",
         "message.dedsafio3.reviil_moon_death": "§5%s looked at the Moon and Reviil's curse was fulfilled. Moon curse deactivated.",
     },
 }
