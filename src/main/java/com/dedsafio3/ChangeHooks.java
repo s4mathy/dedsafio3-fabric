@@ -56,6 +56,13 @@ public final class ChangeHooks {
 				serverWorld.createExplosion(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 2.5f,
 						World.ExplosionSourceType.TNT);
 			}
+			// Al romper hierbas puede salir un Creeper de Pasto.
+			if (DifficultyChange.CREEPER_PASTO.isActive() && world instanceof ServerWorld serverWorld
+					&& (state.isOf(Blocks.GRASS_BLOCK) || state.isOf(Blocks.SHORT_GRASS) || state.isOf(Blocks.TALL_GRASS)
+					|| state.isOf(Blocks.FERN) || state.isOf(Blocks.LARGE_FERN) || state.isOf(Blocks.DEAD_BUSH))
+					&& world.getRandom().nextFloat() < 0.12f) {
+				ModEntities.GRASS_CREEPER.spawn(serverWorld, pos, SpawnReason.TRIGGERED);
+			}
 			// Al romper una telaraña puede salir una Araña de Cueva.
 			if (DifficultyChange.COBWEB_SPIDER.isActive() && state.isOf(Blocks.COBWEB) && world instanceof ServerWorld serverWorld
 					&& world.getRandom().nextFloat() < 0.3f) {
@@ -103,14 +110,18 @@ public final class ChangeHooks {
 			}
 		});
 
-		// El daño de caída de la Ender Pearl (5) pasa a ser daño mágico, que ignora la armadura.
+		// Ender Pearl: con "perforantes" el daño (5) pasa a ser mágico, que ignora la armadura;
+		// con "10 de daño" la perla hace 10 (5 corazones).
 		ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
-			if (entity instanceof ServerPlayerEntity p && DifficultyChange.PEARL_PIERCE.isActive()
+			boolean pierce = DifficultyChange.PEARL_PIERCE.isActive();
+			boolean ten = DifficultyChange.PEARL_10.isActive();
+			if (entity instanceof ServerPlayerEntity p && (pierce || ten)
 					&& source.isOf(DamageTypes.FALL) && amount > 4.9f && amount < 5.1f) {
 				Long thrown = PEARLS.get(p.getUuid());
 				if (thrown != null && p.getServerWorld().getTime() - thrown < 400) {
 					PEARLS.remove(p.getUuid());
-					p.damage(p.getServerWorld().getDamageSources().magic(), 5.0f);
+					p.damage(pierce ? p.getServerWorld().getDamageSources().magic() : p.getServerWorld().getDamageSources().fall(),
+							ten ? 10.0f : 5.0f);
 					return false;
 				}
 			}

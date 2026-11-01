@@ -27,6 +27,8 @@ public class Dedsafio3Client implements ClientModInitializer {
 				(payload, context) -> DeathOverlay.start(payload));
 
 		ModRenderers.register();
+		ClientPlayNetworking.registerGlobalReceiver(com.dedsafio3.RitualPayload.ID,
+				(payload, context) -> context.client().setScreen(new RitualScreen(payload.souls())));
 		ClientPlayNetworking.registerGlobalReceiver(ReviilPayload.ID,
 				(payload, context) -> ReviilClientState.hideHealth = payload.seconds() > 0);
 		// Al salir del mundo se restablece, por si el servidor se cerró en pleno Momento Reviil.

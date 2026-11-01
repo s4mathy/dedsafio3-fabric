@@ -31,7 +31,7 @@ COLORS = {  # id -> (rgb, tinte vanilla de tinte para la receta)
 }
 
 ITEMS = ["dedita", "dedita_plata", "dedita_oro", "ficha_ruleta",
-         "totem_rojo", "totem_azul", "totem_dorado", "espada_caotica"]
+         "totem_rojo", "totem_azul", "totem_dorado", "espada_caotica", "cuchara_resurreccion"]
 
 # ----------------------------------------------------------------------------- idiomas
 # Fuente única de nombres. Las claves de premios deben coincidir con Roulette.java
@@ -654,6 +654,34 @@ CHANGES = {
                         "Reviil Moment: Gas (low)",
                         "Reviil has released an invisible toxic gas! Before the timer ends EVERYONE must DESCEND to a Negative Layer "
                         "(from -1 downward), or they will take damage until they die."),
+    # --- v1.4.0 (Dedsafio 4, miércoles 23.SEP.26)
+    "resurrection_spoon": ("difficulty", "Cuchara de la Resurrección",
+                           "Ahora las Cucharas de la Resurrección deben ser utilizadas en un Ritual el mismo día en el que son reclamadas. "
+                           "Quien muere se convierte en un alma; en una fogata encendida, la Cuchara gasta un alma para revivir a ese jugador.",
+                           "Resurrection Spoon",
+                           "Resurrection Spoons must now be used in a Ritual on the same day they are claimed. "
+                           "Whoever dies becomes a soul; at a lit campfire, the Spoon spends a soul to revive that player."),
+    "creeper_pasto": ("mob", "Creeper de Pasto",
+                      "Pequeña variante de los Creepers que explota rápidamente y es muy veloz. Tiene probabilidad de salir cuando se rompen "
+                      "Bloques de Pasto, Pasto Corto, Pasto Alto, Arbustos, entre otras hierbas.",
+                      "Grass Creeper",
+                      "A small Creeper variant that explodes quickly and is very fast. It has a chance to appear when Grass Blocks, "
+                      "Short Grass, Tall Grass, Bushes and other plants are broken."),
+    "narval_acuifero": ("mob", "Narval",
+                        "Habita los acuíferos del Centro de Quiu. Si detecta intrusos embestirá a gran velocidad, con la probabilidad de "
+                        "empujarte y jugar contigo.",
+                        "Narwhal",
+                        "Lives in the aquifers of the Quiu Center. If it detects intruders it will charge at great speed, with a chance "
+                        "to push you and play with you."),
+    "pearl_10": ("difficulty", "Perlas de 10 de daño", "Ahora las Ender Pearls hacen 10 de daño (5 corazones).",
+                 "10-damage pearls", "Ender Pearls now deal 10 damage (5 hearts)."),
+    "reviil_creepers": ("moment", "Momento Reviil: Creepers eléctricos",
+                        "¡Reviil lanzó una lluvia de Creepers Eléctricos! De manera aleatoria aparecerán Creepers Eléctricos con 1 de Vida en tu "
+                        "posición. Además, Reviil intercambió las posiciones de los humanos y lanzó un conjuro para que los humanos no puedan "
+                        "ver su vida.",
+                        "Reviil Moment: Electric Creepers",
+                        "Reviil launched a rain of Electric Creepers! Electric Creepers with 1 Health will randomly appear at your position. "
+                        "Reviil also swapped the humans' positions and cast a spell so humans cannot see their health."),
 }
 
 TITLES = {
@@ -677,6 +705,7 @@ ENTITY_NAMES = {  # id -> (es, en): coinciden con los ids de ModEntities / Repti
     "bomba_warden": ("Bomba Warden", "Warden Bomb"),
     "pod_phora": ("Pod Phora", "Phora Pod"),
     "skiff_phora": ("Skiff Phora", "Phora Skiff"),
+    "creeper_pasto": ("Creeper de Pasto", "Grass Creeper"),
 }
 
 V111_GUI = {
@@ -697,6 +726,18 @@ V111_GUI = {
         "message.dedsafio3.reviil_meteor_bar": "Lluvia de meteoritos: ¡llega al refugio en %s s!",
         "message.dedsafio3.reviil_meteor_bunker": "§c¡Momento Reviil! Llueven meteoritos y el Nether está DESACTIVADO. Eón construyó un refugio en %s, %s, %s. ¡Lleguen antes de que acabe el tiempo!",
         "message.dedsafio3.nether_disabled": "§cEl Nether está desactivado.",
+        "item.dedsafio3.cuchara_resurreccion": "Cuchara de la Resurrección",
+        "item.dedsafio3.cuchara_resurreccion.tooltip": "Clic derecho en una fogata encendida: abre el Ritual y gasta un alma para revivir a un jugador muerto. Debe usarse el mismo día en que fue reclamada.",
+        "gui.dedsafio3.ritual.title": "Ritual de Resurrección",
+        "gui.dedsafio3.ritual.hint": "Elige el alma que quieres devolver a la vida (la Cuchara se gasta)",
+        "message.dedsafio3.soul_taken": "§b%s se ha convertido en un alma. Necesita un Ritual con la Cuchara de la Resurrección.",
+        "message.dedsafio3.ritual_no_souls": "§7No hay almas que resucitar.",
+        "message.dedsafio3.ritual_far": "§cDebes estar cerca de la fogata del Ritual.",
+        "message.dedsafio3.ritual_expired": "§cLa Cuchara de la Resurrección se desvaneció: debía usarse el mismo día en que fue reclamada.",
+        "message.dedsafio3.ritual_done": "§b%s ha vuelto a la vida gracias al Ritual de %s.",
+        "message.dedsafio3.reviil_creepers": "§5¡Momento Reviil! Llueven Creepers Eléctricos con 1 de vida, las posiciones fueron intercambiadas y no puedes ver tu vida.",
+        "message.dedsafio3.reviil_creepers_bar": "Lluvia de Creepers Eléctricos: %s s",
+        "message.dedsafio3.reviil_creepers_end": "§7La lluvia de Creepers Eléctricos terminó.",
         "message.dedsafio3.reviil_gas_high": "§2¡Momento Reviil! Gas tóxico invisible en todas las dimensiones: ¡suban POR ENCIMA de la Capa 250 antes de que acabe el contador!",
         "message.dedsafio3.reviil_gas_low": "§2¡Momento Reviil! Gas tóxico invisible: ¡DESCIENDAN a una Capa Negativa (desde la -1 hacia abajo) antes de que acabe el contador!",
         "message.dedsafio3.reviil_gas_high_bar": "Gas tóxico en %s s: ¡sube por encima de la capa 250!",
@@ -723,6 +764,18 @@ V111_GUI = {
         "message.dedsafio3.reviil_meteor_bar": "Meteor shower: reach the shelter in %s s!",
         "message.dedsafio3.reviil_meteor_bunker": "§cReviil Moment! Meteors are raining and the Nether is DISABLED. Eón built a shelter at %s, %s, %s. Get there before time runs out!",
         "message.dedsafio3.nether_disabled": "§cThe Nether is disabled.",
+        "item.dedsafio3.cuchara_resurreccion": "Resurrection Spoon",
+        "item.dedsafio3.cuchara_resurreccion.tooltip": "Right click on a lit campfire: opens the Ritual and spends a soul to revive a dead player. Must be used the same day it was claimed.",
+        "gui.dedsafio3.ritual.title": "Resurrection Ritual",
+        "gui.dedsafio3.ritual.hint": "Choose the soul you want to bring back (the Spoon is spent)",
+        "message.dedsafio3.soul_taken": "§b%s has become a soul. They need a Ritual with the Resurrection Spoon.",
+        "message.dedsafio3.ritual_no_souls": "§7There are no souls to revive.",
+        "message.dedsafio3.ritual_far": "§cYou must be near the Ritual campfire.",
+        "message.dedsafio3.ritual_expired": "§cThe Resurrection Spoon faded away: it had to be used the same day it was claimed.",
+        "message.dedsafio3.ritual_done": "§b%s came back to life thanks to %s's Ritual.",
+        "message.dedsafio3.reviil_creepers": "§5Reviil Moment! Electric Creepers with 1 health are raining, positions were swapped and you cannot see your health.",
+        "message.dedsafio3.reviil_creepers_bar": "Electric Creeper rain: %s s",
+        "message.dedsafio3.reviil_creepers_end": "§7The Electric Creeper rain is over.",
         "message.dedsafio3.reviil_gas_high": "§2Reviil Moment! Invisible toxic gas in all dimensions: get ABOVE Layer 250 before the counter ends!",
         "message.dedsafio3.reviil_gas_low": "§2Reviil Moment! Invisible toxic gas: DESCEND to a Negative Layer (from -1 downward) before the counter ends!",
         "message.dedsafio3.reviil_gas_high_bar": "Toxic gas in %s s: get above layer 250!",
@@ -819,6 +872,48 @@ def make_magma_creeper():
     fill(img, 11, 12, 13, 15, (255, 140, 30))
     fill(img, 10, 14, 11, 16, (255, 140, 30))
     fill(img, 13, 14, 14, 16, (255, 140, 30))
+    return img
+
+
+def make_spoon():
+    """Cuchara de la Resurrección 16x16: mango de madera en diagonal y cuenco con brillo verde."""
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    wood, dark = (150, 100, 55), (95, 60, 30)
+    for i in range(0, 10):
+        x, y = 2 + i, 13 - i
+        px(img, x, y, wood)
+        px(img, x + 1, y, dark)
+    # cuenco (círculo arriba a la derecha)
+    cx, cy = 11.5, 4.5
+    for y in range(16):
+        for x in range(16):
+            r = math.hypot(x - cx, y - cy)
+            if r < 3.6:
+                px(img, x, y, (120, 230, 140) if r < 2.2 else (60, 150, 80))
+            elif r < 4.4:
+                px(img, x, y, dark)
+    for (x, y) in ((11, 3), (12, 4)):
+        px(img, x, y, (230, 255, 235))
+    px(img, 1, 14, (60, 140, 60))   # hojita verde en el mango
+    px(img, 2, 14, (90, 190, 90))
+    return img
+
+
+def make_soul_icon():
+    """Icono de alma 16x16: llama fantasmal celeste con ojos."""
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    for y in range(1, 15):
+        w = 5 if y > 5 else max(1, y - 1)
+        if y > 11:
+            w = 5 - (y - 11)
+        for x in range(8 - w, 8 + w):
+            edge = x == 8 - w or x == 8 + w - 1 or y == 14
+            px(img, x, y, (90, 190, 235) if edge else (170, 235, 255))
+    for (x, y) in ((6, 7), (9, 7)):
+        px(img, x, y, (20, 40, 80))
+        px(img, x, y + 1, (20, 40, 80))
+    px(img, 7, 10, (20, 40, 80))
+    px(img, 8, 10, (20, 40, 80))
     return img
 
 
@@ -973,7 +1068,7 @@ def main():
 
     # --- modelos de ítems
     for name in ITEMS:
-        parent = "minecraft:item/handheld" if name == "espada_caotica" else "minecraft:item/generated"
+        parent = "minecraft:item/handheld" if name in ("espada_caotica", "cuchara_resurreccion") else "minecraft:item/generated"
         write_json(os.path.join(ASSETS, "models", "item", f"{name}.json"), item_model(name, parent))
 
     # --- animación de muerte (12 fotogramas) e icono
@@ -1032,6 +1127,9 @@ def main():
     save_png(make_flyer((12, 46, 54), (42, 212, 196), 111, (200, 255, 250)), "textures", "entity", "bomba_warden.png")
     save_png(make_flyer((58, 63, 74), (224, 64, 64), 121, (255, 120, 120)), "textures", "entity", "pod_phora.png")
     save_png(make_flyer((74, 58, 42), (255, 144, 32), 131, (255, 220, 120)), "textures", "entity", "skiff_phora.png")
+    save_png(make_flyer((52, 150, 44), (24, 90, 24), 141, (15, 30, 10)), "textures", "entity", "creeper_pasto.png")
+    save_png(make_spoon(), "textures", "item", "cuchara_resurreccion.png")
+    save_png(make_soul_icon(), "textures", "gui", "soul.png")
     save_png(make_poison_icon(), "textures", "mob_effect", "veneno_primitivo.png")
     for eid in ENTITY_NAMES:
         write_json(os.path.join(ASSETS, "models", "item", f"spawn_{eid}.json"), {"parent": "minecraft:item/template_spawn_egg"})

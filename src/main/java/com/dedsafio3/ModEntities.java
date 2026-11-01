@@ -24,6 +24,7 @@ public final class ModEntities {
 	public static EntityType<NarvalEntity> NARVAL;
 	public static EntityType<HerobrineEntity> HEROBRINE;
 	public static EntityType<WardenBombEntity> WARDEN_BOMB;
+	public static EntityType<GrassCreeperEntity> GRASS_CREEPER;
 	public static EntityType<PhoraEntity> POD_PHORA;
 	public static EntityType<PhoraEntity> SKIFF_PHORA;
 	public static final Map<ReptilianEntity.Kind, EntityType<ReptilianEntity>> REPTILIANS = new EnumMap<>(ReptilianEntity.Kind.class);
@@ -90,6 +91,11 @@ public final class ModEntities {
 				.dimensions(0.7f, 0.7f).maxTrackingRange(10));
 		FabricDefaultAttributeRegistry.register(WARDEN_BOMB, WardenBombEntity.attributes());
 		egg("bomba_warden", WARDEN_BOMB, 0x0C2E36, 0x2AD4C4);
+
+		GRASS_CREEPER = register("creeper_pasto", EntityType.Builder.create(GrassCreeperEntity::new, SpawnGroup.MONSTER)
+				.dimensions(0.4f, 1.0f).maxTrackingRange(8));
+		FabricDefaultAttributeRegistry.register(GRASS_CREEPER, GrassCreeperEntity.attributes());
+		egg("creeper_pasto", GRASS_CREEPER, 0x3E9B2E, 0x1B4A14);
 
 		POD_PHORA = register("pod_phora", EntityType.Builder.<PhoraEntity>create((t, w) -> new PhoraEntity(t, w, true), SpawnGroup.MONSTER)
 				.dimensions(0.9f, 0.7f).maxTrackingRange(10));

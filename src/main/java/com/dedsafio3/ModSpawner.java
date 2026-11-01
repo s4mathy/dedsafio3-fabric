@@ -38,7 +38,9 @@ public final class ModSpawner {
 		/** Agua del océano, a media profundidad. */
 		WATER,
 		/** En el aire, bastante por encima del terreno (naves voladoras). */
-		AIR
+		AIR,
+		/** Agua bajo tierra, sin cielo encima (acuíferos). */
+		AQUIFER
 	}
 
 	private record Rule(DifficultyChange change, RegistryKey<World> dimension, Mode mode, int cap, int min, int max,
@@ -122,6 +124,8 @@ public final class ModSpawner {
 				(w, p) -> w.getBiome(p).matchesKey(BiomeKeys.DEEP_DARK), List.of(EntityType.WARDEN));
 		rule(DifficultyChange.BOMBA_WARDEN, World.OVERWORLD, Mode.CAVE, 4, 1, 2, 0.4, true,
 				(w, p) -> w.getBiome(p).matchesKey(BiomeKeys.DEEP_DARK), List.of(ModEntities.WARDEN_BOMB));
+		rule(DifficultyChange.NARVAL_ACUIFERO, World.OVERWORLD, Mode.AQUIFER, 3, 1, 2, 0.3, true,
+				(w, p) -> p.getY() < 50, List.of(ModEntities.NARVAL));
 		rule(DifficultyChange.POD_PHORA, World.OVERWORLD, Mode.AIR, 3, 1, 2, 0.25, true, (w, p) -> true,
 				List.of(ModEntities.POD_PHORA));
 		rule(DifficultyChange.SKIFF_PHORA, World.OVERWORLD, Mode.AIR, 3, 1, 2, 0.25, true, (w, p) -> true,
@@ -185,6 +189,19 @@ public final class ModSpawner {
 			return null;
 		}
 
+		if (rule.mode() == Mode.AQUIFER) {
+			int low = Math.max(w.getBottomY() + 2, player.getBlockY() - 30);
+			for (int y = player.getBlockY() + 10; y >= low; y--) {
+				BlockPos c = new BlockPos(x, y, z);
+				if (w.getFluidState(c).isIn(net.minecraft.registry.tag.FluidTags.WATER)
+						&& w.getFluidState(c.up()).isIn(net.minecraft.registry.tag.FluidTags.WATER)
+						&& !w.isSkyVisible(c)
+						&& w.getClosestPlayer(c.getX() + 0.5, c.getY(), c.getZ() + 0.5, 12.0, false) == null) {
+					return rule.spot().test(w, c) ? c : null;
+				}
+			}
+			return null;
+		}
 		if (rule.mode() == Mode.AIR) {
 			int top = w.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z);
 			BlockPos ap = new BlockPos(x, Math.min(top + 14 + random.nextInt(8), w.getTopY() - 4), z);

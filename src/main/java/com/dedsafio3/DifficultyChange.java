@@ -47,7 +47,13 @@ public enum DifficultyChange {
 	PEARL_PIERCE("pearl_pierce", Kind.DIFFICULTY),
 	CREEPER_ELECTRIC("creeper_electric", Kind.DIFFICULTY),
 	REVIIL_GAS_ALTO("reviil_gas_alto", Kind.MOMENT),
-	REVIIL_GAS_BAJO("reviil_gas_bajo", Kind.MOMENT);
+	REVIIL_GAS_BAJO("reviil_gas_bajo", Kind.MOMENT),
+	// --- v1.4.0
+	RESURRECTION_SPOON("resurrection_spoon", Kind.DIFFICULTY),
+	CREEPER_PASTO("creeper_pasto", Kind.MOB),
+	NARVAL_ACUIFERO("narval_acuifero", Kind.MOB),
+	PEARL_10("pearl_10", Kind.DIFFICULTY),
+	REVIIL_CREEPERS("reviil_creepers", Kind.MOMENT);
 
 	public enum Kind {
 		DIFFICULTY, MOB, MOMENT
@@ -105,6 +111,7 @@ public enum DifficultyChange {
 			case REVIIL_METEOROS -> ReviilEvent.Type.METEORS;
 			case REVIIL_GAS_ALTO -> ReviilEvent.Type.GAS_HIGH;
 			case REVIIL_GAS_BAJO -> ReviilEvent.Type.GAS_LOW;
+			case REVIIL_CREEPERS -> ReviilEvent.Type.CREEPERS;
 			default -> null;
 		};
 	}

@@ -47,7 +47,9 @@ public final class ReviilEvent {
 		/** Gas tóxico invisible: hay que estar por encima de la capa 250. */
 		GAS_HIGH,
 		/** Gas tóxico invisible: hay que descender a una capa negativa (Y < 0). */
-		GAS_LOW
+		GAS_LOW,
+		/** Lluvia de Creepers Eléctricos con 1 de vida, posiciones intercambiadas y corazones ocultos. */
+		CREEPERS
 	}
 
 	private static boolean isGas(Type t) {
@@ -68,6 +70,7 @@ public final class ReviilEvent {
 			case METEORS -> "message.dedsafio3.reviil_meteor_bar";
 			case GAS_HIGH -> "message.dedsafio3.reviil_gas_high_bar";
 			case GAS_LOW -> "message.dedsafio3.reviil_gas_low_bar";
+			case CREEPERS -> "message.dedsafio3.reviil_creepers_bar";
 			default -> "message.dedsafio3.reviil_bar";
 		};
 	}
@@ -114,12 +117,18 @@ public final class ReviilEvent {
 			if (type == Type.METEORS && left > 0) {
 				tickMeteors(server);
 			}
+			if (type == Type.CREEPERS && left > 0) {
+				tickCreepers(server);
+			}
 			if (left % 5 == 0) {
 				repairBunker();
 			}
 			if (left <= 0) {
 				if (isGas(type)) {
 					startGas(server);
+				} else if (type == Type.CREEPERS) {
+					finish(server);
+					server.getPlayerManager().broadcast(Text.translatable("message.dedsafio3.reviil_creepers_end"), false);
 				} else {
 					strike(server);
 				}
@@ -157,18 +166,37 @@ public final class ReviilEvent {
 		}
 		type = which;
 		restoreBunker(); // si el búnker anterior seguía en pie, se quita antes de construir otro
-		if (isGas(which)) {
-			// Gas tóxico: sin búnker ni rayos; solo temporizador y, al acabar, daño a quien no esté en la capa segura.
+		if (isGas(which) || which == Type.CREEPERS) {
+			// Sin búnker ni rayos. Gas: daño al acabar a quien no esté en la capa segura. Creepers: lluvia de creepers mientras dura.
 			int gasSeconds = DedsafioConfig.get().reviilSeconds;
 			totalTicks = gasSeconds * 20;
 			endTick = server.getTicks() + totalTicks;
 			running = true;
-			bar = new ServerBossBar(Text.translatable(barKey(which), gasSeconds), BossBar.Color.GREEN, BossBar.Style.PROGRESS);
+			bar = new ServerBossBar(Text.translatable(barKey(which), gasSeconds),
+					which == Type.CREEPERS ? BossBar.Color.PURPLE : BossBar.Color.GREEN, BossBar.Style.PROGRESS);
 			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
 				bar.addPlayer(player);
+				if (which == Type.CREEPERS) {
+					ServerPlayNetworking.send(player, new ReviilPayload(gasSeconds));
+				}
 			}
-			server.getPlayerManager().broadcast(Text.translatable(which == Type.GAS_HIGH
-					? "message.dedsafio3.reviil_gas_high" : "message.dedsafio3.reviil_gas_low"), false);
+			String startKey = switch (which) {
+				case GAS_HIGH -> "message.dedsafio3.reviil_gas_high";
+				case GAS_LOW -> "message.dedsafio3.reviil_gas_low";
+				default -> "message.dedsafio3.reviil_creepers";
+			};
+			server.getPlayerManager().broadcast(Text.translatable(startKey), false);
+			if (which == Type.CREEPERS) {
+				server.getPlayerManager().broadcast(Text.translatable("message.dedsafio3.reviil_hearts_hidden"), false);
+				ServerPlayerEntity swapSource = source;
+				if (swapSource == null || swapSource.isRemoved()) {
+					List<ServerPlayerEntity> all = server.getPlayerManager().getPlayerList();
+					swapSource = all.isEmpty() ? null : all.get(0);
+				}
+				if (swapSource != null) {
+					swapPositions(swapSource.getServerWorld());
+				}
+			}
 			return;
 		}
 		if (source == null || source.isRemoved()) {
@@ -209,6 +237,29 @@ public final class ReviilEvent {
 		server.getPlayerManager().broadcast(Text.translatable("message.dedsafio3.reviil_hearts_hidden"), false);
 		if (which == Type.BEAM) {
 			swapPositions(world);
+		}
+	}
+
+	/** Cada 2 s, a cada jugador le aparece (50 %) un Creeper Eléctrico con 1 de vida en su posición. */
+	private static void tickCreepers(MinecraftServer server) {
+		if (server.getTicks() % 40 != 0) {
+			return;
+		}
+		for (ServerPlayerEntity player : new ArrayList<>(server.getPlayerManager().getPlayerList())) {
+			ServerWorld world = player.getServerWorld();
+			if (!player.isAlive() || player.isSpectator() || world.getRandom().nextFloat() >= 0.5f) {
+				continue;
+			}
+			net.minecraft.entity.mob.CreeperEntity creeper = EntityType.CREEPER.create(world);
+			if (creeper != null) {
+				creeper.refreshPositionAndAngles(player.getX(), player.getY(), player.getZ(), player.getYaw(), 0f);
+				NbtCompound nbt = new NbtCompound();
+				creeper.writeNbt(nbt);
+				nbt.putBoolean("powered", true);
+				creeper.readNbt(nbt);
+				creeper.setHealth(1.0f);
+				world.spawnEntity(creeper);
+			}
 		}
 	}
 

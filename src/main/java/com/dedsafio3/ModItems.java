@@ -47,6 +47,10 @@ public final class ModItems {
 
 	public static final List<Item> TOTEMS = List.of(TOTEM_ROJO, TOTEM_AZUL, TOTEM_DORADO);
 
+	// --- Cuchara de la Resurrección: se usa en una fogata para devolver a la vida a un jugador muerto ---
+	public static final Item CUCHARA_RESURRECCION = register("cuchara_resurreccion",
+			new TooltipItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC)));
+
 	// --- Arma ---
 	public static final Item ESPADA_CAOTICA = register("espada_caotica", new ChaosSwordItem(
 			ToolMaterials.NETHERITE,
@@ -77,6 +81,7 @@ public final class ModItems {
 					for (Item totem : TOTEMS) {
 						entries.add(totem);
 					}
+					entries.add(CUCHARA_RESURRECCION);
 					entries.add(ESPADA_CAOTICA);
 					for (Item egg : ModEntities.EGGS) {
 						entries.add(egg);

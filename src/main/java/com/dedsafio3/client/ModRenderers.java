@@ -1,6 +1,7 @@
 package com.dedsafio3.client;
 
 import com.dedsafio3.DactiloEntity;
+import com.dedsafio3.GrassCreeperEntity;
 import com.dedsafio3.Dedsafio3;
 import com.dedsafio3.HerobrineEntity;
 import com.dedsafio3.MagmaCreeperEntity;
@@ -44,6 +45,7 @@ public final class ModRenderers {
 		EntityRendererRegistry.register(ModEntities.DACTILO, DactiloRenderer::new);
 		EntityRendererRegistry.register(ModEntities.NARVAL, NarvalRenderer::new);
 		EntityRendererRegistry.register(ModEntities.HEROBRINE, HerobrineRenderer::new);
+		EntityRendererRegistry.register(ModEntities.GRASS_CREEPER, ctx -> new FlyerRenderer<GrassCreeperEntity>(ctx, "creeper_pasto", 0.6f, 0.6f, 0.6f));
 		EntityRendererRegistry.register(ModEntities.WARDEN_BOMB,
 				ctx -> new FlyerRenderer<WardenBombEntity>(ctx, "bomba_warden", 0.8f, 0.8f, 0.8f));
 		EntityRendererRegistry.register(ModEntities.POD_PHORA,

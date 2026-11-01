@@ -32,6 +32,7 @@ public class Dedsafio3 implements ModInitializer {
 		ChangeHooks.register();
 		ModSpawner.register();
 		ReviilEvent.register();
+		Resurrection.register();
 		MenuService.register();
 		ModCommands.register();
 		LOGGER.info("Dedsafio 3 (fan mod) cargado.");

@@ -11,7 +11,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /** Ajustes del mod, guardados en config/dedsafio3.json y editables desde el menú (tecla K). */
 public final class DedsafioConfig {
@@ -28,6 +30,10 @@ public final class DedsafioConfig {
 	public transient List<String> modifiers = new ArrayList<>();
 	/** Cambios de dificultad activos (ids de {@link DifficultyChange}; el Momento Reviil no se guarda). */
 	public transient List<String> changes = new ArrayList<>();
+	/** Almas de los jugadores muertos (uuid -> nombre), por mundo. */
+	public transient Map<String, String> souls = new LinkedHashMap<>();
+	/** Resurrecciones a aplicar cuando el jugador aparezca (uuid -> "dimensión;x;y;z"), por mundo. */
+	public transient Map<String, String> pendingRevive = new LinkedHashMap<>();
 	/** Segundos que dura el contador del Momento Reviil. */
 	public int reviilSeconds = 60;
 
@@ -40,6 +46,8 @@ public final class DedsafioConfig {
 	private static final class WorldData {
 		List<String> changes = new ArrayList<>();
 		List<String> modifiers = new ArrayList<>();
+		Map<String, String> souls = new LinkedHashMap<>();
+		Map<String, String> pendingRevive = new LinkedHashMap<>();
 	}
 
 	/** Carga los cambios y modificaciones de ESTE mundo; otros mundos no los comparten. */
@@ -47,6 +55,8 @@ public final class DedsafioConfig {
 		worldFile = server.getSavePath(WorldSavePath.ROOT).resolve("dedsafio3_world.json");
 		instance.changes = new ArrayList<>();
 		instance.modifiers = new ArrayList<>();
+		instance.souls = new LinkedHashMap<>();
+		instance.pendingRevive = new LinkedHashMap<>();
 		try {
 			if (Files.exists(worldFile)) {
 				WorldData data = GSON.fromJson(Files.readString(worldFile, StandardCharsets.UTF_8), WorldData.class);
@@ -56,6 +66,12 @@ public final class DedsafioConfig {
 					}
 					if (data.modifiers != null) {
 						instance.modifiers = data.modifiers;
+					}
+					if (data.souls != null) {
+						instance.souls = data.souls;
+					}
+					if (data.pendingRevive != null) {
+						instance.pendingRevive = data.pendingRevive;
 					}
 				}
 			}
@@ -71,6 +87,8 @@ public final class DedsafioConfig {
 		worldFile = null;
 		instance.changes = new ArrayList<>();
 		instance.modifiers = new ArrayList<>();
+		instance.souls = new LinkedHashMap<>();
+		instance.pendingRevive = new LinkedHashMap<>();
 	}
 
 	public static DedsafioConfig get() {
@@ -112,6 +130,8 @@ public final class DedsafioConfig {
 				WorldData data = new WorldData();
 				data.changes = new ArrayList<>(instance.changes);
 				data.modifiers = new ArrayList<>(instance.modifiers);
+				data.souls = new LinkedHashMap<>(instance.souls);
+				data.pendingRevive = new LinkedHashMap<>(instance.pendingRevive);
 				Files.writeString(worldFile, GSON.toJson(data), StandardCharsets.UTF_8);
 			} catch (IOException e) {
 				Dedsafio3.LOGGER.error("No se pudieron guardar los datos del mundo", e);
