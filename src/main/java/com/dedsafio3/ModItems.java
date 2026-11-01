@@ -82,6 +82,7 @@ public final class ModItems {
 						entries.add(totem);
 					}
 					entries.add(CUCHARA_RESURRECCION);
+					entries.add(ModBlocks.RITUAL_CAMPFIRE);
 					entries.add(ESPADA_CAOTICA);
 					for (Item egg : ModEntities.EGGS) {
 						entries.add(egg);

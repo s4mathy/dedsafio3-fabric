@@ -657,10 +657,10 @@ CHANGES = {
     # --- v1.4.0 (Dedsafio 4, miércoles 23.SEP.26)
     "resurrection_spoon": ("difficulty", "Cuchara de la Resurrección",
                            "Ahora las Cucharas de la Resurrección deben ser utilizadas en un Ritual el mismo día en el que son reclamadas. "
-                           "Quien muere se convierte en un alma; en una fogata encendida, la Cuchara gasta un alma para revivir a ese jugador.",
+                           "Cada jugador tiene un alma: en una Fogata del Ritual, la Cuchara y tu alma se gastan para revivir a un jugador muerto.",
                            "Resurrection Spoon",
                            "Resurrection Spoons must now be used in a Ritual on the same day they are claimed. "
-                           "Whoever dies becomes a soul; at a lit campfire, the Spoon spends a soul to revive that player."),
+                           "Each player has one soul: at a Ritual Campfire, the Spoon and your soul are spent to revive a dead player."),
     "creeper_pasto": ("mob", "Creeper de Pasto",
                       "Pequeña variante de los Creepers que explota rápidamente y es muy veloz. Tiene probabilidad de salir cuando se rompen "
                       "Bloques de Pasto, Pasto Corto, Pasto Alto, Arbustos, entre otras hierbas.",
@@ -727,14 +727,16 @@ V111_GUI = {
         "message.dedsafio3.reviil_meteor_bunker": "§c¡Momento Reviil! Llueven meteoritos y el Nether está DESACTIVADO. Eón construyó un refugio en %s, %s, %s. ¡Lleguen antes de que acabe el tiempo!",
         "message.dedsafio3.nether_disabled": "§cEl Nether está desactivado.",
         "item.dedsafio3.cuchara_resurreccion": "Cuchara de la Resurrección",
-        "item.dedsafio3.cuchara_resurreccion.tooltip": "Clic derecho en una fogata encendida: abre el Ritual y gasta un alma para revivir a un jugador muerto. Debe usarse el mismo día en que fue reclamada.",
+        "item.dedsafio3.cuchara_resurreccion.tooltip": "Clic derecho en una Fogata del Ritual: revive a un jugador muerto gastando tu alma y esta Cuchara. Debe usarse el mismo día en que fue reclamada.",
+        "block.dedsafio3.fogata_ritual": "Fogata del Ritual",
         "gui.dedsafio3.ritual.title": "Ritual de Resurrección",
-        "gui.dedsafio3.ritual.hint": "Elige el alma que quieres devolver a la vida (la Cuchara se gasta)",
-        "message.dedsafio3.soul_taken": "§b%s se ha convertido en un alma. Necesita un Ritual con la Cuchara de la Resurrección.",
-        "message.dedsafio3.ritual_no_souls": "§7No hay almas que resucitar.",
-        "message.dedsafio3.ritual_far": "§cDebes estar cerca de la fogata del Ritual.",
+        "gui.dedsafio3.ritual.hint": "Elige a quién revivir: se gastarán tu alma y la Cuchara",
+        "message.dedsafio3.soul_taken": "§b%s ha muerto. Otro jugador puede revivirlo con un Ritual (Cuchara de la Resurrección + Fogata del Ritual).",
+        "message.dedsafio3.ritual_soul_spent": "§cTu alma ya fue gastada: no puedes resucitar a nadie más.",
+        "message.dedsafio3.ritual_no_souls": "§7No hay jugadores muertos que revivir.",
+        "message.dedsafio3.ritual_far": "§cDebes estar cerca de la Fogata del Ritual.",
         "message.dedsafio3.ritual_expired": "§cLa Cuchara de la Resurrección se desvaneció: debía usarse el mismo día en que fue reclamada.",
-        "message.dedsafio3.ritual_done": "§b%s ha vuelto a la vida gracias al Ritual de %s.",
+        "message.dedsafio3.ritual_done": "§b%s ha vuelto a la vida: %s gastó su alma en el Ritual.",
         "message.dedsafio3.reviil_creepers": "§5¡Momento Reviil! Llueven Creepers Eléctricos con 1 de vida, las posiciones fueron intercambiadas y no puedes ver tu vida.",
         "message.dedsafio3.reviil_creepers_bar": "Lluvia de Creepers Eléctricos: %s s",
         "message.dedsafio3.reviil_creepers_end": "§7La lluvia de Creepers Eléctricos terminó.",
@@ -765,14 +767,16 @@ V111_GUI = {
         "message.dedsafio3.reviil_meteor_bunker": "§cReviil Moment! Meteors are raining and the Nether is DISABLED. Eón built a shelter at %s, %s, %s. Get there before time runs out!",
         "message.dedsafio3.nether_disabled": "§cThe Nether is disabled.",
         "item.dedsafio3.cuchara_resurreccion": "Resurrection Spoon",
-        "item.dedsafio3.cuchara_resurreccion.tooltip": "Right click on a lit campfire: opens the Ritual and spends a soul to revive a dead player. Must be used the same day it was claimed.",
+        "item.dedsafio3.cuchara_resurreccion.tooltip": "Right click on a Ritual Campfire: revives a dead player by spending your soul and this Spoon. Must be used the same day it was claimed.",
+        "block.dedsafio3.fogata_ritual": "Ritual Campfire",
         "gui.dedsafio3.ritual.title": "Resurrection Ritual",
-        "gui.dedsafio3.ritual.hint": "Choose the soul you want to bring back (the Spoon is spent)",
-        "message.dedsafio3.soul_taken": "§b%s has become a soul. They need a Ritual with the Resurrection Spoon.",
-        "message.dedsafio3.ritual_no_souls": "§7There are no souls to revive.",
-        "message.dedsafio3.ritual_far": "§cYou must be near the Ritual campfire.",
+        "gui.dedsafio3.ritual.hint": "Choose who to revive: your soul and the Spoon will be spent",
+        "message.dedsafio3.soul_taken": "§b%s has died. Another player can revive them with a Ritual (Resurrection Spoon + Ritual Campfire).",
+        "message.dedsafio3.ritual_soul_spent": "§cYour soul has already been spent: you cannot revive anyone else.",
+        "message.dedsafio3.ritual_no_souls": "§7There are no dead players to revive.",
+        "message.dedsafio3.ritual_far": "§cYou must be near the Ritual Campfire.",
         "message.dedsafio3.ritual_expired": "§cThe Resurrection Spoon faded away: it had to be used the same day it was claimed.",
-        "message.dedsafio3.ritual_done": "§b%s came back to life thanks to %s's Ritual.",
+        "message.dedsafio3.ritual_done": "§b%s came back to life: %s spent their soul in the Ritual.",
         "message.dedsafio3.reviil_creepers": "§5Reviil Moment! Electric Creepers with 1 health are raining, positions were swapped and you cannot see your health.",
         "message.dedsafio3.reviil_creepers_bar": "Electric Creeper rain: %s s",
         "message.dedsafio3.reviil_creepers_end": "§7The Electric Creeper rain is over.",
@@ -1065,6 +1069,41 @@ def main():
             "conditions": [{"condition": "minecraft:survives_explosion"}],
         }],
     })
+
+    # --- Fogata del Ritual: una fogata más grande (troncos y llama a escala de bloque completo)
+    def log(frm, to, axis_x):
+        faces = {d: {"texture": "#log", "uv": [0, 0, 16, 4]} for d in ("north", "south", "east", "west")}
+        faces["up"] = {"texture": "#log", "uv": [0, 0, 16, 4]}
+        faces["down"] = {"texture": "#log", "uv": [0, 0, 16, 4]}
+        return {"from": frm, "to": to, "faces": faces}
+    elements = [
+        log([0, 0, 1], [16, 4, 5], True), log([0, 0, 11], [16, 4, 15], True),
+        log([1, 4, 0], [5, 8, 16], False), log([11, 4, 0], [15, 8, 16], False),
+        {"from": [0, 1, 8], "to": [16, 15, 8], "faces": {
+            "north": {"texture": "#fire", "uv": [0, 0, 16, 16]}, "south": {"texture": "#fire", "uv": [0, 0, 16, 16]}}},
+        {"from": [8, 1, 0], "to": [8, 15, 16], "faces": {
+            "east": {"texture": "#fire", "uv": [0, 0, 16, 16]}, "west": {"texture": "#fire", "uv": [0, 0, 16, 16]}}},
+    ]
+    write_json(os.path.join(ASSETS, "models", "block", "fogata_ritual.json"), {
+        "ambientocclusion": False,
+        "textures": {"particle": "minecraft:block/campfire_log", "log": "minecraft:block/campfire_log",
+                     "fire": "minecraft:block/campfire_fire"},
+        "elements": elements,
+    })
+    write_json(os.path.join(ASSETS, "blockstates", "fogata_ritual.json"),
+               {"variants": {"": {"model": f"{MOD}:block/fogata_ritual"}}})
+    write_json(os.path.join(ASSETS, "models", "item", "fogata_ritual.json"), {"parent": f"{MOD}:block/fogata_ritual"})
+    write_json(os.path.join(DATA, "loot_table", "blocks", "fogata_ritual.json"), {
+        "type": "minecraft:block",
+        "pools": [{
+            "rolls": 1.0,
+            "bonus_rolls": 0.0,
+            "entries": [{"type": "minecraft:item", "name": f"{MOD}:fogata_ritual"}],
+            "conditions": [{"condition": "minecraft:survives_explosion"}],
+        }],
+    })
+    write_json(os.path.join(DATA, "recipe", "fogata_ritual.json"), recipe_shaped(
+        ["LLL", "LCL", "LLL"], {"L": "minecraft:oak_log", "C": "minecraft:campfire"}, f"{MOD}:fogata_ritual"))
 
     # --- modelos de ítems
     for name in ITEMS:

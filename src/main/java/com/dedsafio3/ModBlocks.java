@@ -17,6 +17,8 @@ public final class ModBlocks {
 	public static final Map<RouletteColor, RouletteBlock> ROULETTES = new EnumMap<>(RouletteColor.class);
 	/** Ruleta de colores: la rueda decide el color. */
 	public static RouletteBlock ROULETTE_RANDOM;
+	/** Fogata del Ritual (más grande que la vanilla), necesaria para usar la Cuchara de la Resurrección. */
+	public static RitualCampfireBlock RITUAL_CAMPFIRE;
 
 	private ModBlocks() {
 	}
@@ -37,6 +39,10 @@ public final class ModBlocks {
 	}
 
 	public static void register() {
+		RITUAL_CAMPFIRE = Registry.register(Registries.BLOCK, Dedsafio3.id("fogata_ritual"), new RitualCampfireBlock(
+				AbstractBlock.Settings.create().mapColor(MapColor.BROWN).strength(2.0f).sounds(BlockSoundGroup.WOOD)
+						.luminance(state -> 15).nonOpaque()));
+		Registry.register(Registries.ITEM, Dedsafio3.id("fogata_ritual"), new BlockItem(RITUAL_CAMPFIRE, new Item.Settings()));
 		ROULETTE_RANDOM = registerBlock("roulette_random", null, MapColor.GOLD);
 		for (RouletteColor color : RouletteColor.values()) {
 			ROULETTES.put(color, registerBlock("roulette_" + color.id(), color, color.mapColor()));

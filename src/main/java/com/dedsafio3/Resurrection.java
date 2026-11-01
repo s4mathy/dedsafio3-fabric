@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.CampfireBlock;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
@@ -35,8 +34,9 @@ import java.util.UUID;
 
 /**
  * Cuchara de la Resurrección. Con el cambio activo, quien muere se convierte en un alma (queda de espectador).
- * En una fogata encendida, clic derecho con la Cuchara abre el Ritual: una lista con las almas; al elegir una, la
- * Cuchara gasta esa alma y el jugador vuelve a la vida junto a la fogata. La Cuchara debe usarse el mismo día
+ * En una Fogata del Ritual, clic derecho con la Cuchara abre el Ritual: una lista con los jugadores muertos; al elegir
+ * uno, la Cuchara y el alma de quien hace el ritual (cada jugador tiene una sola) se gastan y el muerto vuelve a la
+ * vida junto a la fogata. La Cuchara debe usarse el mismo día
  * (del juego) en que fue reclamada.
  */
 public final class Resurrection {
@@ -111,7 +111,7 @@ public final class Resurrection {
 				return ActionResult.PASS;
 			}
 			BlockState state = world.getBlockState(hit.getBlockPos());
-			if (!(state.getBlock() instanceof CampfireBlock) || !state.get(CampfireBlock.LIT)) {
+			if (!state.isOf(ModBlocks.RITUAL_CAMPFIRE)) {
 				return ActionResult.PASS;
 			}
 			if (player instanceof ServerPlayerEntity sp) {
@@ -128,6 +128,10 @@ public final class Resurrection {
 
 	private static void openRitual(ServerPlayerEntity player, BlockPos campfire) {
 		Map<String, String> souls = DedsafioConfig.get().souls;
+		if (DedsafioConfig.get().spentSouls.contains(player.getUuidAsString())) {
+			player.sendMessage(Text.translatable("message.dedsafio3.ritual_soul_spent"), true);
+			return;
+		}
 		if (souls.isEmpty()) {
 			player.sendMessage(Text.translatable("message.dedsafio3.ritual_no_souls"), true);
 			return;
@@ -151,13 +155,17 @@ public final class Resurrection {
 			return;
 		}
 		ServerWorld world = server.getWorld(ritual.world());
-		if (world == null || !(world.getBlockState(ritual.pos()).getBlock() instanceof CampfireBlock)
+		if (world == null || !world.getBlockState(ritual.pos()).isOf(ModBlocks.RITUAL_CAMPFIRE)
 				|| reviver.getServerWorld() != world || reviver.squaredDistanceTo(ritual.pos().toCenterPos()) > 100.0) {
 			reviver.sendMessage(Text.translatable("message.dedsafio3.ritual_far"), true);
 			return;
 		}
 		ItemStack spoon = reviver.getMainHandStack();
 		if (!spoon.isOf(ModItems.CUCHARA_RESURRECCION)) {
+			return;
+		}
+		if (config.spentSouls.contains(reviver.getUuidAsString())) {
+			reviver.sendMessage(Text.translatable("message.dedsafio3.ritual_soul_spent"), true);
 			return;
 		}
 		RITUALS.remove(reviver.getUuid());
@@ -168,6 +176,7 @@ public final class Resurrection {
 			reviver.sendMessage(Text.translatable("message.dedsafio3.ritual_expired"), false);
 			return;
 		}
+		config.spentSouls.add(reviver.getUuidAsString()); // el alma de quien hace el ritual se gasta
 		String name = config.souls.remove(uuidText);
 		Vec3 spot = new Vec3(ritual.pos().getX() + 0.5, ritual.pos().getY() + 1.0, ritual.pos().getZ() + 0.5);
 		ServerPlayerEntity target = server.getPlayerManager().getPlayer(UUID.fromString(uuidText));

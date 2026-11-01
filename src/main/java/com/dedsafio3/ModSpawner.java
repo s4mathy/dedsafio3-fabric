@@ -88,7 +88,7 @@ public final class ModSpawner {
 	}
 
 	public static void register() {
-		rule(DifficultyChange.BLAZES, World.NETHER, Mode.FLOOR, 6, 1, 2, 0.5, true, (w, p) -> true,
+		rule(DifficultyChange.BLAZES, World.NETHER, Mode.FLOOR, 8, 1, 2, 0.8, true, (w, p) -> true,
 				List.of(EntityType.BLAZE));
 		rule(DifficultyChange.CREEPER_NUCLEAR, World.OVERWORLD, Mode.SURFACE, 3, 1, 1, 0.35, true, ModSpawner::snowy,
 				List.of(ModEntities.NUCLEAR_CREEPER));
@@ -166,7 +166,8 @@ public final class ModSpawner {
 		if (existing >= rule.cap()) {
 			return;
 		}
-		for (int attempt = 0; attempt < 3; attempt++) {
+		int attempts = rule.mode() == Mode.FLOOR ? 12 : 3;
+		for (int attempt = 0; attempt < attempts; attempt++) {
 			BlockPos pos = findSpot(world, player, rule, random);
 			if (pos == null) {
 				continue;
@@ -174,7 +175,10 @@ public final class ModSpawner {
 			int count = rule.min() + random.nextInt(rule.max() - rule.min() + 1);
 			for (int i = 0; i < count; i++) {
 				EntityType<? extends MobEntity> type = rule.types().get(random.nextInt(rule.types().size()));
-				type.spawn(world, pos.add(random.nextBetween(-2, 2), 0, random.nextBetween(-2, 2)), SpawnReason.NATURAL);
+				// Solo en superficie se reparten alrededor: en cuevas o el Nether un desvío los metería dentro de una pared.
+				BlockPos at = rule.mode() == Mode.SURFACE
+						? pos.add(random.nextBetween(-2, 2), 0, random.nextBetween(-2, 2)) : pos;
+				type.spawn(world, at, SpawnReason.NATURAL);
 			}
 			return;
 		}
@@ -182,7 +186,7 @@ public final class ModSpawner {
 
 	private static BlockPos findSpot(ServerWorld w, ServerPlayerEntity player, Rule rule, Random random) {
 		double angle = random.nextDouble() * Math.PI * 2.0;
-		double dist = 24.0 + random.nextDouble() * 24.0;
+		double dist = rule.mode() == Mode.FLOOR ? 10.0 + random.nextDouble() * 22.0 : 24.0 + random.nextDouble() * 24.0;
 		int x = MathHelper.floor(player.getX() + Math.cos(angle) * dist);
 		int z = MathHelper.floor(player.getZ() + Math.sin(angle) * dist);
 		if (!w.getChunkManager().isChunkLoaded(x >> 4, z >> 4)) {
@@ -251,7 +255,7 @@ public final class ModSpawner {
 		if (rule.mode() == Mode.SURFACE && !w.isSkyVisible(pos)) {
 			return null;
 		}
-		if (w.getClosestPlayer(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 20.0, false) != null) {
+		if (w.getClosestPlayer(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, rule.mode() == Mode.FLOOR ? 8.0 : 20.0, false) != null) {
 			return null;
 		}
 		return rule.spot().test(w, pos) ? pos : null;

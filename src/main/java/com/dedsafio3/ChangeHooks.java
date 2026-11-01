@@ -22,6 +22,7 @@ import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.projectile.thrown.EnderPearlEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.registry.tag.ItemTags;
 import java.util.HashMap;
 import java.util.Map;
@@ -165,10 +166,9 @@ public final class ChangeHooks {
 			if (magma && !player.isCreative() && !player.isSpectator() && touchesMagma(world, player)) {
 				player.damage(world.getDamageSources().hotFloor(), 1.0E9f);
 			}
-			if (doors && !player.isCreative() && !player.isSpectator() && player.isTouchingWater()) {
+			if (doors && !player.isCreative() && !player.isSpectator()) {
 				// Las puertas y trampillas ya no dan aire bajo el agua: el aire se gasta como al ahogarse.
-				BlockState eye = world.getBlockState(BlockPos.ofFloored(player.getEyePos()));
-				if (eye.isIn(BlockTags.DOORS) || eye.isIn(BlockTags.TRAPDOORS)) {
+				if (inAirPocket(world, player)) {
 					int air = player.getAir() - 5; // cancela la recarga de +4 por tick y gasta 1 por tick
 					if (air <= -20) {
 						player.setAir(0);
@@ -191,6 +191,36 @@ public final class ChangeHooks {
 				}
 			}
 		}
+	}
+
+	private static boolean doorLike(BlockState state) {
+		return state.isIn(BlockTags.DOORS) || state.isIn(BlockTags.TRAPDOORS);
+	}
+
+	private static boolean water(ServerWorld world, BlockPos pos) {
+		return world.getFluidState(pos).isIn(FluidTags.WATER);
+	}
+
+	/** Cabeza fuera del agua pero bajo ella: bolsa de aire (puerta o trampilla dentro del agua, o techo bajo un lago). */
+	private static boolean inAirPocket(ServerWorld world, ServerPlayerEntity player) {
+		BlockPos eye = BlockPos.ofFloored(player.getEyePos());
+		if (!world.getFluidState(eye).isEmpty()) {
+			return false; // con los ojos en el agua ya se ahoga normalmente
+		}
+		if (water(world, eye.up())) {
+			return true; // agua justo encima de la cabeza
+		}
+		boolean door = doorLike(world.getBlockState(eye)) || doorLike(world.getBlockState(eye.up()))
+				|| doorLike(world.getBlockState(eye.down()));
+		if (!door) {
+			return false;
+		}
+		for (net.minecraft.util.math.Direction d : net.minecraft.util.math.Direction.values()) {
+			if (water(world, eye.offset(d))) {
+				return true;
+			}
+		}
+		return water(world, eye.up(2));
 	}
 
 	/** Toca un bloque de magma por cualquiera de sus caras (no solo por encima). */

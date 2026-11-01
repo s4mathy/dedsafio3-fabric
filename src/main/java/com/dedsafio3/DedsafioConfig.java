@@ -32,6 +32,8 @@ public final class DedsafioConfig {
 	public transient List<String> changes = new ArrayList<>();
 	/** Almas de los jugadores muertos (uuid -> nombre), por mundo. */
 	public transient Map<String, String> souls = new LinkedHashMap<>();
+	/** Jugadores que ya gastaron su alma al resucitar a otro (uuid), por mundo. */
+	public transient List<String> spentSouls = new ArrayList<>();
 	/** Resurrecciones a aplicar cuando el jugador aparezca (uuid -> "dimensión;x;y;z"), por mundo. */
 	public transient Map<String, String> pendingRevive = new LinkedHashMap<>();
 	/** Segundos que dura el contador del Momento Reviil. */
@@ -48,6 +50,7 @@ public final class DedsafioConfig {
 		List<String> modifiers = new ArrayList<>();
 		Map<String, String> souls = new LinkedHashMap<>();
 		Map<String, String> pendingRevive = new LinkedHashMap<>();
+		List<String> spentSouls = new ArrayList<>();
 	}
 
 	/** Carga los cambios y modificaciones de ESTE mundo; otros mundos no los comparten. */
@@ -57,6 +60,7 @@ public final class DedsafioConfig {
 		instance.modifiers = new ArrayList<>();
 		instance.souls = new LinkedHashMap<>();
 		instance.pendingRevive = new LinkedHashMap<>();
+		instance.spentSouls = new ArrayList<>();
 		try {
 			if (Files.exists(worldFile)) {
 				WorldData data = GSON.fromJson(Files.readString(worldFile, StandardCharsets.UTF_8), WorldData.class);
@@ -72,6 +76,9 @@ public final class DedsafioConfig {
 					}
 					if (data.pendingRevive != null) {
 						instance.pendingRevive = data.pendingRevive;
+					}
+					if (data.spentSouls != null) {
+						instance.spentSouls = data.spentSouls;
 					}
 				}
 			}
@@ -89,6 +96,7 @@ public final class DedsafioConfig {
 		instance.modifiers = new ArrayList<>();
 		instance.souls = new LinkedHashMap<>();
 		instance.pendingRevive = new LinkedHashMap<>();
+		instance.spentSouls = new ArrayList<>();
 	}
 
 	public static DedsafioConfig get() {
@@ -132,6 +140,7 @@ public final class DedsafioConfig {
 				data.modifiers = new ArrayList<>(instance.modifiers);
 				data.souls = new LinkedHashMap<>(instance.souls);
 				data.pendingRevive = new LinkedHashMap<>(instance.pendingRevive);
+				data.spentSouls = new ArrayList<>(instance.spentSouls);
 				Files.writeString(worldFile, GSON.toJson(data), StandardCharsets.UTF_8);
 			} catch (IOException e) {
 				Dedsafio3.LOGGER.error("No se pudieron guardar los datos del mundo", e);

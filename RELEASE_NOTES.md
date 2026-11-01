@@ -1,16 +1,12 @@
-## Dedsafio 3 (fan mod) 1.4.0 — Fabric 1.21.1
+## Dedsafio 3 (fan mod) 1.4.1 — Fabric 1.21.1
 
 Requiere **Fabric API**. Ponlo en `mods/` junto con `fabric-api`.
 
-**Cuchara de la Resurrección y Ritual** (menú K → Cambios → "Cuchara de la Resurrección")
-- Nuevo ítem **Cuchara de la Resurrección** (pestaña creativa del mod).
-- Con el cambio activo, quien muere se convierte en un **alma** (queda de espectador).
-- Clic derecho con la Cuchara en una **fogata encendida** abre el **Ritual**: un menú con los jugadores muertos y un icono de alma junto a cada nombre. Al elegir uno, la Cuchara **gasta su alma** y el jugador vuelve a la vida junto a la fogata.
-- La Cuchara debe usarse el **mismo día (del juego) en que fue reclamada**; si no, se desvanece.
-- Las almas se guardan por mundo.
+**Ritual de Resurrección (rehecho)**
+- **Cada jugador tiene una sola alma**, que se gasta cuando revive a otro. Quien ya la gastó no puede resucitar a nadie más.
+- El Ritual se hace en la nueva **Fogata del Ritual**: un bloque con forma de fogata pero más grande (receta: 1 fogata + 8 troncos de roble, también en la pestaña creativa). La fogata vanilla ya no sirve.
+- Al revivir se gastan la Cuchara y tu alma; el muerto vuelve junto a la fogata con la vida llena.
 
-**Nuevos mobs**: Creeper de Pasto (sale al romper hierbas, pequeño, veloz, explota rápido) y Narval de los acuíferos (embiste a los intrusos y a veces los empuja).
-
-**Cambios de dificultad**: las Ender Pearls hacen 10 de daño (5 corazones).
-
-**Momento Reviil nuevo** (ruleta roja): lluvia de Creepers Eléctricos con 1 de vida en tu posición, posiciones intercambiadas y corazones ocultos.
+**Arreglos**
+- Puertas y trampillas: ya no dan aire bajo el agua (el cambio no hacía nada: ahora se detectan las bolsas de aire con la cabeza bajo el agua y el aire se gasta como al ahogarse).
+- Blazes: aparecen de verdad en el Nether (ya no se generaban metidos en las paredes; más intentos, más cerca y más frecuentes).
