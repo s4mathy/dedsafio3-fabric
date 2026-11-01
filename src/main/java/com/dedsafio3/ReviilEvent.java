@@ -57,7 +57,7 @@ public final class ReviilEvent {
 	/** Fase de daño del gas, después de que termina el temporizador. */
 	private static boolean gasPhase;
 	private static long gasEnd;
-	private static final int GAS_MAX_TICKS = 2400; // 2 min como máximo
+	private static final int GAS_MAX_TICKS = 6000; // 5 min como máximo
 
 	private static boolean gasSafe(ServerPlayerEntity player) {
 		return type == Type.GAS_HIGH ? player.getY() > 250.0 : player.getY() < 0.0;
