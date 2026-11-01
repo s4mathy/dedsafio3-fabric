@@ -1,12 +1,14 @@
 package com.dedsafio3.client;
 
 import com.dedsafio3.ActionPayload;
+import com.dedsafio3.DifficultyChange;
 import com.dedsafio3.RouletteColor;
 import com.dedsafio3.SettingPayload;
 import com.dedsafio3.WorldModifier;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.text.Text;
@@ -22,7 +24,7 @@ import java.util.function.Consumer;
  */
 public class DedsafioMenuScreen extends Screen {
 	private enum Tab {
-		GENERAL("general"), WHEELS("wheels"), WORLD("world");
+		GENERAL("general"), WHEELS("wheels"), WORLD("world"), CHANGES("changes");
 
 		private final String id;
 
@@ -35,7 +37,10 @@ public class DedsafioMenuScreen extends Screen {
 	}
 
 	private MenuState state;
+	private static final int CHANGES_PER_PAGE = 6;
+
 	private Tab tab = Tab.GENERAL;
+	private int page;
 	private final List<Label> labels = new ArrayList<>();
 
 	public DedsafioMenuScreen(MenuState state) {
@@ -61,9 +66,9 @@ public class DedsafioMenuScreen extends Screen {
 		int cx = width / 2;
 
 		// Pestañas.
-		int tabW = 100;
-		int tabX = cx - (tabW * 3 + 8) / 2;
 		Tab[] tabs = Tab.values();
+		int tabW = Math.min(100, (width - 24) / tabs.length);
+		int tabX = cx - (tabW * tabs.length + 4 * (tabs.length - 1)) / 2;
 		for (int i = 0; i < tabs.length; i++) {
 			Tab t = tabs[i];
 			ButtonWidget button = ButtonWidget.builder(Text.translatable("gui.dedsafio3.tab." + t.id), b -> {
@@ -78,6 +83,7 @@ public class DedsafioMenuScreen extends Screen {
 			case GENERAL -> initGeneral(cx);
 			case WHEELS -> initWheels(cx);
 			case WORLD -> initWorld(cx);
+			case CHANGES -> initChanges(cx);
 		}
 
 		addDrawableChild(ButtonWidget.builder(Text.translatable("gui.dedsafio3.close"), b -> close())
@@ -146,6 +152,60 @@ public class DedsafioMenuScreen extends Screen {
 				b -> action("clear_modifiers", "")).dimensions(x, y, w, 20).build());
 		addDrawableChild(ButtonWidget.builder(Text.translatable("gui.dedsafio3.death_preview"),
 				b -> action("death_preview", "")).dimensions(x, y + 24, w, 20).build());
+	}
+
+	/**
+	 * Cambios de dificultad, mobs nuevos y Momento Reviil. El interruptor activa/desactiva el cambio (al activarlo,
+	 * el servidor gira la ruleta naranja para todos); "Avisar" solo lo anuncia en el chat, sin ruleta.
+	 */
+	private void initChanges(int cx) {
+		DifficultyChange[] all = DifficultyChange.values();
+		int pages = (all.length + CHANGES_PER_PAGE - 1) / CHANGES_PER_PAGE;
+		page = Math.max(0, Math.min(page, pages - 1));
+		labels.add(new Label(Text.translatable("gui.dedsafio3.changes_hint"), cx, 30, 0xAAAAAA));
+
+		int x = cx - 128;
+		int rows = 0;
+		boolean hasMoment = false;
+		for (int i = 0; i < CHANGES_PER_PAGE; i++) {
+			int index = page * CHANGES_PER_PAGE + i;
+			if (index >= all.length) {
+				break;
+			}
+			DifficultyChange change = all[index];
+			boolean on = state.changes().contains(change.id());
+			int y = 44 + i * 26;
+			Text label = Text.translatable(change.nameKey()).append(": ")
+					.append(Text.translatable(on ? "gui.dedsafio3.on" : "gui.dedsafio3.off"));
+			addDrawableChild(ButtonWidget.builder(label, b -> setting("change." + change.id(), on ? 0 : 1))
+					.dimensions(x, y, 190, 20)
+					.tooltip(Tooltip.of(Text.translatable(change.descKey())))
+					.build());
+			addDrawableChild(ButtonWidget.builder(Text.translatable("gui.dedsafio3.notify"), b -> action("notify", change.id()))
+					.dimensions(x + 194, y, 62, 20)
+					.tooltip(Tooltip.of(Text.translatable("gui.dedsafio3.notify_tip")))
+					.build());
+			rows++;
+			hasMoment |= change.kind() == DifficultyChange.Kind.MOMENT;
+		}
+		if (hasMoment) {
+			addDrawableChild(new IntSlider(x, 44 + rows * 26 + 2, 256, 20, Text.translatable("gui.dedsafio3.reviil_seconds"),
+					20, 180, state.reviilSeconds(), v -> setting("reviil_seconds", v)));
+		}
+
+		labels.add(new Label(Text.translatable("gui.dedsafio3.page", page + 1, pages), cx, height - 44, 0xAAAAAA));
+		ButtonWidget prev = ButtonWidget.builder(Text.literal("<"), b -> {
+			page--;
+			clearAndInit();
+		}).dimensions(cx - 128, height - 26, 60, 20).build();
+		prev.active = page > 0;
+		addDrawableChild(prev);
+		ButtonWidget next = ButtonWidget.builder(Text.literal(">"), b -> {
+			page++;
+			clearAndInit();
+		}).dimensions(cx + 68, height - 26, 60, 20).build();
+		next.active = page < pages - 1;
+		addDrawableChild(next);
 	}
 
 	// ------------------------------------------------------------------ utilidades

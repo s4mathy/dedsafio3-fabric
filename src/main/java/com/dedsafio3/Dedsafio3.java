@@ -17,6 +17,8 @@ public class Dedsafio3 implements ModInitializer {
 	public void onInitialize() {
 		// El orden importa: los bloques antes que los ítems (el grupo creativo los usa).
 		DedsafioConfig.load();
+		ModEffects.register();
+		ModEntities.register();
 		ModBlocks.register();
 		ModItems.register();
 		ModNetworking.register();
@@ -24,6 +26,9 @@ public class Dedsafio3 implements ModInitializer {
 		DeathAnimation.register();
 		Roulette.register();
 		WorldModifier.register();
+		ChangeHooks.register();
+		ModSpawner.register();
+		ReviilEvent.register();
 		MenuService.register();
 		ModCommands.register();
 		LOGGER.info("Dedsafio 3 (fan mod) cargado.");

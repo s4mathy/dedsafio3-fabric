@@ -10,7 +10,8 @@ import java.util.List;
 
 /** Copia en el cliente del estado que muestra el menú (llega del servidor como JSON). */
 public record MenuState(int difficulty, boolean pvp, boolean keepInventory, boolean deathAnimation,
-						boolean totems, int cooldown, int spin, List<Integer> weights, List<String> modifiers) {
+						boolean totems, int cooldown, int spin, List<Integer> weights, List<String> modifiers,
+						List<String> changes, int reviilSeconds) {
 
 	public static MenuState parse(String json) {
 		JsonObject o = JsonParser.parseString(json).getAsJsonObject();
@@ -23,6 +24,13 @@ public record MenuState(int difficulty, boolean pvp, boolean keepInventory, bool
 		for (JsonElement e : mods) {
 			modifiers.add(e.getAsString());
 		}
+		List<String> changes = new ArrayList<>();
+		if (o.has("changes")) {
+			for (JsonElement e : o.getAsJsonArray("changes")) {
+				changes.add(e.getAsString());
+			}
+		}
+		int reviilSeconds = o.has("reviilSeconds") ? o.get("reviilSeconds").getAsInt() : 60;
 		return new MenuState(
 				o.get("difficulty").getAsInt(),
 				o.get("pvp").getAsBoolean(),
@@ -32,7 +40,9 @@ public record MenuState(int difficulty, boolean pvp, boolean keepInventory, bool
 				o.get("cooldown").getAsInt(),
 				o.get("spin").getAsInt(),
 				weights,
-				modifiers
+				modifiers,
+				changes,
+				reviilSeconds
 		);
 	}
 }

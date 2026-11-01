@@ -2,7 +2,7 @@ name: Build mod
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, 'wip-**']
   workflow_dispatch:
 
 permissions:
@@ -48,12 +48,16 @@ jobs:
             build/libs/*.jar
             !build/libs/*-sources.jar
 
-      - name: Publish release "latest" with the jar
+      - name: Publish releases (solo desde main)
+        if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          VERSION=$(grep '^mod_version=' gradle.properties | cut -d= -f2)
           JAR=$(ls build/libs/*.jar | grep -v -- '-sources' | head -n 1)
-          gh release delete latest --cleanup-tag --yes || true
-          gh release create latest "$JAR" \
-            --title "Dedsafio 3 (fan mod) - build automático" \
-            --notes "Mod para Fabric 1.21.1. Requiere Fabric API. Descarga el .jar de abajo y ponlo en la carpeta mods."
+          for TAG in "v$VERSION" latest; do
+            gh release delete "$TAG" --cleanup-tag --yes || true
+            gh release create "$TAG" "$JAR" \
+              --title "Dedsafio 3 (fan mod) $VERSION" \
+              --notes-file RELEASE_NOTES.md
+          done

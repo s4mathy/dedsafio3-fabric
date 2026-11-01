@@ -78,6 +78,9 @@ public final class ModItems {
 						entries.add(totem);
 					}
 					entries.add(ESPADA_CAOTICA);
+					for (Item egg : ModEntities.EGGS) {
+						entries.add(egg);
+					}
 					entries.add(ModBlocks.ROULETTE_RANDOM);
 					for (RouletteBlock block : ModBlocks.ROULETTES.values()) {
 						entries.add(block);

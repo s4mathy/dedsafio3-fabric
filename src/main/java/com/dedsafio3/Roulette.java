@@ -56,6 +56,11 @@ public final class Roulette {
 	private static final Map<UUID, Pending> PENDING = new HashMap<>();
 	private static final Map<UUID, Long> COOLDOWN = new HashMap<>();
 
+	private record Task(long runAt, Runnable run) {
+	}
+
+	private static final List<Task> TASKS = new ArrayList<>();
+
 	static {
 		defineRed();
 		defineOrange();
@@ -320,8 +325,45 @@ public final class Roulette {
 		return true;
 	}
 
+	/**
+	 * Muestra a todos los jugadores la rueda cayendo en {@code color} con el texto {@code prizeKey} y, al terminar el
+	 * giro, ejecuta {@code onFinish}. Se usa para anunciar los cambios de dificultad (ruleta naranja).
+	 */
+	public static void announce(MinecraftServer server, RouletteColor color, String prizeKey, Runnable onFinish) {
+		List<Integer> colors = new ArrayList<>();
+		List<Integer> weights = new ArrayList<>();
+		for (RouletteColor c : RouletteColor.values()) {
+			colors.add(c.ordinal());
+			weights.add(10);
+		}
+		int spinTicks = DedsafioConfig.get().spinSeconds * 20;
+		float frac = 0.15f + server.getOverworld().getRandom().nextFloat() * 0.7f;
+		RoulettePayload payload = new RoulettePayload(colors, weights, color.ordinal(), frac, spinTicks, prizeKey);
+		for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+			ServerPlayNetworking.send(player, payload);
+		}
+		TASKS.add(new Task(server.getTicks() + spinTicks + APPLY_DELAY_TICKS, onFinish));
+	}
+
 	public static void register() {
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			if (!TASKS.isEmpty()) {
+				long tick = server.getTicks();
+				List<Task> due = new ArrayList<>();
+				for (Task task : TASKS) {
+					if (task.runAt() <= tick) {
+						due.add(task);
+					}
+				}
+				TASKS.removeAll(due);
+				for (Task task : due) {
+					try {
+						task.run().run();
+					} catch (Exception e) {
+						Dedsafio3.LOGGER.error("Error en una acción de ruleta", e);
+					}
+				}
+			}
 			if (PENDING.isEmpty()) {
 				return;
 			}

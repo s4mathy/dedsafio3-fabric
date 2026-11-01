@@ -89,8 +89,8 @@ dyn = [f"color.{MOD}.{c}" for c in enum_colors] + [f"modifier.{MOD}.{m}" for m i
     + [f"gui.{MOD}.difficulty.{i}" for i in range(4)] + [f"gui.{MOD}.tab.{t}" for t in tabs]
 if len(mods) != 3:
     err(f"se esperaban 3 modificadores en WorldModifier.java, hay {len(mods)}")
-if len(tabs) != 3:
-    err(f"se esperaban 3 pestañas en DedsafioMenuScreen.java, hay {len(tabs)}")
+if len(tabs) != 4:
+    err(f"se esperaban 4 pestañas en DedsafioMenuScreen.java, hay {len(tabs)}")
 for k in dyn:
     for lang_name, lang in (("es_es", lang_es), ("en_us", lang_en)):
         if k not in lang:
@@ -103,6 +103,45 @@ if len(ids) != len(set(ids)):
     err(f"ids de payload repetidos: {ids}")
 # claves de lang sin uso aparente (aviso, no error)
 print(f"payloads: {len(ids)} | modificadores: {len(mods)} | pestañas: {len(tabs)}")
+
+# 4c) v1.1.1: cambios (DifficultyChange), mobs, texturas, mixin
+change_src = read(os.path.join(JAVA, "DifficultyChange.java"))
+change_ids = re.findall(r'^\s+[A-Z_]+\("(\w+)",\s*Kind\.\w+\)', change_src, re.M)
+if len(change_ids) != 12:
+    err(f"se esperaban 12 cambios en DifficultyChange.java, hay {len(change_ids)}")
+for cid in change_ids:
+    for suffix in ("name", "desc", "wheel"):
+        for lang_name, lang in (("es_es", lang_es), ("en_us", lang_en)):
+            if f"change.{MOD}.{cid}.{suffix}" not in lang:
+                err(f"[{lang_name}] falta change.{MOD}.{cid}.{suffix}")
+for kind in ("difficulty", "mob", "moment"):
+    for lang_name, lang in (("es_es", lang_es), ("en_us", lang_en)):
+        if f"change.{MOD}.title.{kind}" not in lang:
+            err(f"[{lang_name}] falta change.{MOD}.title.{kind}")
+ent_src = read(os.path.join(JAVA, "ModEntities.java")) + read(os.path.join(JAVA, "ReptilianEntity.java"))
+entity_ids = set(re.findall(r'register\("(\w+)"', ent_src)) | set(re.findall(r'^\s+[A-Z_]+\("(\w+)",\s*[\d.]+,', ent_src, re.M))
+entity_ids = {e for e in entity_ids if e not in ("kind",)}
+if len(entity_ids) != 7:
+    err(f"se esperaban 7 mobs nuevos, encontrados {sorted(entity_ids)}")
+for eid in entity_ids:
+    if not os.path.exists(os.path.join(RES, "assets", MOD, "textures", "entity", f"{eid}.png")):
+        err(f"mob '{eid}': falta textures/entity/{eid}.png")
+    if not os.path.exists(os.path.join(RES, "assets", MOD, "models", "item", f"spawn_{eid}.json")):
+        err(f"mob '{eid}': falta models/item/spawn_{eid}.json")
+    for lang_name, lang in (("es_es", lang_es), ("en_us", lang_en)):
+        for k in (f"entity.{MOD}.{eid}", f"item.{MOD}.spawn_{eid}"):
+            if k not in lang:
+                err(f"[{lang_name}] falta {k}")
+eff = re.search(r'Dedsafio3\.id\("(\w+)"\)', read(os.path.join(JAVA, "ModEffects.java")))
+if not eff or not os.path.exists(os.path.join(RES, "assets", MOD, "textures", "mob_effect", f"{eff.group(1)}.png")):
+    err("falta el icono del efecto en textures/mob_effect/")
+if eff and f"effect.{MOD}.{eff.group(1)}" not in lang_es:
+    err("falta el nombre del efecto en es_es")
+mixin_cfg = json.loads(read(os.path.join(RES, "dedsafio3.mixins.json")))
+for m in mixin_cfg.get("client", []) + mixin_cfg.get("mixins", []):
+    if not os.path.exists(os.path.join(JAVA, "mixin", f"{m}.java")):
+        err(f"mixin declarado sin clase: {m}")
+print(f"cambios: {len(change_ids)} | mobs: {len(entity_ids)}")
 
 # 5) fotogramas de muerte (FRAME_COUNT en DeathOverlay)
 m = re.search(r"FRAME_COUNT\s*=\s*(\d+)", read(os.path.join(JAVA, "client", "DeathOverlay.java")))

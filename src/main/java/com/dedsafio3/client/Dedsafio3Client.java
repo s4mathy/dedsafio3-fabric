@@ -4,6 +4,8 @@ import com.dedsafio3.ConfigPayload;
 import com.dedsafio3.DeathAnimPayload;
 import com.dedsafio3.Dedsafio3;
 import com.dedsafio3.MenuRequestPayload;
+import com.dedsafio3.ReviilPayload;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import com.dedsafio3.RoulettePayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -23,6 +25,12 @@ public class Dedsafio3Client implements ClientModInitializer {
 				(payload, context) -> RouletteOverlay.start(payload));
 		ClientPlayNetworking.registerGlobalReceiver(DeathAnimPayload.ID,
 				(payload, context) -> DeathOverlay.start(payload));
+
+		ModRenderers.register();
+		ClientPlayNetworking.registerGlobalReceiver(ReviilPayload.ID,
+				(payload, context) -> ReviilClientState.hideHealth = payload.seconds() > 0);
+		// Al salir del mundo se restablece, por si el servidor se cerró en pleno Momento Reviil.
+		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ReviilClientState.hideHealth = false);
 
 		// Estado del menú: abre la pantalla o refresca la que ya está abierta.
 		ClientPlayNetworking.registerGlobalReceiver(ConfigPayload.ID, (payload, context) -> {

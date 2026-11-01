@@ -39,6 +39,14 @@ public final class MenuService {
 			modifiers.add(modifier);
 		}
 		o.add("modifiers", modifiers);
+		JsonArray changes = new JsonArray();
+		for (DifficultyChange change : DifficultyChange.values()) {
+			if (change.isActive()) {
+				changes.add(change.id());
+			}
+		}
+		o.add("changes", changes);
+		o.addProperty("reviilSeconds", config.reviilSeconds);
 		return o.toString();
 	}
 
@@ -47,6 +55,15 @@ public final class MenuService {
 		MinecraftServer server = player.getServer();
 		if (server != null) {
 			ServerPlayNetworking.send(player, new ConfigPayload(open, stateJson(server)));
+		}
+	}
+
+	/** Refresca el menú de todos los jugadores que lo tengan abierto (el cliente ignora a los demás). */
+	public static void refreshAll(MinecraftServer server) {
+		for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+			if (canEdit(player)) {
+				send(player, false);
+			}
 		}
 	}
 
@@ -96,11 +113,21 @@ public final class MenuService {
 			case "totems" -> config.totemsEnabled = flag;
 			case "cooldown" -> config.cooldownSeconds = Math.max(0, Math.min(60, value));
 			case "spin" -> config.spinSeconds = Math.max(3, Math.min(15, value));
+			case "reviil_seconds" -> config.reviilSeconds = Math.max(20, Math.min(180, value));
 			default -> {
 				if (key.startsWith("weight.")) {
 					RouletteColor color = RouletteColor.byId(key.substring("weight.".length()));
 					if (color != null) {
 						config.weights[color.ordinal()] = Math.max(0, Math.min(20, value));
+					}
+				} else if (key.startsWith("change.")) {
+					DifficultyChange change = DifficultyChange.byId(key.substring("change.".length()));
+					if (change != null) {
+						if (flag) {
+							change.activateWithRoulette(server, player);
+						} else {
+							change.deactivate(server);
+						}
 					}
 				} else if (key.startsWith("modifier.")) {
 					WorldModifier modifier = WorldModifier.byId(key.substring("modifier.".length()));
@@ -125,6 +152,12 @@ public final class MenuService {
 				DeathAnimation.broadcast(player);
 			}
 			case "clear_modifiers" -> WorldModifier.clearAll(server);
+			case "notify" -> {
+				DifficultyChange change = DifficultyChange.byId(arg);
+				if (change != null) {
+					change.broadcastNotice(server);
+				}
+			}
 			default -> {
 			}
 		}

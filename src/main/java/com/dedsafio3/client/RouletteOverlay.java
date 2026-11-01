@@ -14,6 +14,7 @@ import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import org.joml.Matrix4f;
@@ -26,7 +27,9 @@ import java.util.List;
  * hasta dejar el color ganador bajo el puntero (arriba). Al terminar muestra el color y su premio.
  */
 public final class RouletteOverlay {
-	private static final long HOLD_MS = 3200;
+	private static final long BASE_HOLD_MS = 3200;
+	private static final int MAX_PRIZE_LINES = 8;
+	private static long holdMs = BASE_HOLD_MS;
 	private static final long FADE_MS = 400;
 	private static final float SECTOR_GAP_DEG = 1.6f;
 	private static final int FULL_TURNS = 4;
@@ -71,6 +74,10 @@ public final class RouletteOverlay {
 		RouletteColor color = RouletteColor.byOrdinal(COLORS.get(winner));
 		colorText = Text.translatable(color.nameKey());
 		prizeText = Text.translatable(payload.prizeKey());
+		// Los textos largos (cambios de dificultad, Momento Reviil) necesitan más tiempo para leerse.
+		int wrapWidth = Math.max(120, Math.min(MinecraftClient.getInstance().getWindow().getScaledWidth() - 40, 320));
+		int lines = Math.min(MAX_PRIZE_LINES, MinecraftClient.getInstance().textRenderer.wrapLines(prizeText, wrapWidth).size());
+		holdMs = BASE_HOLD_MS + Math.max(0, lines - 1) * 1300L;
 		startMs = Util.getMeasuringTimeMs();
 		lastSector = -1;
 		finishedSoundPlayed = false;
@@ -82,7 +89,7 @@ public final class RouletteOverlay {
 			return;
 		}
 		long elapsed = Util.getMeasuringTimeMs() - startMs;
-		long total = spinMs + HOLD_MS;
+		long total = spinMs + holdMs;
 		if (elapsed > total) {
 			active = false;
 			return;
@@ -142,7 +149,11 @@ public final class RouletteOverlay {
 		if (progress >= 1f) {
 			int rgb = RouletteColor.byOrdinal(COLORS.get(winner)).rgb();
 			ctx.drawCenteredTextWithShadow(font, colorText, (int) cx, (int) (cy + radius + 14f), argb(a, rgb));
-			ctx.drawCenteredTextWithShadow(font, prizeText, (int) cx, (int) (cy + radius + 26f), argb(a, 0xFFD54F));
+			int wrapWidth = Math.max(120, Math.min(sw - 40, 320));
+			List<OrderedText> lines = font.wrapLines(prizeText, wrapWidth);
+			for (int i = 0; i < Math.min(MAX_PRIZE_LINES, lines.size()); i++) {
+				ctx.drawCenteredTextWithShadow(font, lines.get(i), (int) cx, (int) (cy + radius + 26f) + i * 10, argb(a, 0xFFD54F));
+			}
 		}
 
 		// Sonidos: "tic" al cruzar de sector y fanfarria al final.

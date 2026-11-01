@@ -247,6 +247,7 @@ def build_lang():
         langs["en_us"][f"modifier.{MOD}.{mod}"] = en
     langs["es_es"].update(GUI_ES)
     langs["en_us"].update(GUI_EN)
+    v111_lang(langs)
     for color, prizes in PRIZES.items():
         for pid, (es, en) in prizes.items():
             langs["es_es"][f"roulette.{MOD}.{color}.{pid}"] = es
@@ -544,6 +545,195 @@ def make_icon():
     return img
 
 
+# ----------------------------------------------------------------------------- v1.1.1: cambios, mobs, efecto
+# id -> (tipo, nombre es, descripción es, nombre en, descripción en)
+CHANGES = {
+    "blazes": ("difficulty", "Blazes naturales", "Ahora los Blaze aparecen naturalmente en el Nether.",
+               "Natural blazes", "Blazes now spawn naturally in the Nether."),
+    "creeper_nuclear": ("mob", "Creeper Nuclear", "Provoca grandes explosiones. Aparece en la Nieve.",
+                        "Nuclear Creeper", "Causes huge explosions. Spawns in the snow."),
+    "reptisaurio_salvaje": ("mob", "Reptisaurio Salvaje", "Ataca Cuerpo a Cuerpo. Aparece en las Cuevas del Centro de Quiu.",
+                            "Savage Reptisaur", "Melee attacker. Spawns in the caves."),
+    "plumosaurio": ("mob", "Plumosaurio", "Coloso pacífico, pero si lo golpeas te hará mucho daño.",
+                    "Plumosaur", "Peaceful colossus, but if you hit it, it will hurt you badly."),
+    "dromoraptor_rojo": ("mob", "Dromoraptor Rojo", "Depredador que posee una fuerza brutal. Se desplaza en manada.",
+                         "Red Dromoraptor", "Predator with brutal strength. Moves in packs."),
+    "reptisaurio_guerrero": ("mob", "Reptisaurio Guerrero",
+                             "Ataca Cuerpo a Cuerpo. Aparece en los Asentamientos Reptisaurios. Cuidado: Aplica Veneno Primitivo.",
+                             "Warrior Reptisaur", "Melee attacker. Spawns in Reptisaur Settlements. Beware: applies Primitive Poison."),
+    "reptisaurio_arquero": ("mob", "Reptisaurio Arquero",
+                            "Ataca con Arco y Flechas. Aparece en los Asentamientos Reptisaurios. Cuidado: Aplica Veneno Primitivo.",
+                            "Archer Reptisaur", "Attacks with a bow and arrows. Spawns in Reptisaur Settlements. Beware: applies Primitive Poison."),
+    "reptisaurio_lanza": ("mob", "Reptisaurio con Lanza",
+                          "Ataca con Lanza. Aparece en los Asentamientos Reptisaurios. Cuidado: Aplica Veneno Primitivo.",
+                          "Spear Reptisaur", "Attacks with a spear. Spawns in Reptisaur Settlements. Beware: applies Primitive Poison."),
+    "no_honey": ("difficulty", "Sin miel", "Ya no se puede conseguir Miel. Los Panales ahora explotan al romperse.",
+                 "No honey", "Honey can no longer be obtained. Honeycombs now explode when broken."),
+    "magma_deadly": ("difficulty", "Magma mortal",
+                     "Ahora los Bloques de Magma hacen 3.000.000.000.000.000.000.000.000.000.000.000.000.000 de daño si lo tocas en cualquiera de sus caras.",
+                     "Deadly magma", "Magma Blocks now deal 3,000,000,000,000,000,000,000,000,000,000,000,000,000 damage if you touch any of their faces."),
+    "zombie_climb": ("difficulty", "Zombis trepadores", "Los zombies tienen probabilidad de escalar paredes.",
+                     "Climbing zombies", "Zombies have a chance to climb walls."),
+    "reviil": ("moment", "Momento Reviil",
+               "¡Reviil nos está observando y quiere lanzar un rayo mortal! Eón lo vio justo a tiempo y ha construido un Búnker para refugiarse de él. "
+               "Antes que termine el contador TODOS deben estar dentro o morirán. Además, lanzó un conjuro para intercambiar aleatoriamente las "
+               "posiciones de todos los humanos y que no puedan observar su vida.",
+               "Reviil Moment",
+               "Reviil is watching us and wants to launch a deadly beam! Eón saw it just in time and built a Bunker to shelter from it. "
+               "Before the counter ends EVERYONE must be inside or they will die. He also cast a spell to randomly swap the positions of "
+               "all humans so they cannot observe their life."),
+}
+
+TITLES = {
+    "es_es": {"difficulty": "Cambio de Dificultad", "mob": "Nuevo Mob", "moment": "Momento"},
+    "en_us": {"difficulty": "Difficulty Change", "mob": "New Mob", "moment": "Moment"},
+}
+
+ENTITY_NAMES = {  # id -> (es, en): coinciden con los ids de ModEntities / ReptilianEntity.Kind
+    "creeper_nuclear": ("Creeper Nuclear", "Nuclear Creeper"),
+    "plumosaurio": ("Plumosaurio", "Plumosaur"),
+    "reptisaurio_salvaje": ("Reptisaurio Salvaje", "Savage Reptisaur"),
+    "reptisaurio_guerrero": ("Reptisaurio Guerrero", "Warrior Reptisaur"),
+    "reptisaurio_arquero": ("Reptisaurio Arquero", "Archer Reptisaur"),
+    "reptisaurio_lanza": ("Reptisaurio con Lanza", "Spear Reptisaur"),
+    "dromoraptor_rojo": ("Dromoraptor Rojo", "Red Dromoraptor"),
+}
+
+V111_GUI = {
+    "es_es": {
+        "gui.dedsafio3.tab.changes": "Cambios 1.1.1",
+        "gui.dedsafio3.changes_hint": "Activar gira la ruleta naranja para todos · Avisar solo escribe en el chat",
+        "gui.dedsafio3.notify": "Avisar",
+        "gui.dedsafio3.notify_tip": "Anuncia este cambio en el chat, sin ruleta",
+        "gui.dedsafio3.reviil_seconds": "Contador del Momento Reviil (s)",
+        "gui.dedsafio3.page": "Página %s/%s",
+        "message.dedsafio3.change_notice": "§6[%1$s] §e%2$s§f: %3$s",
+        "message.dedsafio3.change_off": "§7Cambio desactivado: %s",
+        "message.dedsafio3.reviil_bar": "Reviil lanzará su rayo en %s s: ¡entra al búnker!",
+        "message.dedsafio3.reviil_bunker": "§c¡Momento Reviil! Eón construyó un búnker en %s, %s, %s. ¡Entren antes de que acabe el contador!",
+        "message.dedsafio3.reviil_cancel": "§7El Momento Reviil fue cancelado.",
+        "message.dedsafio3.reviil_strike": "§4¡El rayo de Reviil ha caído!",
+        "effect.dedsafio3.veneno_primitivo": "Veneno Primitivo",
+    },
+    "en_us": {
+        "gui.dedsafio3.tab.changes": "Changes 1.1.1",
+        "gui.dedsafio3.changes_hint": "Enabling spins the orange wheel for everyone · Notify only writes in chat",
+        "gui.dedsafio3.notify": "Notify",
+        "gui.dedsafio3.notify_tip": "Announces this change in chat, without the wheel",
+        "gui.dedsafio3.reviil_seconds": "Reviil Moment countdown (s)",
+        "gui.dedsafio3.page": "Page %s/%s",
+        "message.dedsafio3.change_notice": "§6[%1$s] §e%2$s§f: %3$s",
+        "message.dedsafio3.change_off": "§7Change disabled: %s",
+        "message.dedsafio3.reviil_bar": "Reviil will fire its beam in %s s: get inside the bunker!",
+        "message.dedsafio3.reviil_bunker": "§cReviil Moment! Eón built a bunker at %s, %s, %s. Get inside before the counter ends!",
+        "message.dedsafio3.reviil_cancel": "§7The Reviil Moment was cancelled.",
+        "message.dedsafio3.reviil_strike": "§4Reviil's beam has struck!",
+        "effect.dedsafio3.veneno_primitivo": "Primitive Poison",
+    },
+}
+
+
+def v111_lang(langs):
+    for i, code in enumerate(("es_es", "en_us")):
+        entries = langs[code]
+        entries.update(V111_GUI[code])
+        for kind, title in TITLES[code].items():
+            entries[f"change.{MOD}.title.{kind}"] = title
+        for cid, data in CHANGES.items():
+            kind = data[0]
+            name, desc = data[1 + 2 * i], data[2 + 2 * i]
+            entries[f"change.{MOD}.{cid}.name"] = name
+            entries[f"change.{MOD}.{cid}.desc"] = desc
+            if kind == "mob":
+                entries[f"change.{MOD}.{cid}.wheel"] = f"{TITLES[code]['mob']} - {name}: {desc}"
+            elif kind == "moment":
+                entries[f"change.{MOD}.{cid}.wheel"] = f"{name}: {desc}"
+            else:
+                entries[f"change.{MOD}.{cid}.wheel"] = f"{TITLES[code]['difficulty']}: {desc}"
+        for eid, names in ENTITY_NAMES.items():
+            entries[f"entity.{MOD}.{eid}"] = names[i]
+            entries[f"item.{MOD}.spawn_{eid}"] = ("Generar " if i == 0 else "Spawn ") + names[i]
+    return langs
+
+
+def skin(size, base, var, seed):
+    """Textura base con ruido; sirve para cualquier modelo porque no depende del mapa UV."""
+    rnd = random.Random(seed)
+    img = Image.new("RGBA", size, (0, 0, 0, 255))
+    for y in range(size[1]):
+        for x in range(size[0]):
+            n = rnd.randint(-var, var)
+            img.putpixel((x, y), tuple(max(0, min(255, c + n)) for c in base) + (255,))
+    return img
+
+
+def fill(img, x0, y0, x1, y1, color):
+    for y in range(y0, y1):
+        for x in range(x0, x1):
+            px(img, x, y, color)
+
+
+def make_biped(base, var, seed, chest, paint, eye):
+    """Modelo de zombi (64x64): frente de la cabeza en (8,8)-(16,16), pecho en (20,20)-(28,32)."""
+    img = skin((64, 64), base, var, seed)
+    fill(img, 20, 20, 28, 32, chest)                 # pecho
+    fill(img, 8, 8, 16, 16, shade(base, 0.85))       # cara
+    for x in (9, 10, 13, 14):
+        px(img, x, 11, eye)
+    fill(img, 10, 14, 14, 15, (25, 18, 14))          # boca
+    if paint:
+        for x in range(8, 16, 2):
+            px(img, x, 9, paint)
+        fill(img, 8, 12, 16, 13, paint)
+    return img
+
+
+def make_nuclear_creeper():
+    """Creeper (64x32) amarillo con franjas negras de aviso y cara de creeper."""
+    img = skin((64, 32), (232, 210, 26), 10, 71)
+    for y in range(32):
+        for x in range(64):
+            if (x + y) % 10 < 3:
+                px(img, x, y, (30, 30, 24))
+    fill(img, 8, 8, 16, 16, (232, 210, 26))
+    for ex in (9, 13):
+        fill(img, ex, 10, ex + 2, 12, (20, 20, 20))
+    fill(img, 11, 12, 13, 15, (20, 20, 20))
+    fill(img, 10, 14, 11, 16, (20, 20, 20))
+    fill(img, 13, 14, 14, 16, (20, 20, 20))
+    return img
+
+
+def make_plumosaurio():
+    """Golem (128x128) morado con 'plumas' claras; cara en la parte frontal de la cabeza (8,8)-(16,18)."""
+    img = skin((128, 128), (123, 63, 160), 14, 33)
+    rnd = random.Random(34)
+    for _ in range(900):
+        x, y = rnd.randrange(128), rnd.randrange(128)
+        px(img, x, y, (201, 160, 220))
+    fill(img, 8, 8, 16, 18, (140, 80, 175))
+    for x in (9, 10, 13, 14):
+        px(img, x, 11, (255, 220, 60))
+    fill(img, 11, 14, 13, 16, (40, 20, 50))
+    return img
+
+
+def make_poison_icon():
+    """Icono de efecto 18x18: gota verde."""
+    img = Image.new("RGBA", (18, 18), (0, 0, 0, 0))
+    cx, cy = 8.5, 10.5
+    for y in range(18):
+        for x in range(18):
+            r = math.hypot(x - cx, (y - cy) * 0.95)
+            tip = (y < 10 and abs(x - cx) < (y - 1) * 0.55 and y > 1)
+            if r < 6.2 or tip:
+                edge = r > 5.0 or (tip and abs(x - cx) > (y - 1) * 0.55 - 1.2)
+                px(img, x, y, (30, 80, 20) if edge else (110, 190, 60))
+    for (x, y) in ((6, 10), (6, 11), (7, 9)):
+        px(img, x, y, (220, 255, 190))
+    return img
+
+
 # ----------------------------------------------------------------------------- JSON
 def item_model(name, parent="minecraft:item/generated"):
     return {"parent": parent, "textures": {"layer0": f"{MOD}:item/{name}"}}
@@ -672,6 +862,18 @@ def main():
             ["III", "GDG", "III"],
             {"I": "minecraft:iron_ingot", "G": "minecraft:gold_ingot", "D": dye},
             f"{MOD}:roulette_{color}"))
+
+    # --- v1.1.1: texturas de mobs, icono del efecto, modelos de huevos
+    save_png(make_nuclear_creeper(), "textures", "entity", "creeper_nuclear.png")
+    save_png(make_plumosaurio(), "textures", "entity", "plumosaurio.png")
+    save_png(make_biped((60, 85, 45), 12, 41, (70, 55, 35), None, (255, 150, 30)), "textures", "entity", "reptisaurio_salvaje.png")
+    save_png(make_biped((70, 112, 50), 12, 42, (110, 75, 40), (180, 40, 30), (255, 220, 60)), "textures", "entity", "reptisaurio_guerrero.png")
+    save_png(make_biped((50, 120, 100), 12, 43, (200, 190, 140), None, (255, 240, 120)), "textures", "entity", "reptisaurio_arquero.png")
+    save_png(make_biped((110, 122, 50), 12, 44, (90, 90, 60), (200, 160, 40), (255, 80, 40)), "textures", "entity", "reptisaurio_lanza.png")
+    save_png(make_biped((172, 52, 36), 16, 45, (120, 28, 20), (240, 150, 60), (255, 240, 80)), "textures", "entity", "dromoraptor_rojo.png")
+    save_png(make_poison_icon(), "textures", "mob_effect", "veneno_primitivo.png")
+    for eid in ENTITY_NAMES:
+        write_json(os.path.join(ASSETS, "models", "item", f"spawn_{eid}.json"), {"parent": "minecraft:item/template_spawn_egg"})
 
     # --- idiomas
     for code, entries in build_lang().items():

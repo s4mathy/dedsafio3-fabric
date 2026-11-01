@@ -46,3 +46,12 @@ tregua (quita las modificaciones), azul = agua y ayuda, morado = azar.
 - **Texturas:** sustituye los PNG de `src/main/resources/assets/dedsafio3/textures/` (mismos nombres). Animación de muerte:
   `textures/gui/death/frame_00..11.png` (64x64).
 - `python3 tools/verify.py` comprueba que idiomas, modelos y premios estén sincronizados.
+
+## Novedades 1.1.1 — Cambios de dificultad, mobs y Momento Reviil
+
+Menú **K → Cambios 1.1.1** (2 páginas). Cada cambio tiene un interruptor y un botón **Avisar**:
+interruptor = activa/desactiva y, al activarlo, gira la **ruleta naranja** para todos; Avisar = solo lo escribe en el chat.
+
+- **Dificultad:** Blazes naturales en el Nether · Sin miel (la botella no saca miel y colmenas/nidos/bloque de panal explotan al romperse) · Magma mortal (tocar un bloque de magma por cualquier cara mata) · Zombis trepadores (una parte escala paredes).
+- **Mobs** (huevos en la pestaña creativa): Creeper Nuclear (nieve) · Reptisaurio Salvaje (cuevas) · Reptisaurio Guerrero / Arquero / con Lanza (asentamientos, aplican Veneno Primitivo) · Plumosaurio (pacífico, golpea fuertísimo si lo atacas) · Dromoraptor Rojo (manadas). Usan modelos de vanilla con textura propia: sustituye `textures/entity/<id>.png` por las tuyas.
+- **Momento Reviil:** construye un búnker cerca, intercambia al azar las posiciones de los jugadores, oculta la vida y, al acabar el contador, mata a quien no esté dentro. Duración configurable en el menú.

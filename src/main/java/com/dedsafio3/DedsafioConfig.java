@@ -23,6 +23,10 @@ public final class DedsafioConfig {
 	public int[] weights = {10, 10, 10, 10, 10, 10};
 	/** Modificaciones del mundo activas (ids de {@link WorldModifier}). */
 	public List<String> modifiers = new ArrayList<>();
+	/** Cambios de dificultad activos (ids de {@link DifficultyChange}; el Momento Reviil no se guarda). */
+	public List<String> changes = new ArrayList<>();
+	/** Segundos que dura el contador del Momento Reviil. */
+	public int reviilSeconds = 60;
 
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static DedsafioConfig instance = new DedsafioConfig();
@@ -80,5 +84,10 @@ public final class DedsafioConfig {
 		if (modifiers == null) {
 			modifiers = new ArrayList<>();
 		}
+		if (changes == null) {
+			changes = new ArrayList<>();
+		}
+		changes.removeIf(id -> DifficultyChange.byId(id) == null || id.equals("reviil"));
+		reviilSeconds = Math.max(20, Math.min(180, reviilSeconds));
 	}
 }
