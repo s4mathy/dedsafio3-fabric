@@ -23,6 +23,9 @@ public final class ModEntities {
 	public static EntityType<DactiloEntity> DACTILO;
 	public static EntityType<NarvalEntity> NARVAL;
 	public static EntityType<HerobrineEntity> HEROBRINE;
+	public static EntityType<WardenBombEntity> WARDEN_BOMB;
+	public static EntityType<PhoraEntity> POD_PHORA;
+	public static EntityType<PhoraEntity> SKIFF_PHORA;
 	public static final Map<ReptilianEntity.Kind, EntityType<ReptilianEntity>> REPTILIANS = new EnumMap<>(ReptilianEntity.Kind.class);
 	/** Huevos de aparición (para el modo creativo). */
 	public static final List<Item> EGGS = new ArrayList<>();
@@ -82,5 +85,20 @@ public final class ModEntities {
 				.dimensions(0.6f, 1.8f).makeFireImmune().maxTrackingRange(10));
 		FabricDefaultAttributeRegistry.register(HEROBRINE, HerobrineEntity.attributes());
 		egg("herobrine", HEROBRINE, 0x2B2B2B, 0xFFFFFF);
+
+		WARDEN_BOMB = register("bomba_warden", EntityType.Builder.create(WardenBombEntity::new, SpawnGroup.MONSTER)
+				.dimensions(0.7f, 0.7f).maxTrackingRange(10));
+		FabricDefaultAttributeRegistry.register(WARDEN_BOMB, WardenBombEntity.attributes());
+		egg("bomba_warden", WARDEN_BOMB, 0x0C2E36, 0x2AD4C4);
+
+		POD_PHORA = register("pod_phora", EntityType.Builder.<PhoraEntity>create((t, w) -> new PhoraEntity(t, w, true), SpawnGroup.MONSTER)
+				.dimensions(0.9f, 0.7f).maxTrackingRange(10));
+		FabricDefaultAttributeRegistry.register(POD_PHORA, PhoraEntity.attributes(true));
+		egg("pod_phora", POD_PHORA, 0x3A3F4A, 0xE04040);
+
+		SKIFF_PHORA = register("skiff_phora", EntityType.Builder.<PhoraEntity>create((t, w) -> new PhoraEntity(t, w, false), SpawnGroup.MONSTER)
+				.dimensions(1.0f, 0.8f).maxTrackingRange(10));
+		FabricDefaultAttributeRegistry.register(SKIFF_PHORA, PhoraEntity.attributes(false));
+		egg("skiff_phora", SKIFF_PHORA, 0x4A3A2A, 0xFF9020);
 	}
 }

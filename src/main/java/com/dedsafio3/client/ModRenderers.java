@@ -5,6 +5,9 @@ import com.dedsafio3.Dedsafio3;
 import com.dedsafio3.HerobrineEntity;
 import com.dedsafio3.MagmaCreeperEntity;
 import com.dedsafio3.NarvalEntity;
+import com.dedsafio3.PhoraEntity;
+import com.dedsafio3.WardenBombEntity;
+import net.minecraft.entity.mob.MobEntity;
 import com.dedsafio3.ModEntities;
 import com.dedsafio3.NuclearCreeperEntity;
 import com.dedsafio3.ReptilianEntity;
@@ -41,6 +44,12 @@ public final class ModRenderers {
 		EntityRendererRegistry.register(ModEntities.DACTILO, DactiloRenderer::new);
 		EntityRendererRegistry.register(ModEntities.NARVAL, NarvalRenderer::new);
 		EntityRendererRegistry.register(ModEntities.HEROBRINE, HerobrineRenderer::new);
+		EntityRendererRegistry.register(ModEntities.WARDEN_BOMB,
+				ctx -> new FlyerRenderer<WardenBombEntity>(ctx, "bomba_warden", 0.8f, 0.8f, 0.8f));
+		EntityRendererRegistry.register(ModEntities.POD_PHORA,
+				ctx -> new FlyerRenderer<PhoraEntity>(ctx, "pod_phora", 1.0f, 0.8f, 1.0f));
+		EntityRendererRegistry.register(ModEntities.SKIFF_PHORA,
+				ctx -> new FlyerRenderer<PhoraEntity>(ctx, "skiff_phora", 1.3f, 0.7f, 1.3f));
 		ModEntities.REPTILIANS.values().forEach(type -> EntityRendererRegistry.register(type, ReptilianRenderer::new));
 	}
 
@@ -73,6 +82,30 @@ public final class ModRenderers {
 		@Override
 		protected void scale(IronGolemEntity entity, MatrixStack matrices, float amount) {
 			matrices.scale(1.5f, 1.5f, 1.5f);
+		}
+	}
+
+	/** Naves y criaturas voladoras: modelo de creeper (cuerpo compacto) con textura y escala propias. */
+	private static class FlyerRenderer<T extends MobEntity> extends MobEntityRenderer<T, CreeperEntityModel<T>> {
+		private final String textureId;
+		private final float sx, sy, sz;
+
+		FlyerRenderer(EntityRendererFactory.Context context, String textureId, float sx, float sy, float sz) {
+			super(context, new CreeperEntityModel<>(context.getPart(EntityModelLayers.CREEPER)), 0.4f);
+			this.textureId = textureId;
+			this.sx = sx;
+			this.sy = sy;
+			this.sz = sz;
+		}
+
+		@Override
+		public Identifier getTexture(T entity) {
+			return texture(textureId);
+		}
+
+		@Override
+		protected void scale(T entity, MatrixStack matrices, float amount) {
+			matrices.scale(sx, sy, sz);
 		}
 	}
 

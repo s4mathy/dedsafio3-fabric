@@ -43,7 +43,33 @@ public final class ReviilEvent {
 		/** Rayo mortal para quien no esté en el búnker. */
 		BEAM,
 		/** Lluvia de meteoritos con el Nether desactivado. */
-		METEORS
+		METEORS,
+		/** Gas tóxico invisible: hay que estar por encima de la capa 250. */
+		GAS_HIGH,
+		/** Gas tóxico invisible: hay que descender a una capa negativa (Y < 0). */
+		GAS_LOW
+	}
+
+	private static boolean isGas(Type t) {
+		return t == Type.GAS_HIGH || t == Type.GAS_LOW;
+	}
+
+	/** Fase de daño del gas, después de que termina el temporizador. */
+	private static boolean gasPhase;
+	private static long gasEnd;
+	private static final int GAS_MAX_TICKS = 2400; // 2 min como máximo
+
+	private static boolean gasSafe(ServerPlayerEntity player) {
+		return type == Type.GAS_HIGH ? player.getY() > 250.0 : player.getY() < 0.0;
+	}
+
+	private static String barKey(Type t) {
+		return switch (t) {
+			case METEORS -> "message.dedsafio3.reviil_meteor_bar";
+			case GAS_HIGH -> "message.dedsafio3.reviil_gas_high_bar";
+			case GAS_LOW -> "message.dedsafio3.reviil_gas_low_bar";
+			default -> "message.dedsafio3.reviil_bar";
+		};
 	}
 
 	private static boolean running;
@@ -72,11 +98,11 @@ public final class ReviilEvent {
 	}
 
 	public static boolean isRunning() {
-		return running;
+		return running || gasPhase;
 	}
 
 	public static boolean isRunning(Type which) {
-		return running && type == which;
+		return (running || gasPhase) && type == which;
 	}
 
 	public static void register() {
@@ -92,12 +118,16 @@ public final class ReviilEvent {
 				repairBunker();
 			}
 			if (left <= 0) {
-				strike(server);
+				if (isGas(type)) {
+					startGas(server);
+				} else {
+					strike(server);
+				}
 				return;
 			}
 			bar.setPercent(Math.max(0f, Math.min(1f, left / (float) totalTicks)));
 			if (left % 20 == 0) {
-				bar.setName(Text.translatable(type == Type.METEORS ? "message.dedsafio3.reviil_meteor_bar" : "message.dedsafio3.reviil_bar", left / 20));
+				bar.setName(Text.translatable(barKey(type), left / 20));
 			}
 		});
 		ServerTickEvents.END_SERVER_TICK.register(ReviilEvent::tickMoon);
@@ -107,6 +137,7 @@ public final class ReviilEvent {
 		ServerLifecycleEvents.SERVER_STOPPING.register(server -> restoreBunker());
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
 			running = false;
+			gasPhase = false;
 			BOLTS.clear();
 			removalPending = false;
 			BUNKER.clear();
@@ -121,11 +152,25 @@ public final class ReviilEvent {
 	}
 
 	public static void start(MinecraftServer server, ServerPlayerEntity source, Type which) {
-		if (running) {
+		if (running || gasPhase) {
 			return;
 		}
 		type = which;
 		restoreBunker(); // si el búnker anterior seguía en pie, se quita antes de construir otro
+		if (isGas(which)) {
+			// Gas tóxico: sin búnker ni rayos; solo temporizador y, al acabar, daño a quien no esté en la capa segura.
+			int gasSeconds = DedsafioConfig.get().reviilSeconds;
+			totalTicks = gasSeconds * 20;
+			endTick = server.getTicks() + totalTicks;
+			running = true;
+			bar = new ServerBossBar(Text.translatable(barKey(which), gasSeconds), BossBar.Color.GREEN, BossBar.Style.PROGRESS);
+			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+				bar.addPlayer(player);
+			}
+			server.getPlayerManager().broadcast(Text.translatable(which == Type.GAS_HIGH
+					? "message.dedsafio3.reviil_gas_high" : "message.dedsafio3.reviil_gas_low"), false);
+			return;
+		}
 		if (source == null || source.isRemoved()) {
 			List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
 			if (players.isEmpty()) {
@@ -153,7 +198,7 @@ public final class ReviilEvent {
 		endTick = server.getTicks() + totalTicks;
 		running = true;
 
-		bar = new ServerBossBar(Text.translatable(which == Type.METEORS ? "message.dedsafio3.reviil_meteor_bar" : "message.dedsafio3.reviil_bar", seconds), BossBar.Color.RED, BossBar.Style.PROGRESS);
+		bar = new ServerBossBar(Text.translatable(barKey(which), seconds), BossBar.Color.RED, BossBar.Style.PROGRESS);
 		for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
 			bar.addPlayer(player);
 			ServerPlayNetworking.send(player, new ReviilPayload(seconds));
@@ -213,6 +258,7 @@ public final class ReviilEvent {
 
 	/** Rayos con cooldown (56 por jugador, uno cada 0,5 s) y retirada del búnker. */
 	private static void tickAfter(MinecraftServer server) {
+		tickGas(server);
 		if (!BOLTS.isEmpty() && server.getTicks() % BOLT_INTERVAL_TICKS == 0) {
 			Iterator<Map.Entry<UUID, Integer>> it = BOLTS.entrySet().iterator();
 			while (it.hasNext()) {
@@ -313,8 +359,43 @@ public final class ReviilEvent {
 		}
 	}
 
+	/** El temporizador del gas terminó: empieza el daño a quien no esté en la capa segura. */
+	private static void startGas(MinecraftServer server) {
+		finish(server);
+		gasPhase = true;
+		gasEnd = server.getTicks() + GAS_MAX_TICKS;
+		server.getPlayerManager().broadcast(Text.translatable("message.dedsafio3.reviil_gas_released"), false);
+		MenuService.refreshAll(server);
+	}
+
+	/** Daño del gas cada 0,5 s a quien no esté a salvo; termina cuando todos están a salvo (o muertos). */
+	private static void tickGas(MinecraftServer server) {
+		if (!gasPhase || server.getTicks() % 10 != 0) {
+			return;
+		}
+		boolean any = false;
+		for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+			if (!player.isAlive() || player.isCreative() || player.isSpectator() || gasSafe(player)) {
+				continue;
+			}
+			any = true;
+			player.damage(player.getServerWorld().getDamageSources().magic(), 2.0f);
+		}
+		if (!any || server.getTicks() >= gasEnd) {
+			gasPhase = false;
+			server.getPlayerManager().broadcast(Text.translatable("message.dedsafio3.reviil_gas_end"), false);
+			MenuService.refreshAll(server);
+		}
+	}
+
 	/** Cancela el evento sin rayo. */
 	public static void stop(MinecraftServer server) {
+		if (gasPhase) {
+			gasPhase = false;
+			server.getPlayerManager().broadcast(Text.translatable("message.dedsafio3.reviil_cancel"), false);
+			MenuService.refreshAll(server);
+			return;
+		}
 		if (!running) {
 			return;
 		}

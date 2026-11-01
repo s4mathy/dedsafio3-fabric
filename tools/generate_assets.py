@@ -619,6 +619,41 @@ CHANGES = {
                         "Reviil Moment: Meteors",
                         "Reviil has summoned a meteor shower and DISABLED the Nether! Eón has built a shelter to hold out. "
                         "You must get there before time runs out… or you will die."),
+    # --- v1.3.0 (Dedsafio 4, lunes 21.SEP.26)
+    "no_saplings": ("difficulty", "Sin brotes", "Ahora no caen Brotes de Árboles. Replantar ya no es una opción.",
+                    "No saplings", "Tree Saplings no longer drop. Replanting is no longer an option."),
+    "warden_natural": ("difficulty", "Warden natural", "Ahora los Warden aparecen naturalmente en DeepDark.",
+                       "Natural Wardens", "Wardens now spawn naturally in the Deep Dark."),
+    "bomba_warden": ("mob", "Bomba Warden", "Las Bombas Warden aparecen en Deepdark.",
+                     "Warden Bomb", "Warden Bombs spawn in the Deep Dark."),
+    "no_milk": ("difficulty", "Sin leche", "No se le puede sacar leche a las vacas.",
+                "No milk", "Cows can no longer be milked."),
+    "doors_no_air": ("difficulty", "Sin aire en puertas",
+                     "Las puertas y trampillas no pueden utilizarse para respirar bajo el agua.",
+                     "No air in doors", "Doors and trapdoors can no longer be used to breathe underwater."),
+    "pod_phora": ("mob", "Pod Phora", "Nave que dispara Proyectiles Láser. Aparece en los Cubos Phora.",
+                  "Phora Pod", "Ship that fires Laser Projectiles. Spawns in the Phora Cubes."),
+    "skiff_phora": ("mob", "Skiff Phora", "Nave que ataca Cuerpo a Cuerpo. Aparece en los Cubos Phora.",
+                    "Phora Skiff", "Ship that attacks in melee. Spawns in the Phora Cubes."),
+    "warden_shrieker": ("difficulty", "Warden con Shrieker", "Ahora los Warden generan un Sculk Shrieker al morir.",
+                        "Warden Shrieker", "Wardens now generate a Sculk Shrieker when they die."),
+    "pearl_pierce": ("difficulty", "Perlas perforantes", "Ahora las Ender Pearls ignoran la Protección de la Armadura.",
+                     "Piercing pearls", "Ender Pearls now ignore Armor Protection."),
+    "creeper_electric": ("difficulty", "Creepers eléctricos",
+                         "Ahora aparecen Creepers Eléctricos en el Overworld en lugar de los comunes.",
+                         "Electric creepers", "Electric Creepers now spawn in the Overworld instead of common ones."),
+    "reviil_gas_alto": ("moment", "Momento Reviil: Gas (arriba)",
+                        "¡Reviil ha liberado un gas tóxico invisible en todas las dimensiones! Antes que termine el temporizador TODOS deben estar "
+                        "POR ENCIMA de la Capa 250, o recibirán daño hasta morir.",
+                        "Reviil Moment: Gas (high)",
+                        "Reviil has released an invisible toxic gas in all dimensions! Before the timer ends EVERYONE must be ABOVE Layer 250, "
+                        "or they will take damage until they die."),
+    "reviil_gas_bajo": ("moment", "Momento Reviil: Gas (abajo)",
+                        "¡Reviil ha liberado un gas tóxico invisible! Antes que termine el temporizador TODOS deben DESCENDER a una Capa Negativa "
+                        "(desde la -1 hacia abajo), o recibirán daño hasta morir.",
+                        "Reviil Moment: Gas (low)",
+                        "Reviil has released an invisible toxic gas! Before the timer ends EVERYONE must DESCEND to a Negative Layer "
+                        "(from -1 downward), or they will take damage until they die."),
 }
 
 TITLES = {
@@ -639,6 +674,9 @@ ENTITY_NAMES = {  # id -> (es, en): coinciden con los ids de ModEntities / Repti
     "dactilo_bebe": ("Dáctylo Bebé", "Baby Dactyl"),
     "narval": ("Narval", "Narwhal"),
     "herobrine": ("Herobrine", "Herobrine"),
+    "bomba_warden": ("Bomba Warden", "Warden Bomb"),
+    "pod_phora": ("Pod Phora", "Phora Pod"),
+    "skiff_phora": ("Skiff Phora", "Phora Skiff"),
 }
 
 V111_GUI = {
@@ -659,6 +697,12 @@ V111_GUI = {
         "message.dedsafio3.reviil_meteor_bar": "Lluvia de meteoritos: ¡llega al refugio en %s s!",
         "message.dedsafio3.reviil_meteor_bunker": "§c¡Momento Reviil! Llueven meteoritos y el Nether está DESACTIVADO. Eón construyó un refugio en %s, %s, %s. ¡Lleguen antes de que acabe el tiempo!",
         "message.dedsafio3.nether_disabled": "§cEl Nether está desactivado.",
+        "message.dedsafio3.reviil_gas_high": "§2¡Momento Reviil! Gas tóxico invisible en todas las dimensiones: ¡suban POR ENCIMA de la Capa 250 antes de que acabe el contador!",
+        "message.dedsafio3.reviil_gas_low": "§2¡Momento Reviil! Gas tóxico invisible: ¡DESCIENDAN a una Capa Negativa (desde la -1 hacia abajo) antes de que acabe el contador!",
+        "message.dedsafio3.reviil_gas_high_bar": "Gas tóxico en %s s: ¡sube por encima de la capa 250!",
+        "message.dedsafio3.reviil_gas_low_bar": "Gas tóxico en %s s: ¡baja a una capa negativa!",
+        "message.dedsafio3.reviil_gas_released": "§2¡El gas tóxico se ha liberado! Quien no esté a salvo recibirá daño hasta morir.",
+        "message.dedsafio3.reviil_gas_end": "§7El gas tóxico se disipó.",
         "message.dedsafio3.reviil_hearts_hidden": "§7Mientras dure el Momento Reviil no podrás ver tus corazones.",
         "message.dedsafio3.reviil_moon_death": "§5%s miró a la Luna y la maldición de Reviil se cumplió. Maldición lunar desactivada.",
     },
@@ -679,6 +723,12 @@ V111_GUI = {
         "message.dedsafio3.reviil_meteor_bar": "Meteor shower: reach the shelter in %s s!",
         "message.dedsafio3.reviil_meteor_bunker": "§cReviil Moment! Meteors are raining and the Nether is DISABLED. Eón built a shelter at %s, %s, %s. Get there before time runs out!",
         "message.dedsafio3.nether_disabled": "§cThe Nether is disabled.",
+        "message.dedsafio3.reviil_gas_high": "§2Reviil Moment! Invisible toxic gas in all dimensions: get ABOVE Layer 250 before the counter ends!",
+        "message.dedsafio3.reviil_gas_low": "§2Reviil Moment! Invisible toxic gas: DESCEND to a Negative Layer (from -1 downward) before the counter ends!",
+        "message.dedsafio3.reviil_gas_high_bar": "Toxic gas in %s s: get above layer 250!",
+        "message.dedsafio3.reviil_gas_low_bar": "Toxic gas in %s s: go down to a negative layer!",
+        "message.dedsafio3.reviil_gas_released": "§2The toxic gas has been released! Anyone not safe will take damage until they die.",
+        "message.dedsafio3.reviil_gas_end": "§7The toxic gas has dissipated.",
         "message.dedsafio3.reviil_hearts_hidden": "§7While the Reviil Moment lasts you will not be able to see your hearts.",
         "message.dedsafio3.reviil_moon_death": "§5%s looked at the Moon and Reviil's curse was fulfilled. Moon curse deactivated.",
     },
@@ -769,6 +819,20 @@ def make_magma_creeper():
     fill(img, 11, 12, 13, 15, (255, 140, 30))
     fill(img, 10, 14, 11, 16, (255, 140, 30))
     fill(img, 13, 14, 14, 16, (255, 140, 30))
+    return img
+
+
+def make_flyer(base, accent, seed, eye):
+    """Textura de nave/criatura voladora para el modelo de creeper (64x32), con paneles y luces."""
+    img = skin((64, 32), base, 10, seed)
+    rnd = random.Random(seed + 1)
+    for _ in range(140):
+        x, y = rnd.randrange(64), rnd.randrange(32)
+        px(img, x, y, accent)
+    fill(img, 8, 8, 16, 16, shade(base, 0.8))
+    for ex in (9, 13):
+        fill(img, ex, 10, ex + 2, 12, eye)
+    fill(img, 10, 13, 14, 14, accent)
     return img
 
 
@@ -965,6 +1029,9 @@ def main():
     save_png(make_narval(), "textures", "entity", "narval.png")
     # Herobrine: humanoide gris oscuro propio (no es la skin de Steve) con ojos blancos.
     save_png(make_biped((54, 58, 64), 8, 47, (40, 44, 50), None, (255, 255, 255)), "textures", "entity", "herobrine.png")
+    save_png(make_flyer((12, 46, 54), (42, 212, 196), 111, (200, 255, 250)), "textures", "entity", "bomba_warden.png")
+    save_png(make_flyer((58, 63, 74), (224, 64, 64), 121, (255, 120, 120)), "textures", "entity", "pod_phora.png")
+    save_png(make_flyer((74, 58, 42), (255, 144, 32), 131, (255, 220, 120)), "textures", "entity", "skiff_phora.png")
     save_png(make_poison_icon(), "textures", "mob_effect", "veneno_primitivo.png")
     for eid in ENTITY_NAMES:
         write_json(os.path.join(ASSETS, "models", "item", f"spawn_{eid}.json"), {"parent": "minecraft:item/template_spawn_egg"})

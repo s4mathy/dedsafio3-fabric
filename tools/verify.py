@@ -107,8 +107,8 @@ print(f"payloads: {len(ids)} | modificadores: {len(mods)} | pestañas: {len(tabs
 # 4c) v1.1.1: cambios (DifficultyChange), mobs, texturas, mixin
 change_src = read(os.path.join(JAVA, "DifficultyChange.java"))
 change_ids = re.findall(r'^\s+[A-Z_]+\("(\w+)",\s*Kind\.\w+\)', change_src, re.M)
-if len(change_ids) != 21:
-    err(f"se esperaban 21 cambios en DifficultyChange.java, hay {len(change_ids)}")
+if len(change_ids) != 33:
+    err(f"se esperaban 33 cambios en DifficultyChange.java, hay {len(change_ids)}")
 for cid in change_ids:
     for suffix in ("name", "desc", "wheel"):
         for lang_name, lang in (("es_es", lang_es), ("en_us", lang_en)):
@@ -121,8 +121,8 @@ for kind in ("difficulty", "mob", "moment"):
 ent_src = read(os.path.join(JAVA, "ModEntities.java")) + read(os.path.join(JAVA, "ReptilianEntity.java"))
 entity_ids = set(re.findall(r'register\("(\w+)"', ent_src)) | set(re.findall(r'^\s+[A-Z_]+\("(\w+)",\s*[\d.]+,', ent_src, re.M))
 entity_ids = {e for e in entity_ids if e not in ("kind",)}
-if len(entity_ids) != 12:
-    err(f"se esperaban 12 mobs nuevos, encontrados {sorted(entity_ids)}")
+if len(entity_ids) != 15:
+    err(f"se esperaban 15 mobs nuevos, encontrados {sorted(entity_ids)}")
 for eid in entity_ids:
     if not os.path.exists(os.path.join(RES, "assets", MOD, "textures", "entity", f"{eid}.png")):
         err(f"mob '{eid}': falta textures/entity/{eid}.png")

@@ -34,7 +34,20 @@ public enum DifficultyChange {
 	NARVAL("narval", Kind.DIFFICULTY),
 	COBWEB_SPIDER("cobweb_spider", Kind.DIFFICULTY),
 	REVIIL_LUNA("reviil_luna", Kind.MOMENT),
-	REVIIL_METEOROS("reviil_meteoros", Kind.MOMENT);
+	REVIIL_METEOROS("reviil_meteoros", Kind.MOMENT),
+	// --- v1.3.0
+	NO_SAPLINGS("no_saplings", Kind.DIFFICULTY),
+	WARDEN_NATURAL("warden_natural", Kind.DIFFICULTY),
+	BOMBA_WARDEN("bomba_warden", Kind.MOB),
+	NO_MILK("no_milk", Kind.DIFFICULTY),
+	DOORS_NO_AIR("doors_no_air", Kind.DIFFICULTY),
+	POD_PHORA("pod_phora", Kind.MOB),
+	SKIFF_PHORA("skiff_phora", Kind.MOB),
+	WARDEN_SHRIEKER("warden_shrieker", Kind.DIFFICULTY),
+	PEARL_PIERCE("pearl_pierce", Kind.DIFFICULTY),
+	CREEPER_ELECTRIC("creeper_electric", Kind.DIFFICULTY),
+	REVIIL_GAS_ALTO("reviil_gas_alto", Kind.MOMENT),
+	REVIIL_GAS_BAJO("reviil_gas_bajo", Kind.MOMENT);
 
 	public enum Kind {
 		DIFFICULTY, MOB, MOMENT
@@ -85,18 +98,29 @@ public enum DifficultyChange {
 		return null;
 	}
 
+	/** Tipo de Momento Reviil con temporizador, o null si es un cambio normal (o la maldición lunar, que se guarda). */
+	public ReviilEvent.Type timedType() {
+		return switch (this) {
+			case REVIIL -> ReviilEvent.Type.BEAM;
+			case REVIIL_METEOROS -> ReviilEvent.Type.METEORS;
+			case REVIIL_GAS_ALTO -> ReviilEvent.Type.GAS_HIGH;
+			case REVIIL_GAS_BAJO -> ReviilEvent.Type.GAS_LOW;
+			default -> null;
+		};
+	}
+
 	public boolean isActive() {
-		if (this == REVIIL || this == REVIIL_METEOROS) {
-			return ReviilEvent.isRunning(this == REVIIL_METEOROS ? ReviilEvent.Type.METEORS : ReviilEvent.Type.BEAM);
+		if (timedType() != null) {
+			return ReviilEvent.isRunning(timedType());
 		}
 		return DedsafioConfig.get().changes.contains(id);
 	}
 
 	/** Activa o desactiva sin ruleta ni aviso. {@code source} solo lo usa el Momento Reviil (para ubicar el búnker). */
 	public void setActive(MinecraftServer server, boolean on, ServerPlayerEntity source) {
-		if (this == REVIIL || this == REVIIL_METEOROS) {
+		if (timedType() != null) {
 			if (on) {
-				ReviilEvent.start(server, source, this == REVIIL_METEOROS ? ReviilEvent.Type.METEORS : ReviilEvent.Type.BEAM);
+				ReviilEvent.start(server, source, timedType());
 			} else {
 				ReviilEvent.stop(server);
 			}
@@ -116,7 +140,7 @@ public enum DifficultyChange {
 			return;
 		}
 		// Solo puede haber un Momento Reviil con cuenta atrás a la vez.
-		if ((this == REVIIL || this == REVIIL_METEOROS) && ReviilEvent.isRunning()) {
+		if (timedType() != null && ReviilEvent.isRunning()) {
 			return;
 		}
 		WAITING.add(this);

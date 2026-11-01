@@ -1,7 +1,17 @@
-## Dedsafio 3 (fan mod) 1.2.4 — Fabric 1.21.1
+## Dedsafio 3 (fan mod) 1.3.0 — Fabric 1.21.1
 
 Requiere **Fabric API**. Ponlo en `mods/` junto con `fabric-api`.
 
-- Los cambios de dificultad y las modificaciones del mundo ahora se guardan **por mundo** (archivo `dedsafio3_world.json` dentro de la carpeta del mundo): no pasan a los demás mundos que crees. La configuración general (ruletas, pesos, etc.) sigue siendo global.
-- El búnker no empieza su cuenta atrás para desaparecer (10-15 s) hasta que dejan de caer los rayos de quienes no llegaron.
-- Si alguien que estaba afuera logra entrar al búnker, ya no le cae ningún rayo más.
+**Nuevos mobs** (menú K → Cambios)
+- **Bomba Warden**: criatura voladora de la Deep Dark que explota y deja a oscuras.
+- **Pod Phora**: nave voladora que dispara proyectiles láser.
+- **Skiff Phora**: nave voladora que ataca cuerpo a cuerpo.
+
+**Cambios de dificultad**
+- Sin brotes de árboles, sin leche de vaca, Warden natural en la Deep Dark, Warden con Sculk Shrieker al morir, Ender Pearls que ignoran la armadura, Creepers eléctricos en lugar de los comunes y puertas/trampillas que ya no dan aire bajo el agua.
+
+**Momentos Reviil nuevos** (ruleta roja)
+- **Gas (arriba)**: antes de que acabe el temporizador hay que estar por encima de la Capa 250 en cualquier dimensión.
+- **Gas (abajo)**: hay que descender a una capa negativa (Y < 0). Quien no esté a salvo recibe daño cada 0,5 s hasta morir o ponerse a salvo.
+
+Aviso: no se sabe dónde están los "Cubos Phora" de la serie, así que las naves aparecen volando sobre el Overworld.

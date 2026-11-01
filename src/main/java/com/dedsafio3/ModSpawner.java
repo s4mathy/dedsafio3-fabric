@@ -36,7 +36,9 @@ public final class ModSpawner {
 		/** Suelo libre cerca del jugador (Nether). */
 		FLOOR,
 		/** Agua del océano, a media profundidad. */
-		WATER
+		WATER,
+		/** En el aire, bastante por encima del terreno (naves voladoras). */
+		AIR
 	}
 
 	private record Rule(DifficultyChange change, RegistryKey<World> dimension, Mode mode, int cap, int min, int max,
@@ -116,6 +118,15 @@ public final class ModSpawner {
 		rule(DifficultyChange.HEROBRINE, World.OVERWORLD, Mode.SURFACE, 1, 1, 1, 0.04, true,
 				(w, p) -> !w.isDay(), List.of(ModEntities.HEROBRINE));
 
+		rule(DifficultyChange.WARDEN_NATURAL, World.OVERWORLD, Mode.CAVE, 1, 1, 1, 0.12, true,
+				(w, p) -> w.getBiome(p).matchesKey(BiomeKeys.DEEP_DARK), List.of(EntityType.WARDEN));
+		rule(DifficultyChange.BOMBA_WARDEN, World.OVERWORLD, Mode.CAVE, 4, 1, 2, 0.4, true,
+				(w, p) -> w.getBiome(p).matchesKey(BiomeKeys.DEEP_DARK), List.of(ModEntities.WARDEN_BOMB));
+		rule(DifficultyChange.POD_PHORA, World.OVERWORLD, Mode.AIR, 3, 1, 2, 0.25, true, (w, p) -> true,
+				List.of(ModEntities.POD_PHORA));
+		rule(DifficultyChange.SKIFF_PHORA, World.OVERWORLD, Mode.AIR, 3, 1, 2, 0.25, true, (w, p) -> true,
+				List.of(ModEntities.SKIFF_PHORA));
+
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			if (server.getTicks() % 40 != 0) {
 				return;
@@ -174,6 +185,15 @@ public final class ModSpawner {
 			return null;
 		}
 
+		if (rule.mode() == Mode.AIR) {
+			int top = w.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z);
+			BlockPos ap = new BlockPos(x, Math.min(top + 14 + random.nextInt(8), w.getTopY() - 4), z);
+			if (!w.getBlockState(ap).isAir() || !w.getBlockState(ap.up()).isAir() || !w.isSkyVisible(ap)
+					|| w.getClosestPlayer(ap.getX() + 0.5, ap.getY(), ap.getZ() + 0.5, 16.0, false) != null) {
+				return null;
+			}
+			return rule.spot().test(w, ap) ? ap : null;
+		}
 		if (rule.mode() == Mode.WATER) {
 			BlockPos wp = new BlockPos(x, Math.max(w.getBottomY() + 4, w.getSeaLevel() - 4), z);
 			if (!w.getFluidState(wp).isIn(net.minecraft.registry.tag.FluidTags.WATER)

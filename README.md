@@ -47,9 +47,9 @@ tregua (quita las modificaciones), azul = agua y ayuda, morado = azar.
   `textures/gui/death/frame_00..11.png` (64x64).
 - `python3 tools/verify.py` comprueba que idiomas, modelos y premios estén sincronizados.
 
-## Novedades 1.2.0 y 1.1.1 — Cambios de dificultad, mobs y Momentos Reviil
+## Novedades 1.3.0, 1.2.x y 1.1.1 — Cambios de dificultad, mobs y Momentos Reviil
 
-Menú **K → Cambios** (4 páginas). Cada cambio tiene un interruptor y un botón **Avisar**:
+Menú **K → Cambios** (6 páginas). Cada cambio tiene un interruptor y un botón **Avisar**:
 interruptor = activa/desactiva y, al activarlo, gira la **ruleta naranja** para todos; Avisar = solo lo escribe en el chat.
 
 - **Dificultad:** Blazes naturales en el Nether · Sin miel (la botella no saca miel y colmenas/nidos/bloque de panal explotan al romperse) · Magma mortal (tocar un bloque de magma por cualquier cara mata) · Zombis trepadores (una parte escala paredes).
