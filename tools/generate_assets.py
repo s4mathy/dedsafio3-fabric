@@ -711,9 +711,9 @@ ENTITY_NAMES = {  # id -> (es, en): coinciden con los ids de ModEntities / Repti
 V111_GUI = {
     "es_es": {
         "gui.dedsafio3.tab.changes": "Cambios",
-        "gui.dedsafio3.changes_hint": "Activar gira la ruleta naranja (roja en los Momentos Reviil) · Avisar solo escribe en el chat",
+        "gui.dedsafio3.changes_hint": "Activar gira la ruleta naranja (roja en los Momentos Reviil) · Avisar lo activa y lo anuncia en el chat, sin ruleta",
         "gui.dedsafio3.notify": "Avisar",
-        "gui.dedsafio3.notify_tip": "Anuncia este cambio en el chat, sin ruleta",
+        "gui.dedsafio3.notify_tip": "Activa este cambio sin ruleta y lo anuncia en el chat",
         "gui.dedsafio3.reviil_seconds": "Contador del Momento Reviil (s)",
         "gui.dedsafio3.page": "Página %s/%s",
         "message.dedsafio3.change_notice": "§6[%1$s] §e%2$s§f: %3$s",
@@ -751,9 +751,9 @@ V111_GUI = {
     },
     "en_us": {
         "gui.dedsafio3.tab.changes": "Changes",
-        "gui.dedsafio3.changes_hint": "Enabling spins the orange wheel (red for Reviil Moments) · Notify only writes in chat",
+        "gui.dedsafio3.changes_hint": "Enabling spins the orange wheel (red for Reviil Moments) · Notify enables it and announces it in chat, no wheel",
         "gui.dedsafio3.notify": "Notify",
-        "gui.dedsafio3.notify_tip": "Announces this change in chat, without the wheel",
+        "gui.dedsafio3.notify_tip": "Enables this change without the wheel and announces it in chat",
         "gui.dedsafio3.reviil_seconds": "Reviil Moment countdown (s)",
         "gui.dedsafio3.page": "Page %s/%s",
         "message.dedsafio3.change_notice": "§6[%1$s] §e%2$s§f: %3$s",
@@ -1069,6 +1069,11 @@ def main():
             "conditions": [{"condition": "minecraft:survives_explosion"}],
         }],
     })
+
+    # --- icono de alma junto al nombre de los jugadores (fuente de bitmap con un solo carácter)
+    save_png(make_soul_icon(), "textures", "font", "soul.png")
+    write_json(os.path.join(ASSETS, "font", "icons.json"), {"providers": [{
+        "type": "bitmap", "file": f"{MOD}:font/soul.png", "ascent": 7, "height": 8, "chars": ["\ue000"]}]})
 
     # --- Fogata del Ritual: una fogata más grande (troncos y llama a escala de bloque completo)
     def log(frm, to, axis_x):

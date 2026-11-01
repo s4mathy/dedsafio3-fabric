@@ -169,6 +169,6 @@ public final class DedsafioConfig {
 			changes = new ArrayList<>();
 		}
 		changes.removeIf(id -> DifficultyChange.byId(id) == null || DifficultyChange.byId(id).timedType() != null);
-		reviilSeconds = Math.max(20, Math.min(180, reviilSeconds));
+		reviilSeconds = Math.max(20, Math.min(600, reviilSeconds));
 	}
 }

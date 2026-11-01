@@ -190,7 +190,7 @@ public class DedsafioMenuScreen extends Screen {
 		}
 		if (hasMoment) {
 			addDrawableChild(new IntSlider(x, 44 + rows * 26 + 2, 256, 20, Text.translatable("gui.dedsafio3.reviil_seconds"),
-					20, 180, state.reviilSeconds(), v -> setting("reviil_seconds", v)));
+					20, 600, state.reviilSeconds(), v -> setting("reviil_seconds", v)));
 		}
 
 		labels.add(new Label(Text.translatable("gui.dedsafio3.page", page + 1, pages), cx, height - 44, 0xAAAAAA));

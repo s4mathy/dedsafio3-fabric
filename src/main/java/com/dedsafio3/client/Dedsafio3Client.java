@@ -27,6 +27,18 @@ public class Dedsafio3Client implements ClientModInitializer {
 				(payload, context) -> DeathOverlay.start(payload));
 
 		ModRenderers.register();
+		ClientPlayNetworking.registerGlobalReceiver(com.dedsafio3.SoulsPayload.ID, (payload, context) -> {
+			java.util.Set<java.util.UUID> set = new java.util.HashSet<>();
+			for (String id : payload.holders().split(",")) {
+				try {
+					set.add(java.util.UUID.fromString(id.trim()));
+				} catch (IllegalArgumentException ignored) {
+					// vacío u otro formato: se ignora
+				}
+			}
+			com.dedsafio3.SoulIcons.set(set);
+		});
+		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> com.dedsafio3.SoulIcons.set(java.util.Set.of()));
 		ClientPlayNetworking.registerGlobalReceiver(com.dedsafio3.RitualPayload.ID,
 				(payload, context) -> context.client().setScreen(new RitualScreen(payload.souls())));
 		ClientPlayNetworking.registerGlobalReceiver(ReviilPayload.ID,

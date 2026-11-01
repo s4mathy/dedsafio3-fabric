@@ -113,7 +113,7 @@ public final class MenuService {
 			case "totems" -> config.totemsEnabled = flag;
 			case "cooldown" -> config.cooldownSeconds = Math.max(0, Math.min(60, value));
 			case "spin" -> config.spinSeconds = Math.max(3, Math.min(15, value));
-			case "reviil_seconds" -> config.reviilSeconds = Math.max(20, Math.min(180, value));
+			case "reviil_seconds" -> config.reviilSeconds = Math.max(20, Math.min(600, value));
 			default -> {
 				if (key.startsWith("weight.")) {
 					RouletteColor color = RouletteColor.byId(key.substring("weight.".length()));
@@ -155,7 +155,12 @@ public final class MenuService {
 			case "notify" -> {
 				DifficultyChange change = DifficultyChange.byId(arg);
 				if (change != null) {
+					// "Avisar": activa el cambio sin ruleta y lo anuncia en el chat.
+					if (!change.isActive()) {
+						change.setActive(server, true, player);
+					}
 					change.broadcastNotice(server);
+					refreshAll(server);
 				}
 			}
 			default -> {

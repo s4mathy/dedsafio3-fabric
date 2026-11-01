@@ -82,7 +82,15 @@ public final class Resurrection {
 				return;
 			}
 			long day = today(server);
+			if (server.getTicks() % 40 == 0) {
+				syncAll(server);
+			}
 			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+				// Quien es un alma siempre está de espectador (por si el cambio de modo al reaparecer no se aplicó).
+				if (active() && player.isAlive() && !player.isSpectator()
+						&& DedsafioConfig.get().souls.containsKey(player.getUuidAsString())) {
+					player.changeGameMode(GameMode.SPECTATOR);
+				}
 				for (int i = 0; i < player.getInventory().size(); i++) {
 					ItemStack stack = player.getInventory().getStack(i);
 					if (stack.isOf(ModItems.CUCHARA_RESURRECCION) && claimDay(stack) < 0) {
@@ -187,6 +195,7 @@ public final class Resurrection {
 			config.pendingRevive.put(uuidText, world.getRegistryKey().getValue() + ";" + spot.x + ";" + spot.y + ";" + spot.z);
 		}
 		DedsafioConfig.save();
+		syncAll(server);
 		server.getPlayerManager().broadcast(Text.translatable("message.dedsafio3.ritual_done", name, reviver.getDisplayName()), false);
 	}
 
@@ -207,6 +216,7 @@ public final class Resurrection {
 	/** Al reaparecer o conectarse: aplica un ritual pendiente, o deja de espectador a quien sigue siendo un alma. */
 	private static void onSpawn(ServerPlayerEntity player) {
 		DedsafioConfig config = DedsafioConfig.get();
+		syncAll(player.getServer());
 		String key = player.getUuid().toString();
 		String pending = config.pendingRevive.get(key);
 		if (pending != null) {
@@ -228,6 +238,25 @@ public final class Resurrection {
 				DedsafioConfig.save();
 				player.changeGameMode(GameMode.SURVIVAL);
 			}
+		}
+	}
+
+	/** Envía a todos qué jugadores conservan su alma (icono junto al nombre). */
+	public static void syncAll(MinecraftServer server) {
+		DedsafioConfig config = DedsafioConfig.get();
+		java.util.Set<UUID> holders = new java.util.HashSet<>();
+		if (active()) {
+			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+				String id = player.getUuidAsString();
+				if (!config.spentSouls.contains(id) && !config.souls.containsKey(id)) {
+					holders.add(player.getUuid());
+				}
+			}
+		}
+		SoulIcons.set(holders);
+		String csv = String.join(",", holders.stream().map(UUID::toString).toList());
+		for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+			ServerPlayNetworking.send(player, new SoulsPayload(csv));
 		}
 	}
 

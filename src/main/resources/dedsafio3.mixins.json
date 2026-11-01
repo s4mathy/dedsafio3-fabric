@@ -3,7 +3,9 @@
   "minVersion": "0.8",
   "package": "com.dedsafio3.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "PlayerEntityMixin"
+  ],
   "client": [
     "InGameHudMixin"
   ],
