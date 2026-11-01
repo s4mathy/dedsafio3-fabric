@@ -159,9 +159,6 @@ public final class ReviilEvent {
 			if (ball != null) {
 				ball.refreshPositionAndAngles(x, y, z, 0f, 0f);
 				ball.setVelocity(random.nextDouble() * 0.2 - 0.1, -1.1, random.nextDouble() * 0.2 - 0.1);
-				if (ball instanceof net.minecraft.entity.projectile.FireballEntity big) {
-					big.explosionPower = 2;
-				}
 				bunkerWorld.spawnEntity(ball);
 			}
 		}
