@@ -59,7 +59,7 @@ public final class Nightmares {
 			if (server.getTicks() % 10 == 0) {
 				// Quien duerme lo suficiente hace desaparecer a todos los Dáctylos Adultos.
 				for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-					if (player.isSleepingLongEnough()) {
+					if ((player.isSleeping() && player.getSleepTimer() >= 100)) {
 						for (ServerWorld w : server.getWorlds()) {
 							for (DactiloAdultEntity adult : w.getEntitiesByType(ModEntities.DACTILO_ADULT, e -> true)) {
 								adult.discard();
