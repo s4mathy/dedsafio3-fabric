@@ -53,7 +53,17 @@ public enum DifficultyChange {
 	CREEPER_PASTO("creeper_pasto", Kind.MOB),
 	NARVAL_ACUIFERO("narval_acuifero", Kind.MOB),
 	PEARL_10("pearl_10", Kind.DIFFICULTY),
-	REVIIL_CREEPERS("reviil_creepers", Kind.MOMENT);
+	REVIIL_CREEPERS("reviil_creepers", Kind.MOMENT),
+	// --- v1.5.0
+	WITHER_SKELETON_NATURAL("wither_skeleton_natural", Kind.DIFFICULTY),
+	PESADILLAS("pesadillas", Kind.DIFFICULTY),
+	DACTILO_ADULTO("dactilo_adulto", Kind.MOB),
+	CREEPER_WITHER_ROSE("creeper_wither_rose", Kind.MOB),
+	DROMORAPTOR_VERDE("dromoraptor_verde", Kind.MOB),
+	DROMORAPTOR_CHERRY("dromoraptor_cherry", Kind.DIFFICULTY),
+	ANIMALS_EXTINCT("animals_extinct", Kind.DIFFICULTY),
+	BOGGED_NIGHT("bogged_night", Kind.DIFFICULTY),
+	STRAY_NIGHT("stray_night", Kind.DIFFICULTY);
 
 	public enum Kind {
 		DIFFICULTY, MOB, MOMENT
@@ -173,6 +183,9 @@ public enum DifficultyChange {
 	public void broadcastNotice(MinecraftServer server) {
 		server.getPlayerManager().broadcast(Text.translatable("message.dedsafio3.change_notice",
 				Text.translatable(titleKey()), Text.translatable(nameKey()), Text.translatable(descKey())), false);
+		if (this == DACTILO_ADULTO) {
+			server.getPlayerManager().broadcast(Text.translatable("message.dedsafio3.reminder_space_fruit"), false);
+		}
 	}
 
 	public static void resetRuntime() {

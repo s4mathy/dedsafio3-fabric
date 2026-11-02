@@ -27,6 +27,8 @@ public final class ModEntities {
 	public static EntityType<GrassCreeperEntity> GRASS_CREEPER;
 	public static EntityType<PhoraEntity> POD_PHORA;
 	public static EntityType<PhoraEntity> SKIFF_PHORA;
+	public static EntityType<WitherRoseCreeperEntity> WITHER_ROSE_CREEPER;
+	public static EntityType<DactiloAdultEntity> DACTILO_ADULT;
 	public static final Map<ReptilianEntity.Kind, EntityType<ReptilianEntity>> REPTILIANS = new EnumMap<>(ReptilianEntity.Kind.class);
 	/** Huevos de aparición (para el modo creativo). */
 	public static final List<Item> EGGS = new ArrayList<>();
@@ -63,7 +65,8 @@ public final class ModEntities {
 			FabricDefaultAttributeRegistry.register(type, ReptilianEntity.attributes(kind));
 			REPTILIANS.put(kind, type);
 			int primary = kind == ReptilianEntity.Kind.DROMORAPTOR ? 0xB03020
-					: kind == ReptilianEntity.Kind.DROMORAPTOR_AZUL ? 0x2E6FD0 : 0x3E6B2A;
+					: kind == ReptilianEntity.Kind.DROMORAPTOR_AZUL ? 0x2E6FD0
+					: kind == ReptilianEntity.Kind.DROMORAPTOR_VERDE ? 0x4CAF50 : 0x3E6B2A;
 			egg(kind.id, type, primary, 0x1A2A12);
 		}
 
@@ -106,5 +109,15 @@ public final class ModEntities {
 				.dimensions(1.0f, 0.8f).maxTrackingRange(10));
 		FabricDefaultAttributeRegistry.register(SKIFF_PHORA, PhoraEntity.attributes(false));
 		egg("skiff_phora", SKIFF_PHORA, 0x4A3A2A, 0xFF9020);
+
+		WITHER_ROSE_CREEPER = register("creeper_wither_rose", EntityType.Builder.create(WitherRoseCreeperEntity::new, SpawnGroup.MONSTER)
+				.dimensions(0.6f, 1.7f).makeFireImmune().maxTrackingRange(8));
+		FabricDefaultAttributeRegistry.register(WITHER_ROSE_CREEPER, WitherRoseCreeperEntity.attributes());
+		egg("creeper_wither_rose", WITHER_ROSE_CREEPER, 0x1C1C1C, 0x6B1B1B);
+
+		DACTILO_ADULT = register("dactilo_adulto", EntityType.Builder.create(DactiloAdultEntity::new, SpawnGroup.MONSTER)
+				.dimensions(1.6f, 1.0f).maxTrackingRange(12));
+		FabricDefaultAttributeRegistry.register(DACTILO_ADULT, DactiloAdultEntity.attributes());
+		egg("dactilo_adulto", DACTILO_ADULT, 0x8B5A2B, 0x2E1A0A);
 	}
 }

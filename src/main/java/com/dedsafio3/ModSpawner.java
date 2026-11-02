@@ -124,6 +124,16 @@ public final class ModSpawner {
 				(w, p) -> w.getBiome(p).matchesKey(BiomeKeys.DEEP_DARK), List.of(EntityType.WARDEN));
 		rule(DifficultyChange.BOMBA_WARDEN, World.OVERWORLD, Mode.CAVE, 4, 1, 2, 0.4, true,
 				(w, p) -> w.getBiome(p).matchesKey(BiomeKeys.DEEP_DARK), List.of(ModEntities.WARDEN_BOMB));
+		rule(DifficultyChange.WITHER_SKELETON_NATURAL, World.NETHER, Mode.FLOOR, 6, 1, 2, 0.6, true, (w, p) -> true,
+				List.of(EntityType.WITHER_SKELETON));
+		rule(DifficultyChange.CREEPER_WITHER_ROSE, World.NETHER, Mode.FLOOR, 4, 1, 1, 0.4, true, (w, p) -> true,
+				List.of(ModEntities.WITHER_ROSE_CREEPER));
+		rule(DifficultyChange.DROMORAPTOR_VERDE, World.OVERWORLD, Mode.SURFACE, 8, 3, 5, 0.25, true, ModSpawner::jungle,
+				List.of(ModEntities.REPTILIANS.get(ReptilianEntity.Kind.DROMORAPTOR_VERDE)));
+		rule(DifficultyChange.BOGGED_NIGHT, World.OVERWORLD, Mode.SURFACE, 6, 1, 3, 0.5, true, (w, p) -> !w.isDay(),
+				List.of(EntityType.BOGGED));
+		rule(DifficultyChange.STRAY_NIGHT, World.OVERWORLD, Mode.SURFACE, 6, 1, 3, 0.5, true, (w, p) -> !w.isDay(),
+				List.of(EntityType.STRAY));
 		rule(DifficultyChange.NARVAL_ACUIFERO, World.OVERWORLD, Mode.AQUIFER, 3, 1, 2, 0.3, true,
 				(w, p) -> p.getY() < 50, List.of(ModEntities.NARVAL));
 		rule(DifficultyChange.POD_PHORA, World.OVERWORLD, Mode.AIR, 3, 1, 2, 0.25, true, (w, p) -> true,

@@ -89,8 +89,8 @@ dyn = [f"color.{MOD}.{c}" for c in enum_colors] + [f"modifier.{MOD}.{m}" for m i
     + [f"gui.{MOD}.difficulty.{i}" for i in range(4)] + [f"gui.{MOD}.tab.{t}" for t in tabs]
 if len(mods) != 3:
     err(f"se esperaban 3 modificadores en WorldModifier.java, hay {len(mods)}")
-if len(tabs) != 4:
-    err(f"se esperaban 4 pestañas en DedsafioMenuScreen.java, hay {len(tabs)}")
+if len(tabs) != 7:
+    err(f"se esperaban 7 pestañas en DedsafioMenuScreen.java, hay {len(tabs)}")
 for k in dyn:
     for lang_name, lang in (("es_es", lang_es), ("en_us", lang_en)):
         if k not in lang:
@@ -107,8 +107,8 @@ print(f"payloads: {len(ids)} | modificadores: {len(mods)} | pestañas: {len(tabs
 # 4c) v1.1.1: cambios (DifficultyChange), mobs, texturas, mixin
 change_src = read(os.path.join(JAVA, "DifficultyChange.java"))
 change_ids = re.findall(r'^\s+[A-Z_0-9]+\("(\w+)",\s*Kind\.\w+\)', change_src, re.M)
-if len(change_ids) != 38:
-    err(f"se esperaban 38 cambios en DifficultyChange.java, hay {len(change_ids)}")
+if len(change_ids) != 47:
+    err(f"se esperaban 47 cambios en DifficultyChange.java, hay {len(change_ids)}")
 for cid in change_ids:
     for suffix in ("name", "desc", "wheel"):
         for lang_name, lang in (("es_es", lang_es), ("en_us", lang_en)):
@@ -121,8 +121,8 @@ for kind in ("difficulty", "mob", "moment"):
 ent_src = read(os.path.join(JAVA, "ModEntities.java")) + read(os.path.join(JAVA, "ReptilianEntity.java"))
 entity_ids = set(re.findall(r'register\("(\w+)"', ent_src)) | set(re.findall(r'^\s+[A-Z_]+\("(\w+)",\s*[\d.]+,', ent_src, re.M))
 entity_ids = {e for e in entity_ids if e not in ("kind",)}
-if len(entity_ids) != 16:
-    err(f"se esperaban 16 mobs nuevos, encontrados {sorted(entity_ids)}")
+if len(entity_ids) != 19:
+    err(f"se esperaban 19 mobs nuevos, encontrados {sorted(entity_ids)}")
 for eid in entity_ids:
     if not os.path.exists(os.path.join(RES, "assets", MOD, "textures", "entity", f"{eid}.png")):
         err(f"mob '{eid}': falta textures/entity/{eid}.png")

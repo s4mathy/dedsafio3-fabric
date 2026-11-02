@@ -51,7 +51,13 @@ public final class Resurrection {
 	private Resurrection() {
 	}
 
+	/** Morir siempre deja al jugador como alma (espectador); no depende de ningún cambio. */
 	private static boolean active() {
+		return true;
+	}
+
+	/** El cambio de la Cuchara solo decide si el ritual debe hacerse el mismo día en que se reclamó. */
+	private static boolean sameDayRule() {
 		return DifficultyChange.RESURRECTION_SPOON.isActive();
 	}
 
@@ -178,7 +184,7 @@ public final class Resurrection {
 		}
 		RITUALS.remove(reviver.getUuid());
 		// La Cuchara se gasta siempre; si ya no es del día en que fue reclamada, el Ritual falla.
-		boolean fresh = !active() || claimDay(spoon) == today(server);
+		boolean fresh = !sameDayRule() || claimDay(spoon) == today(server);
 		spoon.decrement(1);
 		if (!fresh) {
 			reviver.sendMessage(Text.translatable("message.dedsafio3.ritual_expired"), false);

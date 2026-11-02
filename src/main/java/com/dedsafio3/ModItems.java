@@ -1,6 +1,7 @@
 package com.dedsafio3;
 
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -51,6 +52,13 @@ public final class ModItems {
 	public static final Item CUCHARA_RESURRECCION = register("cuchara_resurreccion",
 			new TooltipItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC)));
 
+	// --- Pesadillas: la Fruta quita el Insomnia y los Dáctylos Adultos; el Indicador muestra el nivel de Insomnia ---
+	public static final Item FRUTA_ESPACIO = register("fruta_espacio", new SpaceFruitItem(new Item.Settings()
+			.food(new FoodComponent.Builder().nutrition(6).saturationModifier(0.6f).alwaysEdible().build())
+			.rarity(Rarity.EPIC)));
+	public static final Item INDICADOR_INSOMNIA = register("indicador_insomnia",
+			new TooltipItem(new Item.Settings().maxCount(1).rarity(Rarity.UNCOMMON)));
+
 	// --- Arma ---
 	public static final Item ESPADA_CAOTICA = register("espada_caotica", new ChaosSwordItem(
 			ToolMaterials.NETHERITE,
@@ -82,6 +90,8 @@ public final class ModItems {
 						entries.add(totem);
 					}
 					entries.add(CUCHARA_RESURRECCION);
+					entries.add(FRUTA_ESPACIO);
+					entries.add(INDICADOR_INSOMNIA);
 					entries.add(ModBlocks.RITUAL_CAMPFIRE);
 					entries.add(ESPADA_CAOTICA);
 					for (Item egg : ModEntities.EGGS) {

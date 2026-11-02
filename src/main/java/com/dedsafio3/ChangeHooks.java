@@ -152,6 +152,24 @@ public final class ChangeHooks {
 		});
 
 		ServerTickEvents.END_WORLD_TICK.register(ChangeHooks::tickWorld);
+
+		// Animales extintos: un gas acaba con los animales cercanos a los jugadores (las mascotas con dueño se salvan).
+		ServerTickEvents.END_WORLD_TICK.register(world -> {
+			if (world.getTime() % 40 != 0 || !DifficultyChange.ANIMALS_EXTINCT.isActive()) {
+				return;
+			}
+			for (ServerPlayerEntity player : world.getPlayers()) {
+				for (net.minecraft.entity.passive.AnimalEntity animal : world.getEntitiesByClass(
+						net.minecraft.entity.passive.AnimalEntity.class, player.getBoundingBox().expand(96.0), a -> true)) {
+					if (animal instanceof net.minecraft.entity.passive.TameableEntity tame && tame.isTamed()) {
+						continue;
+					}
+					world.spawnParticles(net.minecraft.particle.ParticleTypes.SNEEZE, animal.getX(), animal.getBodyY(0.5),
+							animal.getZ(), 12, 0.4, 0.4, 0.4, 0.02);
+					animal.damage(world.getDamageSources().magic(), 1.0E6f);
+				}
+			}
+		});
 	}
 
 	private static void tickWorld(ServerWorld world) {

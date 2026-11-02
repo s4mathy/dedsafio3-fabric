@@ -11,20 +11,23 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 /**
- * Menú interactivo (tecla K o /dedsafio menu). Tres pestañas:
- * General (dificultad, PvP, animación de muerte...), Ruletas (peso de cada color y giro de prueba)
- * y Mundo (modificaciones activas). Cada cambio se envía al servidor, que lo valida y lo aplica.
+ * Menú interactivo (tecla K o /dedsafio menu). Pestañas:
+ * General (dificultad, PvP, animación de muerte...), Ruletas (peso de cada color y giro de prueba),
+ * Mundo (modificaciones activas), Dificultad / Mobs / Momentos (los cambios, separados por tipo) y Buscar. Cada cambio se envía al servidor, que lo valida y lo aplica.
  */
 public class DedsafioMenuScreen extends Screen {
 	private enum Tab {
-		GENERAL("general"), WHEELS("wheels"), WORLD("world"), CHANGES("changes");
+		GENERAL("general"), WHEELS("wheels"), WORLD("world"), DIFFICULTY("difficulty"), MOBS("mobs"), MOMENTS("moments"),
+		SEARCH("search");
 
 		private final String id;
 
@@ -41,6 +44,8 @@ public class DedsafioMenuScreen extends Screen {
 
 	private Tab tab = Tab.GENERAL;
 	private int page;
+	/** Texto de la búsqueda; se conserva al reconstruir la pantalla. */
+	private String query = "";
 	private final List<Label> labels = new ArrayList<>();
 
 	public DedsafioMenuScreen(MenuState state) {
@@ -73,6 +78,7 @@ public class DedsafioMenuScreen extends Screen {
 			Tab t = tabs[i];
 			ButtonWidget button = ButtonWidget.builder(Text.translatable("gui.dedsafio3.tab." + t.id), b -> {
 				tab = t;
+				page = 0;
 				clearAndInit();
 			}).dimensions(tabX + i * (tabW + 4), 6, tabW, 20).build();
 			button.active = tab != t;
@@ -83,7 +89,10 @@ public class DedsafioMenuScreen extends Screen {
 			case GENERAL -> initGeneral(cx);
 			case WHEELS -> initWheels(cx);
 			case WORLD -> initWorld(cx);
-			case CHANGES -> initChanges(cx);
+			case DIFFICULTY -> initChanges(cx, DifficultyChange.Kind.DIFFICULTY);
+			case MOBS -> initChanges(cx, DifficultyChange.Kind.MOB);
+			case MOMENTS -> initChanges(cx, DifficultyChange.Kind.MOMENT);
+			case SEARCH -> initChanges(cx, null);
 		}
 
 		addDrawableChild(ButtonWidget.builder(Text.translatable("gui.dedsafio3.close"), b -> close())
@@ -154,27 +163,65 @@ public class DedsafioMenuScreen extends Screen {
 				b -> action("death_preview", "")).dimensions(x, y + 24, w, 20).build());
 	}
 
+	/** Un cambio coincide con la búsqueda si el texto está en su nombre o en su descripción (ya traducidos). */
+	private static boolean matches(DifficultyChange change, String q) {
+		return Text.translatable(change.nameKey()).getString().toLowerCase(Locale.ROOT).contains(q)
+				|| Text.translatable(change.descKey()).getString().toLowerCase(Locale.ROOT).contains(q);
+	}
+
 	/**
-	 * Cambios de dificultad, mobs nuevos y Momento Reviil. El interruptor activa/desactiva el cambio (al activarlo,
-	 * el servidor gira la ruleta naranja para todos); "Avisar" solo lo anuncia en el chat, sin ruleta.
+	 * Lista de cambios de un tipo (Dificultad, Mobs o Momentos) o, con {@code kind == null}, el buscador sobre todos.
+	 * El interruptor activa/desactiva el cambio (al activarlo el servidor gira la ruleta para todos);
+	 * "Avisar" lo activa y lo anuncia en el chat, sin ruleta.
 	 */
-	private void initChanges(int cx) {
-		DifficultyChange[] all = DifficultyChange.values();
-		int pages = (all.length + CHANGES_PER_PAGE - 1) / CHANGES_PER_PAGE;
+	private void initChanges(int cx, DifficultyChange.Kind kind) {
+		boolean search = kind == null;
+		String q = query.trim().toLowerCase(Locale.ROOT);
+		List<DifficultyChange> list = new ArrayList<>();
+		for (DifficultyChange change : DifficultyChange.values()) {
+			if (search ? (!q.isEmpty() && !matches(change, q)) : change.kind() != kind) {
+				continue;
+			}
+			list.add(change);
+		}
+		int perPage = search ? 5 : CHANGES_PER_PAGE;
+		int top = search ? 58 : 44;
+		int pages = Math.max(1, (list.size() + perPage - 1) / perPage);
 		page = Math.max(0, Math.min(page, pages - 1));
-		labels.add(new Label(Text.translatable("gui.dedsafio3.changes_hint"), cx, 30, 0xAAAAAA));
+
+		if (search) {
+			TextFieldWidget field = new TextFieldWidget(textRenderer, cx - 128, 30, 256, 20,
+					Text.translatable("gui.dedsafio3.tab.search"));
+			field.setPlaceholder(Text.translatable("gui.dedsafio3.search.hint"));
+			field.setMaxLength(40);
+			field.setText(query);
+			field.setChangedListener(text -> {
+				if (!text.equals(query)) {
+					query = text;
+					page = 0;
+					clearAndInit();
+				}
+			});
+			addDrawableChild(field);
+			setInitialFocus(field);
+			if (list.isEmpty()) {
+				labels.add(new Label(Text.translatable("gui.dedsafio3.search.empty"), cx, top + 8, 0xAAAAAA));
+			}
+		} else {
+			labels.add(new Label(Text.translatable("gui.dedsafio3.changes_hint"), cx, 30, 0xAAAAAA));
+		}
 
 		int x = cx - 128;
 		int rows = 0;
 		boolean hasMoment = false;
-		for (int i = 0; i < CHANGES_PER_PAGE; i++) {
-			int index = page * CHANGES_PER_PAGE + i;
-			if (index >= all.length) {
+		for (int i = 0; i < perPage; i++) {
+			int index = page * perPage + i;
+			if (index >= list.size()) {
 				break;
 			}
-			DifficultyChange change = all[index];
+			DifficultyChange change = list.get(index);
 			boolean on = state.changes().contains(change.id());
-			int y = 44 + i * 26;
+			int y = top + i * 26;
 			Text label = Text.translatable(change.nameKey()).append(": ")
 					.append(Text.translatable(on ? "gui.dedsafio3.on" : "gui.dedsafio3.off"));
 			addDrawableChild(ButtonWidget.builder(label, b -> setting("change." + change.id(), on ? 0 : 1))
@@ -188,8 +235,8 @@ public class DedsafioMenuScreen extends Screen {
 			rows++;
 			hasMoment |= change.kind() == DifficultyChange.Kind.MOMENT;
 		}
-		if (hasMoment) {
-			addDrawableChild(new IntSlider(x, 44 + rows * 26 + 2, 256, 20, Text.translatable("gui.dedsafio3.reviil_seconds"),
+		if (hasMoment || kind == DifficultyChange.Kind.MOMENT) {
+			addDrawableChild(new IntSlider(x, top + rows * 26 + 2, 256, 20, Text.translatable("gui.dedsafio3.reviil_seconds"),
 					20, 600, state.reviilSeconds(), v -> setting("reviil_seconds", v)));
 		}
 

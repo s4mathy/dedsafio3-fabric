@@ -31,7 +31,8 @@ COLORS = {  # id -> (rgb, tinte vanilla de tinte para la receta)
 }
 
 ITEMS = ["dedita", "dedita_plata", "dedita_oro", "ficha_ruleta",
-         "totem_rojo", "totem_azul", "totem_dorado", "espada_caotica", "cuchara_resurreccion"]
+         "totem_rojo", "totem_azul", "totem_dorado", "espada_caotica", "cuchara_resurreccion",
+         "fruta_espacio", "indicador_insomnia"]
 
 # ----------------------------------------------------------------------------- idiomas
 # Fuente única de nombres. Las claves de premios deben coincidir con Roulette.java
@@ -682,6 +683,47 @@ CHANGES = {
                         "Reviil Moment: Electric Creepers",
                         "Reviil launched a rain of Electric Creepers! Electric Creepers with 1 Health will randomly appear at your position. "
                         "Reviil also swapped the humans' positions and cast a spell so humans cannot see their health."),
+    # --- v1.5.0 (textos interpretados a partir de las capturas del Dedsafio 4)
+    "wither_skeleton_natural": ("difficulty", "Wither Skeletons naturales",
+                                "Ahora los Wither Skeletons aparecen naturalmente en el Nether, no solo en las fortalezas.",
+                                "Natural Wither Skeletons",
+                                "Wither Skeletons now spawn naturally in the Nether, not only in fortresses."),
+    "pesadillas": ("difficulty", "Pesadillas",
+                   "Si pasas días sin dormir sufrirás Insomnia (bajo, medio o alto) y tendrás pesadillas cada vez peores. "
+                   "Un Indicador de Insomnia te muestra tu nivel. Dormir lo cura.",
+                   "Nightmares",
+                   "If you go days without sleeping you will suffer Insomnia (low, medium or high) and increasingly worse nightmares. "
+                   "An Insomnia Indicator shows your level. Sleeping cures it."),
+    "dactilo_adulto": ("mob", "Dáctylo Adulto",
+                       "Amo de los cielos. Con Insomnia alta aparece y te atrapa, te eleva por los aires y te suelta desde lo alto. "
+                       "Solo la Fruta del Espacio entre Dimensiones lo hace desaparecer.",
+                       "Adult Dactyl",
+                       "Lord of the skies. With high Insomnia it appears, grabs you, lifts you into the air and drops you from above. "
+                       "Only the Interdimensional Space Fruit makes it vanish."),
+    "creeper_wither_rose": ("mob", "Creeper de Wither Rose",
+                            "Aparece en el Nether. Al explotar aplica Wither a todos los cercanos y deja una Wither Rose.",
+                            "Wither Rose Creeper",
+                            "Spawns in the Nether. When it explodes it applies Wither to everyone nearby and leaves a Wither Rose."),
+    "dromoraptor_verde": ("mob", "Dromoraptor Verde",
+                          "Depredador de la selva. Su ataque aplica Veneno II durante 2 segundos. Se desplaza en manada.",
+                          "Green Dromoraptor",
+                          "Jungle predator. Its attack applies Poison II for 2 seconds. Moves in packs."),
+    "dromoraptor_cherry": ("difficulty", "Dromoraptores en el bioma Cherry",
+                           "Los Dromoraptores que ataquen en un bioma Cherry hacen 7 de daño extra.",
+                           "Dromoraptors in the Cherry biome",
+                           "Dromoraptors attacking in a Cherry biome deal 7 extra damage."),
+    "animals_extinct": ("difficulty", "Animales extintos",
+                        "Un gas misterioso extingue a los animales: todos los animales cercanos a los jugadores mueren (las mascotas se salvan).",
+                        "Extinct animals",
+                        "A mysterious gas wipes out animals: every animal near players dies (pets are spared)."),
+    "bogged_night": ("difficulty", "Bogged de noche",
+                     "Ahora los esqueletos Bogged aparecen por la noche en cualquier lugar del mundo.",
+                     "Bogged at night",
+                     "Bogged skeletons now spawn at night anywhere in the world."),
+    "stray_night": ("difficulty", "Stray de noche",
+                    "Ahora los esqueletos Stray aparecen por la noche en cualquier lugar del mundo.",
+                    "Stray at night",
+                    "Stray skeletons now spawn at night anywhere in the world."),
 }
 
 TITLES = {
@@ -706,10 +748,29 @@ ENTITY_NAMES = {  # id -> (es, en): coinciden con los ids de ModEntities / Repti
     "pod_phora": ("Pod Phora", "Phora Pod"),
     "skiff_phora": ("Skiff Phora", "Phora Skiff"),
     "creeper_pasto": ("Creeper de Pasto", "Grass Creeper"),
+    "creeper_wither_rose": ("Creeper de Wither Rose", "Wither Rose Creeper"),
+    "dactilo_adulto": ("Dáctylo Adulto", "Adult Dactyl"),
+    "dromoraptor_verde": ("Dromoraptor Verde", "Green Dromoraptor"),
 }
 
 V111_GUI = {
     "es_es": {
+        "gui.dedsafio3.tab.difficulty": "Dificultad",
+        "gui.dedsafio3.tab.mobs": "Mobs",
+        "gui.dedsafio3.tab.moments": "Momentos",
+        "gui.dedsafio3.tab.search": "Buscar",
+        "gui.dedsafio3.search.hint": "Escribe para buscar un cambio…",
+        "gui.dedsafio3.search.empty": "Sin resultados",
+        "message.dedsafio3.reminder_space_fruit": "§dRecordatorio: la Fruta del Espacio entre Dimensiones hace desaparecer a los Dáctylos Adultos.",
+        "message.dedsafio3.space_fruit": "§dLa Fruta del Espacio entre Dimensiones hizo desaparecer %s Dáctylo(s) Adulto(s) y quitó tu Insomnia.",
+        "item.dedsafio3.fruta_espacio": "Fruta del Espacio entre Dimensiones",
+        "item.dedsafio3.fruta_espacio.tooltip": "Al comerla desaparecen todos los Dáctylos Adultos y se cura el Insomnia.",
+        "item.dedsafio3.indicador_insomnia": "Indicador de Insomnia",
+        "item.dedsafio3.indicador_insomnia.tooltip": "Muestra tu nivel de Insomnia. Duerme para curarlo.",
+        "item.dedsafio3.indicador_insomnia.level.none": "Indicador de Insomnia: sin Insomnia",
+        "item.dedsafio3.indicador_insomnia.level.low": "Indicador de Insomnia: Bajo",
+        "item.dedsafio3.indicador_insomnia.level.medium": "Indicador de Insomnia: Medio",
+        "item.dedsafio3.indicador_insomnia.level.high": "Indicador de Insomnia: ¡Alto!",
         "gui.dedsafio3.tab.changes": "Cambios",
         "gui.dedsafio3.changes_hint": "Activar gira la ruleta naranja (roja en los Momentos Reviil) · Avisar lo activa y lo anuncia en el chat, sin ruleta",
         "gui.dedsafio3.notify": "Avisar",
@@ -750,6 +811,22 @@ V111_GUI = {
         "message.dedsafio3.reviil_moon_death": "§5%s miró a la Luna y la maldición de Reviil se cumplió. Maldición lunar desactivada.",
     },
     "en_us": {
+        "gui.dedsafio3.tab.difficulty": "Difficulty",
+        "gui.dedsafio3.tab.mobs": "Mobs",
+        "gui.dedsafio3.tab.moments": "Moments",
+        "gui.dedsafio3.tab.search": "Search",
+        "gui.dedsafio3.search.hint": "Type to search a change…",
+        "gui.dedsafio3.search.empty": "No results",
+        "message.dedsafio3.reminder_space_fruit": "§dReminder: the Interdimensional Space Fruit makes Adult Dactyls vanish.",
+        "message.dedsafio3.space_fruit": "§dThe Interdimensional Space Fruit made %s Adult Dactyl(s) vanish and cured your Insomnia.",
+        "item.dedsafio3.fruta_espacio": "Interdimensional Space Fruit",
+        "item.dedsafio3.fruta_espacio.tooltip": "Eating it removes every Adult Dactyl and cures Insomnia.",
+        "item.dedsafio3.indicador_insomnia": "Insomnia Indicator",
+        "item.dedsafio3.indicador_insomnia.tooltip": "Shows your Insomnia level. Sleep to cure it.",
+        "item.dedsafio3.indicador_insomnia.level.none": "Insomnia Indicator: no Insomnia",
+        "item.dedsafio3.indicador_insomnia.level.low": "Insomnia Indicator: Low",
+        "item.dedsafio3.indicador_insomnia.level.medium": "Insomnia Indicator: Medium",
+        "item.dedsafio3.indicador_insomnia.level.high": "Insomnia Indicator: High!",
         "gui.dedsafio3.tab.changes": "Changes",
         "gui.dedsafio3.changes_hint": "Enabling spins the orange wheel (red for Reviil Moments) · Notify enables it and announces it in chat, no wheel",
         "gui.dedsafio3.notify": "Notify",
@@ -969,6 +1046,43 @@ def make_plumosaurio():
     return img
 
 
+def make_space_fruit():
+    """Fruta del Espacio 16x16: fruta violeta con estrellas y una hojita cian."""
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    cx, cy = 8, 9.5
+    for y in range(16):
+        for x in range(16):
+            r = math.hypot(x - cx, (y - cy) * 1.05)
+            if r < 5.6:
+                edge = r > 4.5
+                px(img, x, y, (60, 30, 110) if edge else (130, 70, 200))
+    for (x, y) in ((6, 8), (10, 7), (9, 11), (6, 12)):
+        px(img, x, y, (240, 230, 255))
+    px(img, 8, 3, (90, 60, 40)); px(img, 8, 4, (90, 60, 40))
+    for (x, y) in ((9, 2), (10, 2), (10, 3), (11, 3)):
+        px(img, x, y, (80, 220, 220))
+    return img
+
+
+def make_insomnia_indicator():
+    """Indicador de Insomnia 16x16: reloj/luna con barra de nivel."""
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    for y in range(16):
+        for x in range(16):
+            r = math.hypot(x - 7.5, y - 7.5)
+            if r < 6.4:
+                px(img, x, y, (30, 30, 70) if r > 5.2 else (60, 60, 130))
+    for y in range(16):
+        for x in range(16):
+            r2 = math.hypot(x - 9.5, y - 6.5)
+            r1 = math.hypot(x - 7.5, y - 7.5)
+            if r1 < 4.2 and r2 > 3.6:
+                px(img, x, y, (250, 235, 150))
+    for i, col in enumerate(((90, 200, 90), (240, 200, 60), (230, 60, 50))):
+        fill(img, 3 + i * 4, 13, 6 + i * 4, 15, col)
+    return img
+
+
 def make_poison_icon():
     """Icono de efecto 18x18: gota verde."""
     img = Image.new("RGBA", (18, 18), (0, 0, 0, 0))
@@ -1173,6 +1287,11 @@ def main():
     save_png(make_flyer((74, 58, 42), (255, 144, 32), 131, (255, 220, 120)), "textures", "entity", "skiff_phora.png")
     save_png(make_flyer((52, 150, 44), (24, 90, 24), 141, (15, 30, 10)), "textures", "entity", "creeper_pasto.png")
     save_png(make_spoon(), "textures", "item", "cuchara_resurreccion.png")
+    save_png(make_space_fruit(), "textures", "item", "fruta_espacio.png")
+    save_png(make_insomnia_indicator(), "textures", "item", "indicador_insomnia.png")
+    save_png(make_flyer((24, 24, 28), (110, 20, 24), 151, (230, 40, 40)), "textures", "entity", "creeper_wither_rose.png")
+    save_png(skin((64, 32), (122, 84, 46), 14, 161), "textures", "entity", "dactilo_adulto.png")
+    save_png(make_biped((46, 140, 62), 16, 48, (24, 90, 40), (170, 240, 120), (255, 240, 80)), "textures", "entity", "dromoraptor_verde.png")
     save_png(make_soul_icon(), "textures", "gui", "soul.png")
     save_png(make_poison_icon(), "textures", "mob_effect", "veneno_primitivo.png")
     for eid in ENTITY_NAMES:

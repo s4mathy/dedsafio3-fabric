@@ -45,7 +45,8 @@ public class ReptilianEntity extends HostileEntity implements RangedAttackMob {
 		ARQUERO("reptisaurio_arquero", 24.0, 3.0, 0.25, true, Items.BOW),
 		LANZA("reptisaurio_lanza", 36.0, 9.0, 0.27, true, Items.TRIDENT),
 		DROMORAPTOR("dromoraptor_rojo", 34.0, 10.0, 0.38, false, null),
-		DROMORAPTOR_AZUL("dromoraptor_azul", 28.0, 8.0, 0.42, false, null);
+		DROMORAPTOR_AZUL("dromoraptor_azul", 28.0, 8.0, 0.42, false, null),
+		DROMORAPTOR_VERDE("dromoraptor_verde", 32.0, 9.0, 0.40, false, null);
 
 		public final String id;
 		final double health;
@@ -153,7 +154,18 @@ public class ReptilianEntity extends HostileEntity implements RangedAttackMob {
 
 	@Override
 	public boolean tryAttack(Entity target) {
+		boolean raptor = kind == Kind.DROMORAPTOR || kind == Kind.DROMORAPTOR_AZUL || kind == Kind.DROMORAPTOR_VERDE;
+		// En el bioma Cherry los Dromoraptores hacen 7 de daño extra (cambio "Dromoraptores en Cherry").
+		boolean cherry = raptor && DifficultyChange.DROMORAPTOR_CHERRY.isActive()
+				&& getWorld().getBiome(getBlockPos()).matchesKey(net.minecraft.world.biome.BiomeKeys.CHERRY_GROVE);
+		var damageAttr = getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+		if (damageAttr != null) {
+			damageAttr.setBaseValue(kind.damage + (cherry ? 7.0 : 0.0));
+		}
 		boolean hit = super.tryAttack(target);
+		if (hit && kind == Kind.DROMORAPTOR_VERDE && target instanceof LivingEntity victim) {
+			victim.addStatusEffect(new StatusEffectInstance(ModEffects.PRIMITIVE_POISON, 40, 1), this);
+		}
 		if (hit && kind.poison && target instanceof LivingEntity living) {
 			living.addStatusEffect(new StatusEffectInstance(ModEffects.PRIMITIVE_POISON, 200, 0), this);
 		}
