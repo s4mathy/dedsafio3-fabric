@@ -63,6 +63,10 @@ public final class ModItems {
 	public static final Item INDICADOR_INSOMNIA = register("indicador_insomnia",
 			new TooltipItem(new Item.Settings().maxCount(1).rarity(Rarity.UNCOMMON)));
 
+	// --- Gleba: la nave espacial viaja a Gleba desde una Plataforma de Despegue ---
+	public static final Item NAVE_ESPACIAL = register("nave_espacial",
+			new SpaceshipItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC)));
+
 	// --- Arma ---
 	public static final Item ESPADA_CAOTICA = register("espada_caotica", new ChaosSwordItem(
 			ToolMaterials.NETHERITE,
@@ -98,6 +102,8 @@ public final class ModItems {
 					entries.add(FRUTA_ESPACIO);
 					entries.add(INDICADOR_INSOMNIA);
 					entries.add(ModBlocks.RITUAL_CAMPFIRE);
+					entries.add(ModBlocks.PLATFORM);
+					entries.add(NAVE_ESPACIAL);
 					entries.add(ESPADA_CAOTICA);
 					for (Item egg : ModEntities.EGGS) {
 						entries.add(egg);

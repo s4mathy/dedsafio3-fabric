@@ -20,6 +20,9 @@ public final class ModBlocks {
 	/** Fogata del Ritual (más grande que la vanilla), necesaria para usar la Cuchara de la Resurrección. */
 	public static RitualCampfireBlock RITUAL_CAMPFIRE;
 
+	/** Plataforma de Despegue: la nave espacial solo se coloca sobre ella. */
+	public static net.minecraft.block.Block PLATFORM;
+
 	private ModBlocks() {
 	}
 
@@ -43,6 +46,10 @@ public final class ModBlocks {
 				AbstractBlock.Settings.create().mapColor(MapColor.BROWN).strength(2.0f).sounds(BlockSoundGroup.WOOD)
 						.luminance(state -> 15).nonOpaque()));
 		Registry.register(Registries.ITEM, Dedsafio3.id("fogata_ritual"), new BlockItem(RITUAL_CAMPFIRE, new Item.Settings()));
+		PLATFORM = Registry.register(Registries.BLOCK, Dedsafio3.id("plataforma_despegue"), new net.minecraft.block.Block(
+				AbstractBlock.Settings.create().mapColor(MapColor.IRON_GRAY).strength(5.0f, 8.0f).sounds(BlockSoundGroup.METAL)
+						.requiresTool()));
+		Registry.register(Registries.ITEM, Dedsafio3.id("plataforma_despegue"), new BlockItem(PLATFORM, new Item.Settings()));
 		ROULETTE_RANDOM = registerBlock("roulette_random", null, MapColor.GOLD);
 		for (RouletteColor color : RouletteColor.values()) {
 			ROULETTES.put(color, registerBlock("roulette_" + color.id(), color, color.mapColor()));

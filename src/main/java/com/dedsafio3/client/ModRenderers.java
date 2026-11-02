@@ -1,6 +1,7 @@
 package com.dedsafio3.client;
 
 import com.dedsafio3.DactiloAdultEntity;
+import com.dedsafio3.SpaceshipEntity;
 import com.dedsafio3.DactiloEntity;
 import com.dedsafio3.WitherRoseCreeperEntity;
 import com.dedsafio3.GrassCreeperEntity;
@@ -58,6 +59,8 @@ public final class ModRenderers {
 				ctx -> new FlyerRenderer<WitherRoseCreeperEntity>(ctx, "creeper_wither_rose", 1.0f, 1.0f, 1.0f));
 		EntityRendererRegistry.register(ModEntities.DACTILO_ADULT,
 				ctx -> new FlyerRenderer<DactiloAdultEntity>(ctx, "dactilo_adulto", 1.8f, 1.2f, 1.8f));
+		EntityRendererRegistry.register(ModEntities.SPACESHIP,
+				ctx -> new FlyerRenderer<SpaceshipEntity>(ctx, "nave_espacial", 2.2f, 2.2f, 2.2f));
 		ModEntities.REPTILIANS.values().forEach(type -> EntityRendererRegistry.register(type, ReptilianRenderer::new));
 	}
 

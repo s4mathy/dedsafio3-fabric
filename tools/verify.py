@@ -120,7 +120,7 @@ for kind in ("difficulty", "mob", "moment"):
             err(f"[{lang_name}] falta change.{MOD}.title.{kind}")
 ent_src = read(os.path.join(JAVA, "ModEntities.java")) + read(os.path.join(JAVA, "ReptilianEntity.java"))
 entity_ids = set(re.findall(r'register\("(\w+)"', ent_src)) | set(re.findall(r'^\s+[A-Z_]+\("(\w+)",\s*[\d.]+,', ent_src, re.M))
-entity_ids = {e for e in entity_ids if e not in ("kind",)}
+entity_ids = {e for e in entity_ids if e not in ("kind", "nave_espacial")}
 if len(entity_ids) != 19:
     err(f"se esperaban 19 mobs nuevos, encontrados {sorted(entity_ids)}")
 for eid in entity_ids:

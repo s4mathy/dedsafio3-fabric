@@ -32,7 +32,8 @@ COLORS = {  # id -> (rgb, tinte vanilla de tinte para la receta)
 
 ITEMS = ["dedita", "dedita_plata", "dedita_oro", "ficha_ruleta",
          "totem_rojo", "totem_azul", "totem_dorado", "espada_caotica", "cuchara_resurreccion",
-         "fruta_espacio", "indicador_insomnia", "tenedor_resurreccion"]
+         "fruta_espacio", "indicador_insomnia", "tenedor_resurreccion",
+         "nave_espacial"]
 
 # ----------------------------------------------------------------------------- idiomas
 # Fuente única de nombres. Las claves de premios deben coincidir con Roulette.java
@@ -751,10 +752,20 @@ ENTITY_NAMES = {  # id -> (es, en): coinciden con los ids de ModEntities / Repti
     "creeper_wither_rose": ("Creeper de Wither Rose", "Wither Rose Creeper"),
     "dactilo_adulto": ("Dáctylo Adulto", "Adult Dactyl"),
     "dromoraptor_verde": ("Dromoraptor Verde", "Green Dromoraptor"),
+    "nave_espacial": ("Nave Espacial", "Spaceship"),
 }
 
 V111_GUI = {
     "es_es": {
+        "block.dedsafio3.plataforma_despegue": "Plataforma de Despegue",
+        "item.dedsafio3.nave_espacial": "Nave Espacial",
+        "item.dedsafio3.nave_espacial.tooltip": "Solo se puede colocar sobre una Plataforma de Despegue. Súbete con clic derecho: viaja a Gleba y de vuelta.",
+        "message.dedsafio3.ship_only_platform": "§cLa nave espacial solo se puede colocar sobre una Plataforma de Despegue.",
+        "message.dedsafio3.ship_unavailable": "§cLa nave no puede despegar aquí (solo desde la Tierra o Gleba).",
+        "message.dedsafio3.ship_blocked": "§cNo hay espacio libre sobre la plataforma (necesita 3 bloques de altura y que no haya otra nave).",
+        "message.dedsafio3.ship_countdown": "§eDespegue en %s…",
+        "message.dedsafio3.ship_arrived_gleba": "§aHas aterrizado en Gleba, el Planeta Orgánico.",
+        "message.dedsafio3.ship_arrived_home": "§aHas aterrizado de vuelta en la Tierra.",
         "gui.dedsafio3.tab.difficulty": "Dificultad",
         "gui.dedsafio3.tab.mobs": "Mobs",
         "gui.dedsafio3.tab.moments": "Momentos",
@@ -817,6 +828,15 @@ V111_GUI = {
         "message.dedsafio3.reviil_moon_death": "§5%s miró a la Luna y la maldición de Reviil se cumplió. Maldición lunar desactivada.",
     },
     "en_us": {
+        "block.dedsafio3.plataforma_despegue": "Launch Platform",
+        "item.dedsafio3.nave_espacial": "Spaceship",
+        "item.dedsafio3.nave_espacial.tooltip": "Can only be placed on a Launch Platform. Right click to board: travels to Gleba and back.",
+        "message.dedsafio3.ship_only_platform": "§cThe spaceship can only be placed on a Launch Platform.",
+        "message.dedsafio3.ship_unavailable": "§cThe ship cannot take off here (only from Earth or Gleba).",
+        "message.dedsafio3.ship_blocked": "§cNo free space above the platform (needs 3 blocks of height and no other ship).",
+        "message.dedsafio3.ship_countdown": "§eLiftoff in %s…",
+        "message.dedsafio3.ship_arrived_gleba": "§aYou have landed on Gleba, the Organic Planet.",
+        "message.dedsafio3.ship_arrived_home": "§aYou have landed back on Earth.",
         "gui.dedsafio3.tab.difficulty": "Difficulty",
         "gui.dedsafio3.tab.mobs": "Mobs",
         "gui.dedsafio3.tab.moments": "Moments",
@@ -1111,6 +1131,49 @@ def make_insomnia_indicator():
     return img
 
 
+def make_platform_top():
+    """Plataforma de Despegue 16x16 (cara superior): chapa gris con franjas de aviso y marca circular."""
+    img = skin((16, 16), (96, 100, 108), 6, 171)
+    for i in range(16):
+        for (x, y) in ((i, 0), (i, 15), (0, i), (15, i)):
+            px(img, x, y, (230, 190, 40) if (x + y) % 4 < 2 else (30, 30, 34))
+    for y in range(16):
+        for x in range(16):
+            r = math.hypot(x - 7.5, y - 7.5)
+            if 3.0 < r < 4.6:
+                px(img, x, y, (230, 230, 235))
+    return img
+
+
+def make_platform_side():
+    """Lateral de la Plataforma: chapa con remaches."""
+    img = skin((16, 16), (84, 88, 96), 6, 172)
+    for y in (0, 15):
+        fill(img, 0, y, 16, y + 1, (40, 42, 48))
+    for (x, y) in ((2, 3), (13, 3), (2, 12), (13, 12)):
+        px(img, x, y, (170, 175, 185))
+    fill(img, 0, 7, 16, 9, (230, 190, 40))
+    return img
+
+
+def make_ship_item():
+    """Nave espacial 16x16: cohete blanco con ventana azul y aletas rojas."""
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    for y in range(1, 13):
+        w = 1 + min(y, 3) if y < 4 else 4
+        for x in range(8 - w, 8 + w):
+            edge = x == 8 - w or x == 8 + w - 1
+            px(img, x, y, (170, 175, 185) if edge else (235, 238, 245))
+    for (x, y) in ((7, 5), (8, 5), (7, 6), (8, 6)):
+        px(img, x, y, (70, 150, 230))
+    for y in range(9, 14):
+        px(img, 3, y, (200, 50, 45)); px(img, 12, y, (200, 50, 45))
+        px(img, 4, y + 1 if y < 13 else y, (200, 50, 45)); px(img, 11, y + 1 if y < 13 else y, (200, 50, 45))
+    for (x, y) in ((7, 13), (8, 13), (7, 14), (8, 14), (7, 15)):
+        px(img, x, y, (250, 160, 40))
+    return img
+
+
 def make_poison_icon():
     """Icono de efecto 18x18: gota verde."""
     img = Image.new("RGBA", (18, 18), (0, 0, 0, 0))
@@ -1252,6 +1315,62 @@ def main():
     write_json(os.path.join(DATA, "recipe", "fogata_ritual.json"), recipe_shaped(
         ["LLL", "LCL", "LLL"], {"L": "minecraft:oak_log", "C": "minecraft:campfire"}, f"{MOD}:fogata_ritual"))
 
+    # --- v1.6.0: Plataforma de Despegue, Nave Espacial y el planeta Gleba
+    save_png(make_platform_top(), "textures", "block", "plataforma_despegue_top.png")
+    save_png(make_platform_side(), "textures", "block", "plataforma_despegue_side.png")
+    save_png(make_platform_side(), "textures", "block", "plataforma_despegue_bottom.png")
+    write_json(os.path.join(ASSETS, "models", "block", "plataforma_despegue.json"), {
+        "parent": "minecraft:block/cube_bottom_top",
+        "textures": {"top": f"{MOD}:block/plataforma_despegue_top", "side": f"{MOD}:block/plataforma_despegue_side",
+                     "bottom": f"{MOD}:block/plataforma_despegue_bottom", "particle": f"{MOD}:block/plataforma_despegue_side"}})
+    write_json(os.path.join(ASSETS, "blockstates", "plataforma_despegue.json"),
+               {"variants": {"": {"model": f"{MOD}:block/plataforma_despegue"}}})
+    write_json(os.path.join(ASSETS, "models", "item", "plataforma_despegue.json"), {"parent": f"{MOD}:block/plataforma_despegue"})
+    write_json(os.path.join(DATA, "loot_table", "blocks", "plataforma_despegue.json"), {
+        "type": "minecraft:block",
+        "pools": [{"rolls": 1.0, "bonus_rolls": 0.0,
+                   "entries": [{"type": "minecraft:item", "name": f"{MOD}:plataforma_despegue"}],
+                   "conditions": [{"condition": "minecraft:survives_explosion"}]}],
+    })
+    write_json(os.path.join(DATA, "recipe", "plataforma_despegue.json"), recipe_shaped(
+        ["IRI", "IBI", "III"],
+        {"I": "minecraft:iron_block", "R": "minecraft:redstone_block", "B": "minecraft:blast_furnace"},
+        f"{MOD}:plataforma_despegue"))
+    write_json(os.path.join(DATA, "recipe", "nave_espacial.json"), recipe_shaped(
+        ["IGI", "IRI", "DFD"],
+        {"I": "minecraft:iron_block", "G": "minecraft:glass", "R": "minecraft:redstone_block",
+         "D": "minecraft:diamond", "F": "minecraft:firework_rocket"},
+        f"{MOD}:nave_espacial"))
+    save_png(make_ship_item(), "textures", "item", "nave_espacial.png")
+    save_png(make_flyer((205, 210, 220), (200, 50, 45), 181, (70, 150, 230)), "textures", "entity", "nave_espacial.png")
+
+    # Gleba: dimensión por datapack. Terreno del Overworld con un único bioma orgánico (hongos, hierba amarillenta).
+    write_json(os.path.join(DATA, "dimension_type", "gleba.json"), {
+        "ultrawarm": False, "natural": True, "coordinate_scale": 1.0, "has_skylight": True, "has_ceiling": False,
+        "ambient_light": 0.1, "piglin_safe": False, "bed_works": True, "respawn_anchor_works": False,
+        "has_raids": False, "logical_height": 384, "min_y": -64, "height": 384,
+        "infiniburn": "#minecraft:infiniburn_overworld", "effects": "minecraft:overworld",
+        "monster_spawn_light_level": {"type": "minecraft:uniform", "min_inclusive": 0, "max_inclusive": 7},
+        "monster_spawn_block_light_limit": 0})
+    write_json(os.path.join(DATA, "dimension", "gleba.json"), {
+        "type": f"{MOD}:gleba",
+        "generator": {"type": "minecraft:noise", "settings": "minecraft:overworld",
+                      "biome_source": {"type": "minecraft:fixed", "biome": f"{MOD}:gleba"}}})
+    features = [[] for _ in range(11)]
+    features[6] = ["minecraft:ore_dirt", "minecraft:ore_gravel", "minecraft:ore_coal_upper", "minecraft:ore_coal_lower",
+                   "minecraft:ore_iron_upper", "minecraft:ore_iron_middle", "minecraft:ore_gold", "minecraft:ore_redstone",
+                   "minecraft:ore_diamond", "minecraft:ore_lapis", "minecraft:ore_copper"]
+    features[8] = ["minecraft:spring_water", "minecraft:spring_lava"]
+    features[9] = ["minecraft:mushroom_island_vegetation", "minecraft:brown_mushroom_normal",
+                   "minecraft:red_mushroom_normal", "minecraft:patch_grass_plain"]
+    write_json(os.path.join(DATA, "worldgen", "biome", "gleba.json"), {
+        "has_precipitation": True, "temperature": 0.9, "downfall": 0.9,
+        "effects": {"sky_color": 0xC49AA8, "fog_color": 0xE6B8A2, "water_color": 0x6FAE4F, "water_fog_color": 0x4B7A32,
+                    "grass_color": 0xB5C23A, "foliage_color": 0x8FB035},
+        "spawners": {}, "spawn_costs": {},
+        "carvers": ["minecraft:cave", "minecraft:cave_extra_underground", "minecraft:canyon"],
+        "features": features})
+
     # --- modelos de ítems
     for name in ITEMS:
         parent = "minecraft:item/handheld" if name in ("espada_caotica", "cuchara_resurreccion", "tenedor_resurreccion") else "minecraft:item/generated"
@@ -1265,7 +1384,7 @@ def main():
     # --- tags
     write_json(os.path.join(ROOT, "data", "minecraft", "tags", "block", "mineable", "pickaxe.json"), {
         "replace": False,
-        "values": [f"{MOD}:roulette_{c}" for c in list(COLORS) + ["random"]],
+        "values": [f"{MOD}:roulette_{c}" for c in list(COLORS) + ["random"]] + [f"{MOD}:plataforma_despegue"],
     })
 
     # --- recetas

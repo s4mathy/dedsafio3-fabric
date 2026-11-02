@@ -29,6 +29,7 @@ public final class ModEntities {
 	public static EntityType<PhoraEntity> SKIFF_PHORA;
 	public static EntityType<WitherRoseCreeperEntity> WITHER_ROSE_CREEPER;
 	public static EntityType<DactiloAdultEntity> DACTILO_ADULT;
+	public static EntityType<SpaceshipEntity> SPACESHIP;
 	public static final Map<ReptilianEntity.Kind, EntityType<ReptilianEntity>> REPTILIANS = new EnumMap<>(ReptilianEntity.Kind.class);
 	/** Huevos de aparición (para el modo creativo). */
 	public static final List<Item> EGGS = new ArrayList<>();
@@ -119,5 +120,9 @@ public final class ModEntities {
 				.dimensions(1.6f, 1.0f).maxTrackingRange(12));
 		FabricDefaultAttributeRegistry.register(DACTILO_ADULT, DactiloAdultEntity.attributes());
 		egg("dactilo_adulto", DACTILO_ADULT, 0x8B5A2B, 0x2E1A0A);
+
+		SPACESHIP = register("nave_espacial", EntityType.Builder.create(SpaceshipEntity::new, SpawnGroup.MISC)
+				.dimensions(1.6f, 3.6f).makeFireImmune().maxTrackingRange(10));
+		FabricDefaultAttributeRegistry.register(SPACESHIP, SpaceshipEntity.attributes());
 	}
 }
