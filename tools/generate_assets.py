@@ -1439,7 +1439,7 @@ def main():
         "effects": {"sky_color": 0xC49AA8, "fog_color": 0xE6B8A2, "water_color": 0x6FAE4F, "water_fog_color": 0x4B7A32,
                     "grass_color": 0xB5C23A, "foliage_color": 0x8FB035},
         "spawners": {}, "spawn_costs": {},
-        "carvers": ["minecraft:cave", "minecraft:cave_extra_underground", "minecraft:canyon"],
+        "carvers": {"air": ["minecraft:cave", "minecraft:cave_extra_underground", "minecraft:canyon"]},
         "features": features})
 
     # --- modelos de ítems
