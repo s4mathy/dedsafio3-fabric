@@ -64,6 +64,16 @@ public final class ChangeHooks {
 					&& world.getRandom().nextFloat() < 0.12f) {
 				ModEntities.GRASS_CREEPER.spawn(serverWorld, pos, SpawnReason.TRIGGERED);
 			}
+			// Gusano de Carne: puede salir al romper bloques de "grasa" (aquí: barro). Parásito Volador: sale de las verrugas.
+			if (DifficultyChange.GUSANO_CARNE.isActive() && world instanceof ServerWorld serverWorld
+					&& (state.isOf(Blocks.MUD) || state.isOf(Blocks.PACKED_MUD)) && world.getRandom().nextFloat() < 0.3f) {
+				ModEntities.GLEBA_MOBS.get(GlebaMobEntity.Kind.GUSANO_CARNE).spawn(serverWorld, pos, SpawnReason.TRIGGERED);
+			}
+			if (DifficultyChange.PARASITO_VOLADOR.isActive() && world instanceof ServerWorld serverWorld
+					&& (state.isOf(Blocks.NETHER_WART_BLOCK) || state.isOf(Blocks.WARPED_WART_BLOCK))
+					&& world.getRandom().nextFloat() < 0.4f) {
+				ModEntities.GLEBA_MOBS.get(GlebaMobEntity.Kind.PARASITO_VOLADOR).spawn(serverWorld, pos, SpawnReason.TRIGGERED);
+			}
 			// Al romper una telaraña puede salir una Araña de Cueva.
 			if (DifficultyChange.COBWEB_SPIDER.isActive() && state.isOf(Blocks.COBWEB) && world instanceof ServerWorld serverWorld
 					&& world.getRandom().nextFloat() < 0.3f) {
@@ -149,6 +159,16 @@ public final class ChangeHooks {
 				}
 			}
 			return ActionResult.PASS;
+		});
+
+		// Keep Inventory (Fruta de Quiu): quien muere con el efecto conserva inventario y experiencia.
+		net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents.COPY_FROM.register((oldPlayer, newPlayer, alive) -> {
+			if (!alive && oldPlayer.hasStatusEffect(ModEffects.KEEP_INVENTORY)) {
+				newPlayer.getInventory().clone(oldPlayer.getInventory());
+				newPlayer.experienceLevel = oldPlayer.experienceLevel;
+				newPlayer.experienceProgress = oldPlayer.experienceProgress;
+				newPlayer.totalExperience = oldPlayer.totalExperience;
+			}
 		});
 
 		ServerTickEvents.END_WORLD_TICK.register(ChangeHooks::tickWorld);

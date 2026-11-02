@@ -107,8 +107,8 @@ print(f"payloads: {len(ids)} | modificadores: {len(mods)} | pestañas: {len(tabs
 # 4c) v1.1.1: cambios (DifficultyChange), mobs, texturas, mixin
 change_src = read(os.path.join(JAVA, "DifficultyChange.java"))
 change_ids = re.findall(r'^\s+[A-Z_0-9]+\("(\w+)",\s*Kind\.\w+\)', change_src, re.M)
-if len(change_ids) != 47:
-    err(f"se esperaban 47 cambios en DifficultyChange.java, hay {len(change_ids)}")
+if len(change_ids) != 55:
+    err(f"se esperaban 55 cambios en DifficultyChange.java, hay {len(change_ids)}")
 for cid in change_ids:
     for suffix in ("name", "desc", "wheel"):
         for lang_name, lang in (("es_es", lang_es), ("en_us", lang_en)):
@@ -118,11 +118,11 @@ for kind in ("difficulty", "mob", "moment"):
     for lang_name, lang in (("es_es", lang_es), ("en_us", lang_en)):
         if f"change.{MOD}.title.{kind}" not in lang:
             err(f"[{lang_name}] falta change.{MOD}.title.{kind}")
-ent_src = read(os.path.join(JAVA, "ModEntities.java")) + read(os.path.join(JAVA, "ReptilianEntity.java"))
+ent_src = read(os.path.join(JAVA, "ModEntities.java")) + read(os.path.join(JAVA, "ReptilianEntity.java")) + read(os.path.join(JAVA, "GlebaMobEntity.java"))
 entity_ids = set(re.findall(r'register\("(\w+)"', ent_src)) | set(re.findall(r'^\s+[A-Z_]+\("(\w+)",\s*[\d.]+,', ent_src, re.M))
 entity_ids = {e for e in entity_ids if e not in ("kind", "nave_espacial")}
-if len(entity_ids) != 19:
-    err(f"se esperaban 19 mobs nuevos, encontrados {sorted(entity_ids)}")
+if len(entity_ids) != 27:
+    err(f"se esperaban 27 mobs nuevos, encontrados {sorted(entity_ids)}")
 for eid in entity_ids:
     if not os.path.exists(os.path.join(RES, "assets", MOD, "textures", "entity", f"{eid}.png")):
         err(f"mob '{eid}': falta textures/entity/{eid}.png")

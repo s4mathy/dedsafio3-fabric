@@ -63,6 +63,11 @@ public final class ModItems {
 	public static final Item INDICADOR_INSOMNIA = register("indicador_insomnia",
 			new TooltipItem(new Item.Settings().maxCount(1).rarity(Rarity.UNCOMMON)));
 
+	// --- Fruta de Quiu: da el efecto Keep Inventory (se pierde al morir) ---
+	public static final Item FRUTA_QUIU = register("fruta_quiu", new QuiuFruitItem(new Item.Settings()
+			.food(new FoodComponent.Builder().nutrition(4).saturationModifier(0.5f).alwaysEdible().build())
+			.rarity(Rarity.EPIC)));
+
 	// --- Gleba: la nave espacial viaja a Gleba desde una Plataforma de Despegue ---
 	public static final Item NAVE_ESPACIAL = register("nave_espacial",
 			new SpaceshipItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC)));
@@ -104,6 +109,7 @@ public final class ModItems {
 					entries.add(ModBlocks.RITUAL_CAMPFIRE);
 					entries.add(ModBlocks.PLATFORM);
 					entries.add(NAVE_ESPACIAL);
+					entries.add(FRUTA_QUIU);
 					entries.add(ESPADA_CAOTICA);
 					for (Item egg : ModEntities.EGGS) {
 						entries.add(egg);

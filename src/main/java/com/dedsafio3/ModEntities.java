@@ -30,6 +30,7 @@ public final class ModEntities {
 	public static EntityType<WitherRoseCreeperEntity> WITHER_ROSE_CREEPER;
 	public static EntityType<DactiloAdultEntity> DACTILO_ADULT;
 	public static EntityType<SpaceshipEntity> SPACESHIP;
+	public static final Map<GlebaMobEntity.Kind, EntityType<GlebaMobEntity>> GLEBA_MOBS = new EnumMap<>(GlebaMobEntity.Kind.class);
 	public static final Map<ReptilianEntity.Kind, EntityType<ReptilianEntity>> REPTILIANS = new EnumMap<>(ReptilianEntity.Kind.class);
 	/** Huevos de aparición (para el modo creativo). */
 	public static final List<Item> EGGS = new ArrayList<>();
@@ -120,6 +121,15 @@ public final class ModEntities {
 				.dimensions(1.6f, 1.0f).maxTrackingRange(12));
 		FabricDefaultAttributeRegistry.register(DACTILO_ADULT, DactiloAdultEntity.attributes());
 		egg("dactilo_adulto", DACTILO_ADULT, 0x8B5A2B, 0x2E1A0A);
+
+		for (GlebaMobEntity.Kind kind : GlebaMobEntity.Kind.values()) {
+			EntityType<GlebaMobEntity> type = register(kind.id, EntityType.Builder
+					.<GlebaMobEntity>create((t, world) -> new GlebaMobEntity(t, world, kind), SpawnGroup.MONSTER)
+					.dimensions(kind.width, kind.height).maxTrackingRange(8));
+			FabricDefaultAttributeRegistry.register(type, GlebaMobEntity.attributes(kind));
+			GLEBA_MOBS.put(kind, type);
+			egg(kind.id, type, 0x6B8E3A, 0xD9C45A);
+		}
 
 		SPACESHIP = register("nave_espacial", EntityType.Builder.create(SpaceshipEntity::new, SpawnGroup.MISC)
 				.dimensions(1.6f, 3.6f).makeFireImmune().maxTrackingRange(10));

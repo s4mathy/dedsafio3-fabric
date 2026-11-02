@@ -26,6 +26,8 @@ public class Dedsafio3Client implements ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(DeathAnimPayload.ID,
 				(payload, context) -> DeathOverlay.start(payload));
 
+		ClientPlayNetworking.registerGlobalReceiver(com.dedsafio3.FlashPayload.ID,
+				(payload, context) -> FlashOverlay.start(payload.ticks()));
 		ModRenderers.register();
 		ClientPlayNetworking.registerGlobalReceiver(com.dedsafio3.SoulsPayload.ID, (payload, context) -> {
 			java.util.Set<java.util.UUID> set = new java.util.HashSet<>();
@@ -78,6 +80,7 @@ public class Dedsafio3Client implements ClientModInitializer {
 				DeathOverlay.render(drawContext);
 				RouletteOverlay.render(drawContext);
 			}
+			FlashOverlay.render(drawContext);
 		});
 
 		// Sobre cualquier pantalla (inventario, pantalla de muerte, etc.).
@@ -85,6 +88,7 @@ public class Dedsafio3Client implements ClientModInitializer {
 				ScreenEvents.afterRender(screen).register((s, drawContext, mouseX, mouseY, tickDelta) -> {
 					DeathOverlay.render(drawContext);
 					RouletteOverlay.render(drawContext);
+					FlashOverlay.render(drawContext);
 				}));
 	}
 }

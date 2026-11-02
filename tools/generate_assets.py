@@ -33,7 +33,7 @@ COLORS = {  # id -> (rgb, tinte vanilla de tinte para la receta)
 ITEMS = ["dedita", "dedita_plata", "dedita_oro", "ficha_ruleta",
          "totem_rojo", "totem_azul", "totem_dorado", "espada_caotica", "cuchara_resurreccion",
          "fruta_espacio", "indicador_insomnia", "tenedor_resurreccion",
-         "nave_espacial"]
+         "nave_espacial", "fruta_quiu"]
 
 # ----------------------------------------------------------------------------- idiomas
 # Fuente única de nombres. Las claves de premios deben coincidir con Roulette.java
@@ -725,6 +725,22 @@ CHANGES = {
                     "Ahora los esqueletos Stray aparecen por la noche en cualquier lugar del mundo.",
                     "Stray at night",
                     "Stray skeletons now spawn at night anywhere in the world."),
+    "creeper_fluido": ("mob", "Creeper de Fluido", "Se ha visto una nueva criatura en Gleba, el Planeta Orgánico: Creeper de Fluido. Al explotar, introduce fluidos en tu computadora, provocando que tus componentes fallen y te desconecten de la realidad. Puede escalar.",
+          "Fluid Creeper", "A new creature has been seen on Gleba, the Organic Planet: Fluid Creeper. When it explodes it pours fluids into your computer, making your components fail and disconnecting you from reality. Can climb."),
+    "nautilus_oseo": ("mob", "Nautilus Óseo Pequeño", "Se ha visto una nueva criatura en Gleba, el Planeta Orgánico: Nautilus Óseo Pequeño. Criatura voladora que atacará si te acercas. No puedes empujarla. Aplica Levitación. Son MUY peligrosos en grupo.",
+          "Small Bone Nautilus", "A new creature has been seen on Gleba, the Organic Planet: Small Bone Nautilus. Flying creature that attacks if you get close. You cannot push it. Applies Levitation. VERY dangerous in groups."),
+    "garrapata_cerebral": ("mob", "Garrapata Cerebral Pequeña", "Se ha visto una nueva criatura en Gleba, el Planeta Orgánico: Garrapata Cerebral Pequeña. Vaga por el planeta en busca de su próxima víctima. Ataca de inmediato si detecta una presencia desconocida. Puede escalar.",
+          "Small Brain Tick", "A new creature has been seen on Gleba, the Organic Planet: Small Brain Tick. Wanders the planet looking for its next victim. Attacks immediately if it detects an unknown presence. Can climb."),
+    "gusano_carne": ("mob", "Gusano de Carne", "Se ha visto una nueva criatura en Gleba, el Planeta Orgánico: Gusano de Carne. Criatura pequeña y lenta. Ataca directamente a quien se le acerque. Probabilidad de aparecer al romper los bloques de Grasa Líquida o Coagulada (aquí: barro).",
+          "Meat Worm", "A new creature has been seen on Gleba, the Organic Planet: Meat Worm. Small and slow creature. Attacks anyone who gets close. Chance to appear when breaking Liquid or Coagulated Fat blocks (here: mud)."),
+    "parasito": ("mob", "Parásito", "Se ha visto una nueva criatura en Gleba, el Planeta Orgánico: Parásito. Criatura que habita en los Jugos Gástricos de Gleba. Ataca cuerpo a cuerpo sin pensarlo.",
+          "Parasite", "A new creature has been seen on Gleba, the Organic Planet: Parasite. Creature that lives in Gleba's Gastric Juices. Attacks in melee without thinking."),
+    "cerebro_amarillo": ("mob", "Cerebro Amarillo", "Se ha visto una nueva criatura en Gleba, el Planeta Orgánico: Cerebro Amarillo. Se abalanza sobre tu cabeza, cegándote y drenando tu vida hasta matarte. Necesitas ayuda de otra persona para quitártelo.",
+          "Yellow Brain", "A new creature has been seen on Gleba, the Organic Planet: Yellow Brain. It leaps onto your head, blinding you and draining your life until you die. You need another person's help to remove it."),
+    "parasito_volador": ("mob", "Parásito Volador", "Se ha visto una nueva criatura en Gleba, el Planeta Orgánico: Parásito Volador. Habita dentro de las Verrugas Claras y Oscuras de Gleba. Al romperlas, saldrá y te atacará. Es muy veloz.",
+          "Flying Parasite", "A new creature has been seen on Gleba, the Organic Planet: Flying Parasite. Lives inside Gleba's Light and Dark Warts. When you break them, it comes out and attacks you. Very fast."),
+    "flashbang": ("mob", "Flashbang", "Se ha visto una nueva criatura enviada por Reviil: Flashbang. Corre velozmente hacia ti. Al explotar, cubre tu pantalla de blanco por algunos segundos. Sólo aparece de noche en el Overworld.",
+          "Flashbang", "A new creature sent by Reviil has been seen: Flashbang. It runs fast toward you. When it explodes it covers your screen in white for a few seconds. Only appears at night in the Overworld."),
 }
 
 TITLES = {
@@ -753,10 +769,21 @@ ENTITY_NAMES = {  # id -> (es, en): coinciden con los ids de ModEntities / Repti
     "dactilo_adulto": ("Dáctylo Adulto", "Adult Dactyl"),
     "dromoraptor_verde": ("Dromoraptor Verde", "Green Dromoraptor"),
     "nave_espacial": ("Nave Espacial", "Spaceship"),
+    "creeper_fluido": ("Creeper de Fluido", "Fluid Creeper"),
+    "nautilus_oseo": ("Nautilus Óseo Pequeño", "Small Bone Nautilus"),
+    "garrapata_cerebral": ("Garrapata Cerebral Pequeña", "Small Brain Tick"),
+    "gusano_carne": ("Gusano de Carne", "Meat Worm"),
+    "parasito": ("Parásito", "Parasite"),
+    "cerebro_amarillo": ("Cerebro Amarillo", "Yellow Brain"),
+    "parasito_volador": ("Parásito Volador", "Flying Parasite"),
+    "flashbang": ("Flashbang", "Flashbang"),
 }
 
 V111_GUI = {
     "es_es": {
+        "item.dedsafio3.fruta_quiu": "Fruta de Quiu",
+        "item.dedsafio3.fruta_quiu.tooltip": "Al comerla das Keep Inventory: conservas tu inventario al morir. El efecto se pierde al morir/revivir; hay que volver a comerla.",
+        "effect.dedsafio3.keep_inventory": "Keep Inventory",
         "block.dedsafio3.plataforma_despegue": "Plataforma de Despegue",
         "item.dedsafio3.nave_espacial": "Nave Espacial",
         "item.dedsafio3.nave_espacial.tooltip": "Solo se puede colocar sobre una Plataforma de Despegue. Súbete con clic derecho: viaja a Gleba y de vuelta.",
@@ -828,6 +855,9 @@ V111_GUI = {
         "message.dedsafio3.reviil_moon_death": "§5%s miró a la Luna y la maldición de Reviil se cumplió. Maldición lunar desactivada.",
     },
     "en_us": {
+        "item.dedsafio3.fruta_quiu": "Quiu Fruit",
+        "item.dedsafio3.fruta_quiu.tooltip": "Eating it gives Keep Inventory: you keep your inventory on death. The effect is lost on death/revival; eat another one.",
+        "effect.dedsafio3.keep_inventory": "Keep Inventory",
         "block.dedsafio3.plataforma_despegue": "Launch Platform",
         "item.dedsafio3.nave_espacial": "Spaceship",
         "item.dedsafio3.nave_espacial.tooltip": "Can only be placed on a Launch Platform. Right click to board: travels to Gleba and back.",
@@ -1174,6 +1204,34 @@ def make_ship_item():
     return img
 
 
+def make_quiu_fruit():
+    """Fruta de Quiu 16x16: fruta dorada con brillo y hojita verde."""
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    for y in range(16):
+        for x in range(16):
+            r = math.hypot(x - 8, (y - 9.5) * 1.05)
+            if r < 5.6:
+                px(img, x, y, (160, 110, 20) if r > 4.5 else (240, 190, 50))
+    for (x, y) in ((6, 7), (7, 6), (6, 8)):
+        px(img, x, y, (255, 245, 190))
+    px(img, 8, 3, (90, 60, 30)); px(img, 8, 4, (90, 60, 30))
+    for (x, y) in ((9, 2), (10, 2), (10, 3), (11, 3)):
+        px(img, x, y, (70, 170, 60))
+    return img
+
+
+def make_keep_icon():
+    """Icono de efecto 18x18: cofre dorado."""
+    img = Image.new("RGBA", (18, 18), (0, 0, 0, 0))
+    fill(img, 3, 6, 15, 15, (200, 150, 40))
+    fill(img, 3, 6, 15, 8, (235, 190, 70))
+    fill(img, 3, 10, 15, 11, (120, 80, 20))
+    fill(img, 8, 9, 10, 13, (240, 240, 240))
+    for x in range(3, 15):
+        px(img, x, 5, (120, 80, 20)); px(img, x, 15, (120, 80, 20))
+    return img
+
+
 def make_poison_icon():
     """Icono de efecto 18x18: gota verde."""
     img = Image.new("RGBA", (18, 18), (0, 0, 0, 0))
@@ -1343,6 +1401,19 @@ def main():
         f"{MOD}:nave_espacial"))
     save_png(make_ship_item(), "textures", "item", "nave_espacial.png")
     save_png(make_flyer((205, 210, 220), (200, 50, 45), 181, (70, 150, 230)), "textures", "entity", "nave_espacial.png")
+
+    save_png(make_flyer((60, 140, 170), (170, 220, 240), 200, (255, 255, 255)), "textures", "entity", "creeper_fluido.png")
+    save_png(make_flyer((225, 220, 200), (150, 140, 120), 210, (40, 40, 40)), "textures", "entity", "nautilus_oseo.png")
+    save_png(make_flyer((150, 60, 110), (230, 150, 190), 220, (255, 230, 120)), "textures", "entity", "garrapata_cerebral.png")
+    save_png(make_flyer((190, 90, 80), (240, 170, 150), 230, (30, 20, 20)), "textures", "entity", "gusano_carne.png")
+    save_png(make_flyer((70, 110, 50), (150, 200, 90), 240, (240, 240, 100)), "textures", "entity", "parasito.png")
+    save_png(make_flyer((230, 200, 60), (180, 140, 30), 250, (30, 30, 30)), "textures", "entity", "cerebro_amarillo.png")
+    save_png(make_flyer((110, 60, 150), (200, 140, 240), 260, (255, 255, 255)), "textures", "entity", "parasito_volador.png")
+    save_png(make_flyer((240, 240, 245), (60, 60, 70), 270, (255, 60, 60)), "textures", "entity", "flashbang.png")
+    save_png(make_quiu_fruit(), "textures", "item", "fruta_quiu.png")
+    save_png(make_keep_icon(), "textures", "mob_effect", "keep_inventory.png")
+    write_json(os.path.join(DATA, "recipe", "fruta_quiu.json"), recipe_shapeless(
+        ["minecraft:golden_apple", "minecraft:diamond", "minecraft:sweet_berries"], f"{MOD}:fruta_quiu"))
 
     # Gleba: dimensión por datapack. Terreno del Overworld con un único bioma orgánico (hongos, hierba amarillenta).
     write_json(os.path.join(DATA, "dimension_type", "gleba.json"), {

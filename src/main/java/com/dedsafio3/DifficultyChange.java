@@ -63,7 +63,16 @@ public enum DifficultyChange {
 	DROMORAPTOR_CHERRY("dromoraptor_cherry", Kind.DIFFICULTY),
 	ANIMALS_EXTINCT("animals_extinct", Kind.DIFFICULTY),
 	BOGGED_NIGHT("bogged_night", Kind.DIFFICULTY),
-	STRAY_NIGHT("stray_night", Kind.DIFFICULTY);
+	STRAY_NIGHT("stray_night", Kind.DIFFICULTY),
+	// --- v1.6.1 (Gleba)
+	CREEPER_FLUIDO("creeper_fluido", Kind.MOB),
+	NAUTILUS_OSEO("nautilus_oseo", Kind.MOB),
+	GARRAPATA_CEREBRAL("garrapata_cerebral", Kind.MOB),
+	GUSANO_CARNE("gusano_carne", Kind.MOB),
+	PARASITO("parasito", Kind.MOB),
+	CEREBRO_AMARILLO("cerebro_amarillo", Kind.MOB),
+	PARASITO_VOLADOR("parasito_volador", Kind.MOB),
+	FLASHBANG("flashbang", Kind.MOB);
 
 	public enum Kind {
 		DIFFICULTY, MOB, MOMENT

@@ -73,6 +73,10 @@ public class ReptilianEntity extends HostileEntity implements RangedAttackMob {
 	public ReptilianEntity(EntityType<? extends HostileEntity> type, World world, Kind kind) {
 		super(type, world);
 		this.kind = kind;
+		// initGoals() corre dentro del constructor de MobEntity, antes de conocer el tipo: se rehace.
+		goalSelector.clear(goal -> true);
+		targetSelector.clear(goal -> true);
+		initGoals();
 		if (kind.weapon != null) {
 			equipStack(EquipmentSlot.MAINHAND, new ItemStack(kind.weapon));
 		}

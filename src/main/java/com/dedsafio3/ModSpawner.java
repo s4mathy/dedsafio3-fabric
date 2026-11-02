@@ -134,6 +134,22 @@ public final class ModSpawner {
 				List.of(EntityType.BOGGED));
 		rule(DifficultyChange.STRAY_NIGHT, World.OVERWORLD, Mode.SURFACE, 6, 1, 3, 0.5, true, (w, p) -> !w.isDay(),
 				List.of(EntityType.STRAY));
+		RegistryKey<World> gleba = SpaceshipEntity.GLEBA;
+		var g = ModEntities.GLEBA_MOBS;
+		rule(DifficultyChange.CREEPER_FLUIDO, gleba, Mode.SURFACE, 4, 1, 2, 0.35, true, (w, p) -> true,
+				List.of(g.get(GlebaMobEntity.Kind.CREEPER_FLUIDO)));
+		rule(DifficultyChange.NAUTILUS_OSEO, gleba, Mode.AIR, 6, 2, 4, 0.3, true, (w, p) -> true,
+				List.of(g.get(GlebaMobEntity.Kind.NAUTILUS_OSEO)));
+		rule(DifficultyChange.GARRAPATA_CEREBRAL, gleba, Mode.SURFACE, 6, 1, 3, 0.4, true, (w, p) -> true,
+				List.of(g.get(GlebaMobEntity.Kind.GARRAPATA_CEREBRAL)));
+		rule(DifficultyChange.GUSANO_CARNE, gleba, Mode.SURFACE, 4, 1, 2, 0.25, true, (w, p) -> true,
+				List.of(g.get(GlebaMobEntity.Kind.GUSANO_CARNE)));
+		rule(DifficultyChange.PARASITO, gleba, Mode.WATER, 4, 1, 2, 0.35, true, (w, p) -> true,
+				List.of(g.get(GlebaMobEntity.Kind.PARASITO)));
+		rule(DifficultyChange.CEREBRO_AMARILLO, gleba, Mode.SURFACE, 2, 1, 1, 0.15, true, (w, p) -> true,
+				List.of(g.get(GlebaMobEntity.Kind.CEREBRO_AMARILLO)));
+		rule(DifficultyChange.FLASHBANG, World.OVERWORLD, Mode.SURFACE, 4, 1, 2, 0.4, true, (w, p) -> !w.isDay(),
+				List.of(g.get(GlebaMobEntity.Kind.FLASHBANG)));
 		rule(DifficultyChange.NARVAL_ACUIFERO, World.OVERWORLD, Mode.AQUIFER, 3, 1, 2, 0.3, true,
 				(w, p) -> p.getY() < 50, List.of(ModEntities.NARVAL));
 		rule(DifficultyChange.POD_PHORA, World.OVERWORLD, Mode.AIR, 3, 1, 2, 0.25, true, (w, p) -> true,
