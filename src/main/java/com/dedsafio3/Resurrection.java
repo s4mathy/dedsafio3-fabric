@@ -61,6 +61,11 @@ public final class Resurrection {
 		return DifficultyChange.RESURRECTION_SPOON.isActive();
 	}
 
+	/** La Cuchara (gasta el alma de quien hace el ritual) y el Tenedor (no la gasta). */
+	private static boolean isRitualItem(ItemStack stack) {
+		return stack.isOf(ModItems.CUCHARA_RESURRECCION) || stack.isOf(ModItems.TENEDOR_RESURRECCION);
+	}
+
 	private static long today(MinecraftServer server) {
 		return server.getOverworld().getTimeOfDay() / 24000L;
 	}
@@ -99,7 +104,7 @@ public final class Resurrection {
 				}
 				for (int i = 0; i < player.getInventory().size(); i++) {
 					ItemStack stack = player.getInventory().getStack(i);
-					if (stack.isOf(ModItems.CUCHARA_RESURRECCION) && claimDay(stack) < 0) {
+					if (isRitualItem(stack) && claimDay(stack) < 0) {
 						stamp(stack, day);
 					}
 				}
@@ -121,7 +126,7 @@ public final class Resurrection {
 
 		// Ritual: clic derecho en una fogata encendida con la Cuchara.
 		UseBlockCallback.EVENT.register((player, world, hand, hit) -> {
-			if (hand != Hand.MAIN_HAND || !player.getStackInHand(hand).isOf(ModItems.CUCHARA_RESURRECCION)) {
+			if (hand != Hand.MAIN_HAND || !isRitualItem(player.getStackInHand(hand))) {
 				return ActionResult.PASS;
 			}
 			BlockState state = world.getBlockState(hit.getBlockPos());
@@ -142,7 +147,8 @@ public final class Resurrection {
 
 	private static void openRitual(ServerPlayerEntity player, BlockPos campfire) {
 		Map<String, String> souls = DedsafioConfig.get().souls;
-		if (DedsafioConfig.get().spentSouls.contains(player.getUuidAsString())) {
+		if (!player.getMainHandStack().isOf(ModItems.TENEDOR_RESURRECCION)
+				&& DedsafioConfig.get().spentSouls.contains(player.getUuidAsString())) {
 			player.sendMessage(Text.translatable("message.dedsafio3.ritual_soul_spent"), true);
 			return;
 		}
@@ -175,10 +181,11 @@ public final class Resurrection {
 			return;
 		}
 		ItemStack spoon = reviver.getMainHandStack();
-		if (!spoon.isOf(ModItems.CUCHARA_RESURRECCION)) {
+		if (!isRitualItem(spoon)) {
 			return;
 		}
-		if (config.spentSouls.contains(reviver.getUuidAsString())) {
+		boolean fork = spoon.isOf(ModItems.TENEDOR_RESURRECCION);
+		if (!fork && config.spentSouls.contains(reviver.getUuidAsString())) {
 			reviver.sendMessage(Text.translatable("message.dedsafio3.ritual_soul_spent"), true);
 			return;
 		}
@@ -190,7 +197,9 @@ public final class Resurrection {
 			reviver.sendMessage(Text.translatable("message.dedsafio3.ritual_expired"), false);
 			return;
 		}
-		config.spentSouls.add(reviver.getUuidAsString()); // el alma de quien hace el ritual se gasta
+		if (!fork) {
+			config.spentSouls.add(reviver.getUuidAsString()); // el alma de quien hace el ritual se gasta (el Tenedor no)
+		}
 		String name = config.souls.remove(uuidText);
 		Vec3 spot = new Vec3(ritual.pos().getX() + 0.5, ritual.pos().getY() + 1.0, ritual.pos().getZ() + 0.5);
 		ServerPlayerEntity target = server.getPlayerManager().getPlayer(UUID.fromString(uuidText));
@@ -203,6 +212,34 @@ public final class Resurrection {
 		DedsafioConfig.save();
 		syncAll(server);
 		server.getPlayerManager().broadcast(Text.translatable("message.dedsafio3.ritual_done", name, reviver.getDisplayName()), false);
+	}
+
+	/** Devuelve el alma a un jugador que la gastó. Devuelve false si ya la tenía. */
+	public static boolean giveSoul(MinecraftServer server, UUID uuid) {
+		boolean removed = DedsafioConfig.get().spentSouls.remove(uuid.toString());
+		if (removed) {
+			DedsafioConfig.save();
+			syncAll(server);
+		}
+		return removed;
+	}
+
+	/** Revive por comando a un jugador muerto (alma) en la posición dada. Devuelve su nombre, o null si no estaba muerto. */
+	public static String reviveAt(MinecraftServer server, String uuidText, ServerWorld world, double x, double y, double z) {
+		DedsafioConfig config = DedsafioConfig.get();
+		String name = config.souls.remove(uuidText);
+		if (name == null) {
+			return null;
+		}
+		ServerPlayerEntity target = server.getPlayerManager().getPlayer(UUID.fromString(uuidText));
+		if (target != null && target.isAlive()) {
+			applyRevive(target, world, new Vec3(x, y, z));
+		} else {
+			config.pendingRevive.put(uuidText, world.getRegistryKey().getValue() + ";" + x + ";" + y + ";" + z);
+		}
+		DedsafioConfig.save();
+		syncAll(server);
+		return name;
 	}
 
 	private record Vec3(double x, double y, double z) {

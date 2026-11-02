@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "dedsafio3:item/tenedor_resurreccion"
+  }
+}

@@ -1,19 +1,13 @@
 package com.dedsafio3;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/** Fruta del Espacio entre Dimensiones: al comerla desaparecen todos los Dáctylos Adultos del mundo y se quita el Insomnia. */
+/** Fruta del Espacio entre Dimensiones: al comerla te teletransporta lejos (como la Fruta de Chorus), para escapar de los Dáctylos Adultos. */
 public class SpaceFruitItem extends TooltipItem {
 	public SpaceFruitItem(Settings settings) {
 		super(settings);
@@ -21,19 +15,22 @@ public class SpaceFruitItem extends TooltipItem {
 
 	@Override
 	public ItemStack finishUsing(ItemStack stack, World world, LivingEntity user) {
-		if (world instanceof ServerWorld serverWorld && user instanceof ServerPlayerEntity player) {
-			List<Entity> adults = new ArrayList<>();
-			for (ServerWorld w : serverWorld.getServer().getWorlds()) {
-				for (Entity e : w.iterateEntities()) {
-					if (e instanceof DactiloAdultEntity) {
-						adults.add(e);
-					}
+		ItemStack result = super.finishUsing(stack, world, user);
+		if (!world.isClient && user instanceof ServerPlayerEntity player) {
+			for (int attempt = 0; attempt < 32; attempt++) {
+				double x = player.getX() + (player.getRandom().nextDouble() - 0.5) * 80.0;
+				double z = player.getZ() + (player.getRandom().nextDouble() - 0.5) * 80.0;
+				double y = MathHelper.clamp(player.getY() + (player.getRandom().nextInt(24) - 12),
+						world.getBottomY(), world.getBottomY() + world.getDimension().logicalHeight() - 1);
+				if (player.hasVehicle()) {
+					player.stopRiding();
+				}
+				if (player.teleport(x, y, z, true)) {
+					break;
 				}
 			}
-			adults.forEach(Entity::discard);
-			player.getStatHandler().setStat(player, Stats.CUSTOM.getOrCreateStat(Stats.TIME_SINCE_REST), 0);
-			player.sendMessage(Text.translatable("message.dedsafio3.space_fruit", adults.size()), false);
+			player.sendMessage(Text.translatable("message.dedsafio3.space_fruit"), true);
 		}
-		return super.finishUsing(stack, world, user);
+		return result;
 	}
 }

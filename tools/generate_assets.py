@@ -32,7 +32,7 @@ COLORS = {  # id -> (rgb, tinte vanilla de tinte para la receta)
 
 ITEMS = ["dedita", "dedita_plata", "dedita_oro", "ficha_ruleta",
          "totem_rojo", "totem_azul", "totem_dorado", "espada_caotica", "cuchara_resurreccion",
-         "fruta_espacio", "indicador_insomnia"]
+         "fruta_espacio", "indicador_insomnia", "tenedor_resurreccion"]
 
 # ----------------------------------------------------------------------------- idiomas
 # Fuente única de nombres. Las claves de premios deben coincidir con Roulette.java
@@ -696,10 +696,10 @@ CHANGES = {
                    "An Insomnia Indicator shows your level. Sleeping cures it."),
     "dactilo_adulto": ("mob", "Dáctylo Adulto",
                        "Amo de los cielos. Con Insomnia alta aparece y te atrapa, te eleva por los aires y te suelta desde lo alto. "
-                       "Solo la Fruta del Espacio entre Dimensiones lo hace desaparecer.",
+                       "La Fruta del Espacio entre Dimensiones te teletransporta lejos de él; para que desaparezca, duerme.",
                        "Adult Dactyl",
                        "Lord of the skies. With high Insomnia it appears, grabs you, lifts you into the air and drops you from above. "
-                       "Only the Interdimensional Space Fruit makes it vanish."),
+                       "The Interdimensional Space Fruit teleports you away from it; to make it vanish, sleep."),
     "creeper_wither_rose": ("mob", "Creeper de Wither Rose",
                             "Aparece en el Nether. Al explotar aplica Wither a todos los cercanos y deja una Wither Rose.",
                             "Wither Rose Creeper",
@@ -761,10 +761,16 @@ V111_GUI = {
         "gui.dedsafio3.tab.search": "Buscar",
         "gui.dedsafio3.search.hint": "Escribe para buscar un cambio…",
         "gui.dedsafio3.search.empty": "Sin resultados",
-        "message.dedsafio3.reminder_space_fruit": "§dRecordatorio: la Fruta del Espacio entre Dimensiones hace desaparecer a los Dáctylos Adultos.",
-        "message.dedsafio3.space_fruit": "§dLa Fruta del Espacio entre Dimensiones hizo desaparecer %s Dáctylo(s) Adulto(s) y quitó tu Insomnia.",
+        "message.dedsafio3.reminder_space_fruit": "§dRecordatorio: la Fruta del Espacio entre Dimensiones te teletransporta lejos de los Dáctylos Adultos. Para que desaparezcan, duerme.",
+        "message.dedsafio3.space_fruit": "§dLa Fruta del Espacio te teletransportó lejos.",
+        "command.dedsafio3.soul_given": "Alma devuelta a %s.",
+        "command.dedsafio3.soul_already": "%s ya tenía su alma.",
+        "command.dedsafio3.not_dead": "%s no está muerto (no es un alma).",
+        "command.dedsafio3.revived": "%s ha sido revivido.",
+        "item.dedsafio3.tenedor_resurreccion": "Tenedor de la Resurrección",
+        "item.dedsafio3.tenedor_resurreccion.tooltip": "Como la Cuchara, pero no gasta tu alma. Clic derecho en una Fogata del Ritual.",
         "item.dedsafio3.fruta_espacio": "Fruta del Espacio entre Dimensiones",
-        "item.dedsafio3.fruta_espacio.tooltip": "Al comerla desaparecen todos los Dáctylos Adultos y se cura el Insomnia.",
+        "item.dedsafio3.fruta_espacio.tooltip": "Al comerla te teletransporta lejos, para escapar de los Dáctylos Adultos. Para que desaparezcan, duerme.",
         "item.dedsafio3.indicador_insomnia": "Indicador de Insomnia",
         "item.dedsafio3.indicador_insomnia.tooltip": "Muestra tu nivel de Insomnia. Duerme para curarlo.",
         "item.dedsafio3.indicador_insomnia.level.none": "Indicador de Insomnia: sin Insomnia",
@@ -817,10 +823,16 @@ V111_GUI = {
         "gui.dedsafio3.tab.search": "Search",
         "gui.dedsafio3.search.hint": "Type to search a change…",
         "gui.dedsafio3.search.empty": "No results",
-        "message.dedsafio3.reminder_space_fruit": "§dReminder: the Interdimensional Space Fruit makes Adult Dactyls vanish.",
-        "message.dedsafio3.space_fruit": "§dThe Interdimensional Space Fruit made %s Adult Dactyl(s) vanish and cured your Insomnia.",
+        "message.dedsafio3.reminder_space_fruit": "§dReminder: the Interdimensional Space Fruit teleports you away from Adult Dactyls. To make them vanish, sleep.",
+        "message.dedsafio3.space_fruit": "§dThe Space Fruit teleported you away.",
+        "command.dedsafio3.soul_given": "Soul returned to %s.",
+        "command.dedsafio3.soul_already": "%s already had their soul.",
+        "command.dedsafio3.not_dead": "%s is not dead (not a soul).",
+        "command.dedsafio3.revived": "%s has been revived.",
+        "item.dedsafio3.tenedor_resurreccion": "Resurrection Fork",
+        "item.dedsafio3.tenedor_resurreccion.tooltip": "Like the Spoon, but does not spend your soul. Right click on a Ritual Campfire.",
         "item.dedsafio3.fruta_espacio": "Interdimensional Space Fruit",
-        "item.dedsafio3.fruta_espacio.tooltip": "Eating it removes every Adult Dactyl and cures Insomnia.",
+        "item.dedsafio3.fruta_espacio.tooltip": "Eating it teleports you far away, to escape Adult Dactyls. To make them vanish, sleep.",
         "item.dedsafio3.indicador_insomnia": "Insomnia Indicator",
         "item.dedsafio3.indicador_insomnia.tooltip": "Shows your Insomnia level. Sleep to cure it.",
         "item.dedsafio3.indicador_insomnia.level.none": "Insomnia Indicator: no Insomnia",
@@ -1046,6 +1058,22 @@ def make_plumosaurio():
     return img
 
 
+def make_fork():
+    """Tenedor de la Resurrección 16x16: como la cuchara pero con tres puntas y brillo celeste."""
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    wood, dark = (150, 100, 55), (95, 60, 30)
+    for i in range(0, 9):
+        x, y = 2 + i, 13 - i
+        px(img, x, y, wood)
+        px(img, x + 1, y, dark)
+    for (x, y) in ((9, 5), (10, 4), (11, 3), (12, 2), (11, 6), (12, 5), (13, 4), (14, 3), (8, 3), (9, 2), (10, 1), (11, 0)):
+        px(img, x, y, (120, 200, 240))
+    for (x, y) in ((10, 5), (11, 4), (12, 3), (13, 2)):
+        px(img, x, y, (230, 250, 255))
+    px(img, 1, 14, (60, 140, 60))
+    return img
+
+
 def make_space_fruit():
     """Fruta del Espacio 16x16: fruta violeta con estrellas y una hojita cian."""
     img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
@@ -1226,7 +1254,7 @@ def main():
 
     # --- modelos de ítems
     for name in ITEMS:
-        parent = "minecraft:item/handheld" if name in ("espada_caotica", "cuchara_resurreccion") else "minecraft:item/generated"
+        parent = "minecraft:item/handheld" if name in ("espada_caotica", "cuchara_resurreccion", "tenedor_resurreccion") else "minecraft:item/generated"
         write_json(os.path.join(ASSETS, "models", "item", f"{name}.json"), item_model(name, parent))
 
     # --- animación de muerte (12 fotogramas) e icono
@@ -1287,6 +1315,7 @@ def main():
     save_png(make_flyer((74, 58, 42), (255, 144, 32), 131, (255, 220, 120)), "textures", "entity", "skiff_phora.png")
     save_png(make_flyer((52, 150, 44), (24, 90, 24), 141, (15, 30, 10)), "textures", "entity", "creeper_pasto.png")
     save_png(make_spoon(), "textures", "item", "cuchara_resurreccion.png")
+    save_png(make_fork(), "textures", "item", "tenedor_resurreccion.png")
     save_png(make_space_fruit(), "textures", "item", "fruta_espacio.png")
     save_png(make_insomnia_indicator(), "textures", "item", "indicador_insomnia.png")
     save_png(make_flyer((24, 24, 28), (110, 20, 24), 151, (230, 40, 40)), "textures", "entity", "creeper_wither_rose.png")

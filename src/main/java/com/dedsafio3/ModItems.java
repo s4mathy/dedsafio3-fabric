@@ -52,6 +52,10 @@ public final class ModItems {
 	public static final Item CUCHARA_RESURRECCION = register("cuchara_resurreccion",
 			new TooltipItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC)));
 
+	// --- Tenedor de la Resurrección: como la Cuchara, pero no gasta el alma de quien hace el ritual ---
+	public static final Item TENEDOR_RESURRECCION = register("tenedor_resurreccion",
+			new TooltipItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC)));
+
 	// --- Pesadillas: la Fruta quita el Insomnia y los Dáctylos Adultos; el Indicador muestra el nivel de Insomnia ---
 	public static final Item FRUTA_ESPACIO = register("fruta_espacio", new SpaceFruitItem(new Item.Settings()
 			.food(new FoodComponent.Builder().nutrition(6).saturationModifier(0.6f).alwaysEdible().build())
@@ -90,6 +94,7 @@ public final class ModItems {
 						entries.add(totem);
 					}
 					entries.add(CUCHARA_RESURRECCION);
+					entries.add(TENEDOR_RESURRECCION);
 					entries.add(FRUTA_ESPACIO);
 					entries.add(INDICADOR_INSOMNIA);
 					entries.add(ModBlocks.RITUAL_CAMPFIRE);
