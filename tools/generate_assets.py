@@ -33,7 +33,7 @@ COLORS = {  # id -> (rgb, tinte vanilla de tinte para la receta)
 ITEMS = ["dedita", "dedita_plata", "dedita_oro", "ficha_ruleta",
          "totem_rojo", "totem_azul", "totem_dorado", "espada_caotica", "cuchara_resurreccion",
          "fruta_espacio", "indicador_insomnia", "tenedor_resurreccion",
-         "nave_espacial", "fruta_quiu"]
+         "nave_espacial", "fruta_quiu", "bolsa_primitiva", "bolsa_glebanoide"]
 
 # ----------------------------------------------------------------------------- idiomas
 # Fuente única de nombres. Las claves de premios deben coincidir con Roulette.java
@@ -743,6 +743,30 @@ CHANGES = {
           "Flying Parasite", "A new creature has been seen on Gleba, the Organic Planet: Flying Parasite. Lives inside Gleba's Light and Dark Warts. When you break them, it comes out and attacks you. Very fast."),
     "flashbang": ("mob", "Flashbang", "Se ha visto una nueva criatura enviada por Reviil: Flashbang. Corre velozmente hacia ti. Al explotar, cubre tu pantalla de blanco por algunos segundos. Sólo aparece de noche en el Overworld.",
           "Flashbang", "A new creature sent by Reviil has been seen: Flashbang. It runs fast toward you. When it explodes it covers your screen in white for a few seconds. Only appears at night in the Overworld."),
+    "creeper_nuclear_nether": ("difficulty", "Creepers Nucleares en el Techo del Nether", "Los Creepers Nucleares ahora aparecen en el Techo del Nether. Además, pueden ver a través de las paredes y romper bloques para ir hacia tí.",
+          "Nuclear Creepers on the Nether Roof", "Nuclear Creepers now spawn on the Nether Roof. They can also see through walls and break blocks to reach you."),
+    "dactilo_pantano": ("difficulty", "Dáctylo Bebé en el Pantano", "El Dáctylo Bebé ahora aparece naturalmente en el bioma Pantano (Overworld).",
+          "Baby Dactyl in the Swamp", "The Baby Dactyl now spawns naturally in the Swamp biome (Overworld)."),
+    "reaper_deepdark": ("difficulty", "Reapers Pequeños en Deep Dark", "Los Reapers Pequeños aparecen naturalmente en Deep Dark.",
+          "Small Reapers in the Deep Dark", "Small Reapers spawn naturally in the Deep Dark."),
+    "flashbang_limbo": ("difficulty", "Flashbangs en el Limbo", "Ahora los Flashbangs aparecen en el Laberinto del Limbo. Además se ha duplicado su rango de explosión.",
+          "Flashbangs in the Limbo", "Flashbangs now spawn in the Limbo Labyrinth. Their explosion range has also been doubled."),
+    "spider_strength": ("difficulty", "Arañas con Fuerza III", "Ahora las Arañas y Arañas de Cueva tienen Fuerza III.",
+          "Strength III spiders", "Spiders and Cave Spiders now have Strength III."),
+    "fall_damage_x2": ("difficulty", "Daño de caída x2", "El Daño de Caída ha sido multiplicado x2.",
+          "Fall damage x2", "Fall Damage has been multiplied x2."),
+    "parasito_volador_explota": ("difficulty", "Parásitos Voladores explosivos", "Ahora los Parásitos Voladores explotan al morir.",
+          "Exploding Flying Parasites", "Flying Parasites now explode when they die."),
+    "spider_night_speed": ("difficulty", "Arañas de noche y veloces", "Ahora las Arañas de Cueva aparecen en el Overworld durante la Noche. Además, todas las arañas tienen Velocidad I infinita.",
+          "Fast night spiders", "Cave Spiders now spawn in the Overworld at Night. Also, all spiders have infinite Speed I."),
+    "cerebro_amarillo_planeta": ("difficulty", "Cerebros Amarillos por todo Gleba", "Los Cerebros Amarillos consiguieron salir de las Cuevas de Gleba y ahora aparecen por todo el Planeta.",
+          "Yellow Brains across Gleba", "Yellow Brains escaped Gleba's Caves and now spawn across the whole Planet."),
+    "reaper_pequeno": ("mob", "Reaper Pequeño", "Se ha visto una nueva criatura salida del Limbo: Reaper Pequeño. Al golpear a su objetivo con una Hoz, desterrará a su víctima directamente a un Laberinto en el Limbo del que deberás escapar cuanto antes y encontrar la salida.",
+          "Small Reaper", "A new creature from the Limbo has been seen: Small Reaper. When it hits its target with a Scythe, it banishes the victim straight into a Labyrinth in the Limbo that you must escape as soon as possible by finding the exit."),
+    "medusa_osea": ("mob", "Médusa Ósea", "Se ha visto una nueva criatura en Gleba, el Planeta Orgánico: Médusa Ósea. Una criatura con capacidades únicas. Si elimina a un jugador, se convertirá en él y adoptará su inventario. Será EXTREMADAMENTE inteligente, contará con patrones de ataque y estrategias de pelea utilizando todos sus objetos y recursos.",
+          "Bone Medusa", "A new creature has been seen on Gleba, the Organic Planet: Bone Medusa. A creature with unique abilities. If it kills a player, it becomes them and adopts their inventory. It will be EXTREMELY smart, with attack patterns and fighting strategies using all its items and resources."),
+    "cerebro_rojo": ("mob", "Cerebro Rojo", "Se ha visto una nueva criatura en Gleba, el Planeta Orgánico: Cerebro Rojo. Se abalanza sobre tu cabeza, cegándote y drenando tu vida hasta matarte. Necesitas ayuda de otra persona para quitártelo. IMPORTANTE: Si estás bajo el control mental del cerebro, comenzarás a atacar a tus compañeros cercanos. Incluso podrías llegar a matarlos.",
+          "Red Brain", "A new creature has been seen on Gleba, the Organic Planet: Red Brain. It leaps onto your head, blinding you and draining your life until you die. You need another person's help to remove it. IMPORTANT: If you are under the brain's mind control, you will start attacking nearby teammates. You could even kill them."),
 }
 
 TITLES = {
@@ -771,6 +795,9 @@ ENTITY_NAMES = {  # id -> (es, en): coinciden con los ids de ModEntities / Repti
     "dactilo_adulto": ("Dáctylo Adulto", "Adult Dactyl"),
     "dromoraptor_verde": ("Dromoraptor Verde", "Green Dromoraptor"),
     "nave_espacial": ("Nave Espacial", "Spaceship"),
+    "reaper_pequeno": ("Reaper Pequeño", "Small Reaper"),
+    "medusa_osea": ("Médusa Ósea", "Bone Medusa"),
+    "cerebro_rojo": ("Cerebro Rojo", "Red Brain"),
     "creeper_fluido": ("Creeper de Fluido", "Fluid Creeper"),
     "nautilus_oseo": ("Nautilus Óseo Pequeño", "Small Bone Nautilus"),
     "garrapata_cerebral": ("Garrapata Cerebral Pequeña", "Small Brain Tick"),
@@ -783,6 +810,12 @@ ENTITY_NAMES = {  # id -> (es, en): coinciden con los ids de ModEntities / Repti
 
 V111_GUI = {
     "es_es": {
+        "item.dedsafio3.bolsa_primitiva": "Bolsa Primitiva",
+        "item.dedsafio3.bolsa_primitiva.tooltip": "Clic derecho para abrirla: guarda objetos (27 espacios).",
+        "item.dedsafio3.bolsa_glebanoide": "Bolsa Glebanoide",
+        "item.dedsafio3.bolsa_glebanoide.tooltip": "Tiene más espacio que las Bolsas Primitivas (54 espacios). Clic derecho para abrirla.",
+        "message.dedsafio3.limbo_banished": "§5Has sido desterrado al Laberinto del Limbo. Encuentra la salida (suelo de luz ocre) para volver.",
+        "message.dedsafio3.limbo_exit": "§aHas escapado del Limbo.",
         "item.dedsafio3.fruta_quiu": "Fruta de Quiu",
         "item.dedsafio3.fruta_quiu.tooltip": "Al comerla das Keep Inventory: conservas tu inventario al morir. El efecto se pierde al morir/revivir; hay que volver a comerla.",
         "effect.dedsafio3.keep_inventory": "Keep Inventory",
@@ -857,6 +890,12 @@ V111_GUI = {
         "message.dedsafio3.reviil_moon_death": "§5%s miró a la Luna y la maldición de Reviil se cumplió. Maldición lunar desactivada.",
     },
     "en_us": {
+        "item.dedsafio3.bolsa_primitiva": "Primitive Bag",
+        "item.dedsafio3.bolsa_primitiva.tooltip": "Right click to open: stores items (27 slots).",
+        "item.dedsafio3.bolsa_glebanoide": "Glebanoid Bag",
+        "item.dedsafio3.bolsa_glebanoide.tooltip": "Has more space than Primitive Bags (54 slots). Right click to open.",
+        "message.dedsafio3.limbo_banished": "§5You have been banished to the Limbo Labyrinth. Find the exit (ochre light floor) to return.",
+        "message.dedsafio3.limbo_exit": "§aYou escaped the Limbo.",
         "item.dedsafio3.fruta_quiu": "Quiu Fruit",
         "item.dedsafio3.fruta_quiu.tooltip": "Eating it gives Keep Inventory: you keep your inventory on death. The effect is lost on death/revival; eat another one.",
         "effect.dedsafio3.keep_inventory": "Keep Inventory",
@@ -1234,6 +1273,20 @@ def make_keep_icon():
     return img
 
 
+def make_bag(base, trim):
+    """Bolsa 16x16: saco con cuerda y solapa."""
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    for y in range(4, 15):
+        w = 4 + (y - 4) // 2 if y < 10 else 6 - (y - 10) // 3
+        for x in range(8 - w, 8 + w):
+            edge = x == 8 - w or x == 8 + w - 1 or y == 14
+            px(img, x, y, shade(base, 0.7) if edge else base)
+    fill(img, 5, 2, 11, 5, shade(base, 0.85))
+    fill(img, 5, 5, 11, 6, trim)
+    px(img, 8, 7, trim); px(img, 8, 8, trim)
+    return img
+
+
 def make_poison_icon():
     """Icono de efecto 18x18: gota verde."""
     img = Image.new("RGBA", (18, 18), (0, 0, 0, 0))
@@ -1412,6 +1465,28 @@ def main():
     save_png(make_flyer((230, 200, 60), (180, 140, 30), 250, (30, 30, 30)), "textures", "entity", "cerebro_amarillo.png")
     save_png(make_flyer((110, 60, 150), (200, 140, 240), 260, (255, 255, 255)), "textures", "entity", "parasito_volador.png")
     save_png(make_flyer((240, 240, 245), (60, 60, 70), 270, (255, 60, 60)), "textures", "entity", "flashbang.png")
+    save_png(make_biped((30, 24, 46), 8, 61, (50, 40, 80), None, (230, 60, 255)), "textures", "entity", "reaper_pequeno.png")
+    save_png(make_biped((226, 222, 204), 10, 62, (180, 176, 160), (110, 27, 27), (200, 30, 30)), "textures", "entity", "medusa_osea.png")
+    save_png(make_flyer((190, 40, 50), (240, 120, 130), 223, (255, 230, 120)), "textures", "entity", "cerebro_rojo.png")
+    save_png(make_bag((160, 110, 60), (230, 210, 150)), "textures", "item", "bolsa_primitiva.png")
+    save_png(make_bag((90, 160, 70), (240, 200, 60)), "textures", "item", "bolsa_glebanoide.png")
+    write_json(os.path.join(DATA, "recipe", "bolsa_primitiva.json"), recipe_shaped(
+        ["LSL", "L L", "LLL"], {"L": "minecraft:leather", "S": "minecraft:string"}, f"{MOD}:bolsa_primitiva"))
+    write_json(os.path.join(DATA, "recipe", "bolsa_glebanoide.json"), recipe_shaped(
+        ["MMM", "MPM", "MMM"], {"M": "minecraft:moss_block", "P": f"{MOD}:bolsa_primitiva"}, f"{MOD}:bolsa_glebanoide"))
+    # Limbo: dimensión plana oscura; el laberinto lo construye el código al desterrar a alguien.
+    write_json(os.path.join(DATA, "dimension_type", "limbo.json"), {
+        "ultrawarm": False, "natural": False, "coordinate_scale": 1.0, "has_skylight": False, "has_ceiling": True,
+        "ambient_light": 0.0, "fixed_time": 18000, "piglin_safe": False, "bed_works": False, "respawn_anchor_works": False,
+        "has_raids": False, "logical_height": 64, "min_y": 0, "height": 64,
+        "infiniburn": "#minecraft:infiniburn_overworld", "effects": "minecraft:overworld",
+        "monster_spawn_light_level": 0, "monster_spawn_block_light_limit": 15})
+    write_json(os.path.join(DATA, "dimension", "limbo.json"), {
+        "type": f"{MOD}:limbo",
+        "generator": {"type": "minecraft:flat", "settings": {
+            "biome": "minecraft:the_void", "features": False, "lakes": False,
+            "layers": [{"block": "minecraft:bedrock", "height": 1}, {"block": "minecraft:polished_blackstone", "height": 2}],
+            "structure_overrides": []}}})
     save_png(make_quiu_fruit(), "textures", "item", "fruta_quiu.png")
     save_png(make_keep_icon(), "textures", "mob_effect", "keep_inventory.png")
     write_json(os.path.join(DATA, "recipe", "fruta_quiu.json"), recipe_shapeless(

@@ -42,6 +42,8 @@ import net.minecraft.world.World;
 public final class ChangeHooks {
 	/** Último lanzamiento de Ender Pearl de cada jugador (tick del mundo). */
 	private static final Map<UUID, Long> PEARLS = new HashMap<>();
+	/** Evita duplicar dos veces el daño de caída (al re-aplicarlo o con las perlas). */
+	private static boolean fallGuard;
 
 	private ChangeHooks() {
 	}
@@ -131,12 +133,58 @@ public final class ChangeHooks {
 				Long thrown = PEARLS.get(p.getUuid());
 				if (thrown != null && p.getServerWorld().getTime() - thrown < 400) {
 					PEARLS.remove(p.getUuid());
-					p.damage(pierce ? p.getServerWorld().getDamageSources().magic() : p.getServerWorld().getDamageSources().fall(),
-							ten ? 10.0f : 5.0f);
+					fallGuard = true;
+					try {
+						p.damage(pierce ? p.getServerWorld().getDamageSources().magic() : p.getServerWorld().getDamageSources().fall(),
+								ten ? 10.0f : 5.0f);
+					} finally {
+						fallGuard = false;
+					}
 					return false;
 				}
 			}
 			return true;
+		});
+
+		// Daño de caída x2.
+		ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
+			if (!fallGuard && DifficultyChange.FALL_DAMAGE_X2.isActive() && source.isOf(DamageTypes.FALL)) {
+				fallGuard = true;
+				try {
+					entity.damage(source, amount * 2.0f);
+				} finally {
+					fallGuard = false;
+				}
+				return false;
+			}
+			return true;
+		});
+
+		// Arañas: Fuerza III y Velocidad I infinita (según los cambios activos al aparecer).
+		ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
+			if (entity instanceof net.minecraft.entity.mob.SpiderEntity spider && spider.age == 0) {
+				if (DifficultyChange.SPIDER_STRENGTH.isActive()) {
+					spider.addStatusEffect(new net.minecraft.entity.effect.StatusEffectInstance(
+							net.minecraft.entity.effect.StatusEffects.STRENGTH, net.minecraft.entity.effect.StatusEffectInstance.INFINITE, 2, false, false));
+				}
+				if (DifficultyChange.SPIDER_NIGHT_SPEED.isActive()) {
+					spider.addStatusEffect(new net.minecraft.entity.effect.StatusEffectInstance(
+							net.minecraft.entity.effect.StatusEffects.SPEED, net.minecraft.entity.effect.StatusEffectInstance.INFINITE, 0, false, false));
+				}
+			}
+		});
+
+		// Médusa Ósea: si mata a un jugador se convierte en él y adopta su inventario.
+		ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
+			if (DifficultyChange.MEDUSA_OSEA.isActive() && entity instanceof ServerPlayerEntity dead
+					&& source.getAttacker() instanceof MedusaEntity medusa) {
+				java.util.List<ItemStack> stacks = new java.util.ArrayList<>();
+				for (ItemEntity drop : dead.getServerWorld().getEntitiesByClass(ItemEntity.class, dead.getBoundingBox().expand(4.0), d -> true)) {
+					stacks.add(drop.getStack().copy());
+					drop.discard();
+				}
+				medusa.adopt(dead, stacks);
+			}
 		});
 
 		// Todos los zombis nacen con Espada de Hierro con Filo V.

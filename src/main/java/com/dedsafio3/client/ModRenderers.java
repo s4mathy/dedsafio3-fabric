@@ -2,6 +2,7 @@ package com.dedsafio3.client;
 
 import com.dedsafio3.DactiloAdultEntity;
 import com.dedsafio3.GlebaMobEntity;
+import com.dedsafio3.MedusaEntity;
 import com.dedsafio3.SpaceshipEntity;
 import com.dedsafio3.DactiloEntity;
 import com.dedsafio3.WitherRoseCreeperEntity;
@@ -64,6 +65,7 @@ public final class ModRenderers {
 				ctx -> new FlyerRenderer<SpaceshipEntity>(ctx, "nave_espacial", 2.2f, 2.2f, 2.2f));
 		ModEntities.GLEBA_MOBS.forEach((kind, type) -> EntityRendererRegistry.register(type,
 				ctx -> new FlyerRenderer<GlebaMobEntity>(ctx, kind.id, kind.scale, kind.scale, kind.scale)));
+		EntityRendererRegistry.register(ModEntities.MEDUSA, MedusaRenderer::new);
 		ModEntities.REPTILIANS.values().forEach(type -> EntityRendererRegistry.register(type, ReptilianRenderer::new));
 	}
 
@@ -174,6 +176,21 @@ public final class ModRenderers {
 		@Override
 		public Identifier getTexture(HerobrineEntity entity) {
 			return texture("herobrine");
+		}
+	}
+
+	/** Médusa Ósea: humanoide que muestra la armadura y las armas que adopta de sus víctimas. */
+	private static class MedusaRenderer extends BipedEntityRenderer<MedusaEntity, BipedEntityModel<MedusaEntity>> {
+		MedusaRenderer(EntityRendererFactory.Context context) {
+			super(context, new BipedEntityModel<>(context.getPart(EntityModelLayers.ZOMBIE)), 0.5f);
+			addFeature(new net.minecraft.client.render.entity.feature.ArmorFeatureRenderer<>(this,
+					new BipedEntityModel<>(context.getPart(EntityModelLayers.ZOMBIE_INNER_ARMOR)),
+					new BipedEntityModel<>(context.getPart(EntityModelLayers.ZOMBIE_OUTER_ARMOR)), context.getModelManager()));
+		}
+
+		@Override
+		public Identifier getTexture(MedusaEntity entity) {
+			return texture("medusa_osea");
 		}
 	}
 

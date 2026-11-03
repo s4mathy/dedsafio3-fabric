@@ -39,6 +39,8 @@ public final class ModSpawner {
 		WATER,
 		/** En el aire, bastante por encima del terreno (naves voladoras). */
 		AIR,
+		/** Techo del Nether: sobre la capa de bedrock (y 128). */
+		ROOF,
 		/** Agua bajo tierra, sin cielo encima (acuíferos). */
 		AQUIFER
 	}
@@ -146,10 +148,30 @@ public final class ModSpawner {
 				List.of(g.get(GlebaMobEntity.Kind.GUSANO_CARNE)));
 		rule(DifficultyChange.PARASITO, gleba, Mode.WATER, 4, 1, 2, 0.35, true, (w, p) -> true,
 				List.of(g.get(GlebaMobEntity.Kind.PARASITO)));
-		rule(DifficultyChange.CEREBRO_AMARILLO, gleba, Mode.SURFACE, 2, 1, 1, 0.15, true, (w, p) -> true,
+		rule(DifficultyChange.CEREBRO_AMARILLO, gleba, Mode.CAVE, 2, 1, 1, 0.15, true, (w, p) -> true,
 				List.of(g.get(GlebaMobEntity.Kind.CEREBRO_AMARILLO)));
 		rule(DifficultyChange.FLASHBANG, World.OVERWORLD, Mode.SURFACE, 4, 1, 2, 0.4, true, (w, p) -> !w.isDay(),
 				List.of(g.get(GlebaMobEntity.Kind.FLASHBANG)));
+		// --- v1.7.0
+		rule(DifficultyChange.CREEPER_NUCLEAR_NETHER, World.NETHER, Mode.ROOF, 3, 1, 1, 0.35, true, (w, p) -> true,
+				List.of(ModEntities.NUCLEAR_CREEPER));
+		rule(DifficultyChange.DACTILO_PANTANO, World.OVERWORLD, Mode.SURFACE, 4, 1, 2, 0.3, true,
+				(w, p) -> w.getBiome(p).matchesKey(BiomeKeys.SWAMP) || w.getBiome(p).matchesKey(BiomeKeys.MANGROVE_SWAMP),
+				List.of(ModEntities.DACTILO));
+		rule(DifficultyChange.REAPER_DEEPDARK, World.OVERWORLD, Mode.CAVE, 3, 1, 2, 0.4, true,
+				(w, p) -> w.getBiome(p).matchesKey(BiomeKeys.DEEP_DARK), List.of(g.get(GlebaMobEntity.Kind.REAPER_PEQUENO)));
+		rule(DifficultyChange.REAPER_PEQUENO, World.OVERWORLD, Mode.CAVE, 2, 1, 1, 0.15, true, (w, p) -> true,
+				List.of(g.get(GlebaMobEntity.Kind.REAPER_PEQUENO)));
+		rule(DifficultyChange.FLASHBANG_LIMBO, Limbo.KEY, Mode.FLOOR, 6, 1, 2, 0.5, true, (w, p) -> true,
+				List.of(g.get(GlebaMobEntity.Kind.FLASHBANG)));
+		rule(DifficultyChange.SPIDER_NIGHT_SPEED, World.OVERWORLD, Mode.SURFACE, 6, 1, 3, 0.4, true, (w, p) -> !w.isDay(),
+				List.of(EntityType.CAVE_SPIDER));
+		rule(DifficultyChange.CEREBRO_AMARILLO_PLANETA, gleba, Mode.SURFACE, 2, 1, 1, 0.15, true, (w, p) -> true,
+				List.of(g.get(GlebaMobEntity.Kind.CEREBRO_AMARILLO)));
+		rule(DifficultyChange.CEREBRO_ROJO, gleba, Mode.CAVE, 2, 1, 1, 0.12, true, (w, p) -> true,
+				List.of(g.get(GlebaMobEntity.Kind.CEREBRO_ROJO)));
+		rule(DifficultyChange.MEDUSA_OSEA, gleba, Mode.SURFACE, 1, 1, 1, 0.06, true, (w, p) -> true,
+				List.of(ModEntities.MEDUSA));
 		rule(DifficultyChange.NARVAL_ACUIFERO, World.OVERWORLD, Mode.AQUIFER, 3, 1, 2, 0.3, true,
 				(w, p) -> p.getY() < 50, List.of(ModEntities.NARVAL));
 		rule(DifficultyChange.POD_PHORA, World.OVERWORLD, Mode.AIR, 3, 1, 2, 0.25, true, (w, p) -> true,
@@ -231,6 +253,15 @@ public final class ModSpawner {
 				}
 			}
 			return null;
+		}
+		if (rule.mode() == Mode.ROOF) {
+			BlockPos rp = new BlockPos(x, 128, z);
+			if (player.getY() < 125 || !w.getBlockState(rp.down()).isOf(net.minecraft.block.Blocks.BEDROCK)
+					|| !w.getBlockState(rp).isAir() || !w.getBlockState(rp.up()).isAir()
+					|| w.getClosestPlayer(rp.getX() + 0.5, rp.getY(), rp.getZ() + 0.5, 20.0, false) != null) {
+				return null;
+			}
+			return rule.spot().test(w, rp) ? rp : null;
 		}
 		if (rule.mode() == Mode.AIR) {
 			int top = w.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z);

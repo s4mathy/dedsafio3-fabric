@@ -30,6 +30,7 @@ public final class ModEntities {
 	public static EntityType<WitherRoseCreeperEntity> WITHER_ROSE_CREEPER;
 	public static EntityType<DactiloAdultEntity> DACTILO_ADULT;
 	public static EntityType<SpaceshipEntity> SPACESHIP;
+	public static EntityType<MedusaEntity> MEDUSA;
 	public static final Map<GlebaMobEntity.Kind, EntityType<GlebaMobEntity>> GLEBA_MOBS = new EnumMap<>(GlebaMobEntity.Kind.class);
 	public static final Map<ReptilianEntity.Kind, EntityType<ReptilianEntity>> REPTILIANS = new EnumMap<>(ReptilianEntity.Kind.class);
 	/** Huevos de aparición (para el modo creativo). */
@@ -130,6 +131,11 @@ public final class ModEntities {
 			GLEBA_MOBS.put(kind, type);
 			egg(kind.id, type, 0x6B8E3A, 0xD9C45A);
 		}
+
+		MEDUSA = register("medusa_osea", EntityType.Builder.create(MedusaEntity::new, SpawnGroup.MONSTER)
+				.dimensions(0.6f, 1.95f).maxTrackingRange(10));
+		FabricDefaultAttributeRegistry.register(MEDUSA, MedusaEntity.attributes());
+		egg("medusa_osea", MEDUSA, 0xE8E4D0, 0x6B1B1B);
 
 		SPACESHIP = register("nave_espacial", EntityType.Builder.create(SpaceshipEntity::new, SpawnGroup.MISC)
 				.dimensions(1.6f, 3.6f).makeFireImmune().maxTrackingRange(10));

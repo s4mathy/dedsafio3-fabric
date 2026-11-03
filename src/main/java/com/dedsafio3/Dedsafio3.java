@@ -34,6 +34,7 @@ public class Dedsafio3 implements ModInitializer {
 		ReviilEvent.register();
 		Resurrection.register();
 		Nightmares.register();
+		Limbo.register();
 		MenuService.register();
 		ModCommands.register();
 		LOGGER.info("Dedsafio 3 (fan mod) cargado.");

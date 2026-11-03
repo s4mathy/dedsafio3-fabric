@@ -41,7 +41,9 @@ public class GlebaMobEntity extends HostileEntity {
 		PARASITO("parasito", 16.0, 5.0, 0.30, false, false, 0.5f, 1.1f, 0.8f),
 		CEREBRO_AMARILLO("cerebro_amarillo", 6.0, 0.0, 0.36, false, false, 0.4f, 0.6f, 0.5f),
 		PARASITO_VOLADOR("parasito_volador", 10.0, 4.0, 0.30, true, false, 0.5f, 0.5f, 0.6f),
-		FLASHBANG("flashbang", 14.0, 0.0, 0.42, false, false, 0.6f, 1.7f, 1.0f);
+		FLASHBANG("flashbang", 14.0, 0.0, 0.42, false, false, 0.6f, 1.7f, 1.0f),
+		CEREBRO_ROJO("cerebro_rojo", 8.0, 0.0, 0.38, false, false, 0.4f, 0.6f, 0.5f),
+		REAPER_PEQUENO("reaper_pequeno", 22.0, 6.0, 0.30, false, false, 0.5f, 1.3f, 0.7f);
 
 		public final String id;
 		final double health;
@@ -85,6 +87,10 @@ public class GlebaMobEntity extends HostileEntity {
 			this.moveControl = new FlightMoveControl(this, 20, true);
 			this.navigation = new BirdNavigation(this, world);
 			setNoGravity(true);
+		}
+		if (kind == Kind.REAPER_PEQUENO) {
+			equipStack(net.minecraft.entity.EquipmentSlot.MAINHAND, new net.minecraft.item.ItemStack(net.minecraft.item.Items.NETHERITE_HOE));
+			setEquipmentDropChance(net.minecraft.entity.EquipmentSlot.MAINHAND, 0f);
 		}
 		// initGoals() ya corrió dentro del constructor de MobEntity, antes de conocer el tipo: se rehace.
 		goalSelector.clear(goal -> true);
@@ -150,6 +156,10 @@ public class GlebaMobEntity extends HostileEntity {
 		if (hit && kind == Kind.NAUTILUS_OSEO && target instanceof LivingEntity living) {
 			living.addStatusEffect(new StatusEffectInstance(StatusEffects.LEVITATION, 80, 1), this);
 		}
+		// Con la hoz, el Reaper Pequeño destierra a su víctima al laberinto del Limbo.
+		if (hit && kind == Kind.REAPER_PEQUENO && target instanceof ServerPlayerEntity player) {
+			Limbo.banish(player);
+		}
 		return hit;
 	}
 
@@ -173,7 +183,7 @@ public class GlebaMobEntity extends HostileEntity {
 		}
 		if (kind.explodes()) {
 			tickFuse(world, target);
-		} else if (kind == Kind.CEREBRO_AMARILLO) {
+		} else if (kind == Kind.CEREBRO_AMARILLO || kind == Kind.CEREBRO_ROJO) {
 			tickLatch(target);
 		}
 	}
@@ -196,7 +206,9 @@ public class GlebaMobEntity extends HostileEntity {
 	private void explode(ServerWorld world) {
 		if (kind == Kind.FLASHBANG) {
 			world.playSound(null, getBlockPos(), SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST, net.minecraft.sound.SoundCategory.HOSTILE, 3.0f, 1.6f);
-			for (ServerPlayerEntity player : world.getEntitiesByClass(ServerPlayerEntity.class, getBoundingBox().expand(14.0), p -> true)) {
+			// Con el cambio del Limbo, el rango de explosión del Flashbang se duplica.
+			double range = DifficultyChange.FLASHBANG_LIMBO.isActive() ? 28.0 : 14.0;
+			for (ServerPlayerEntity player : world.getEntitiesByClass(ServerPlayerEntity.class, getBoundingBox().expand(range), p -> true)) {
 				net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new FlashPayload(120));
 				player.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 0));
 			}
@@ -225,11 +237,37 @@ public class GlebaMobEntity extends HostileEntity {
 				host.damage(getDamageSources().magic(), 1.0f);
 			}
 			host.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 0, false, false));
+			// Cerebro Rojo: control mental, el portador ataca a sus compañeros cercanos (incluso hasta matarlos).
+			if (kind == Kind.CEREBRO_ROJO && drain % 15 == 0 && host instanceof PlayerEntity controlled) {
+				PlayerEntity victim = null;
+				double best = 16.0;
+				for (PlayerEntity other : getWorld().getEntitiesByClass(PlayerEntity.class, host.getBoundingBox().expand(4.0), p -> p != host)) {
+					double d = host.squaredDistanceTo(other);
+					if (!other.isCreative() && !other.isSpectator() && d < best) {
+						best = d;
+						victim = other;
+					}
+				}
+				if (victim != null) {
+					controlled.swingHand(net.minecraft.util.Hand.MAIN_HAND, true);
+					victim.damage(getDamageSources().playerAttack(controlled), 5.0f);
+					victim.takeKnockback(0.5, host.getX() - victim.getX(), host.getZ() - victim.getZ());
+				}
+			}
 		} else if (target instanceof PlayerEntity player && !player.isCreative() && !player.isSpectator()
 				&& squaredDistanceTo(player) < 2.25) {
 			host = player;
 			drain = 0;
 			playSound(SoundEvents.ENTITY_SLIME_SQUISH, 1.0f, 0.6f);
+		}
+	}
+
+	@Override
+	public void onDeath(DamageSource source) {
+		super.onDeath(source);
+		// Cambio "Parásitos Voladores explotan al morir".
+		if (kind == Kind.PARASITO_VOLADOR && !getWorld().isClient && DifficultyChange.PARASITO_VOLADOR_EXPLOTA.isActive()) {
+			getWorld().createExplosion(this, getX(), getY(), getZ(), 2.0f, World.ExplosionSourceType.MOB);
 		}
 	}
 

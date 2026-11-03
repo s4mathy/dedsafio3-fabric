@@ -68,6 +68,12 @@ public final class ModItems {
 			.food(new FoodComponent.Builder().nutrition(4).saturationModifier(0.5f).alwaysEdible().build())
 			.rarity(Rarity.EPIC)));
 
+	// --- Bolsas: Primitiva (3 filas) y Glebanoide (6 filas) ---
+	public static final Item BOLSA_PRIMITIVA = register("bolsa_primitiva",
+			new BagItem(new Item.Settings().maxCount(1).rarity(Rarity.UNCOMMON), 3));
+	public static final Item BOLSA_GLEBANOIDE = register("bolsa_glebanoide",
+			new BagItem(new Item.Settings().maxCount(1).rarity(Rarity.RARE), 6));
+
 	// --- Gleba: la nave espacial viaja a Gleba desde una Plataforma de Despegue ---
 	public static final Item NAVE_ESPACIAL = register("nave_espacial",
 			new SpaceshipItem(new Item.Settings().maxCount(1).rarity(Rarity.EPIC)));
@@ -109,6 +115,8 @@ public final class ModItems {
 					entries.add(ModBlocks.RITUAL_CAMPFIRE);
 					entries.add(ModBlocks.PLATFORM);
 					entries.add(NAVE_ESPACIAL);
+					entries.add(BOLSA_PRIMITIVA);
+					entries.add(BOLSA_GLEBANOIDE);
 					entries.add(FRUTA_QUIU);
 					entries.add(ESPADA_CAOTICA);
 					for (Item egg : ModEntities.EGGS) {

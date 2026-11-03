@@ -45,6 +45,13 @@ public class NuclearCreeperEntity extends HostileEntity {
 		goalSelector.add(6, new LookAroundGoal(this));
 		targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
 		targetSelector.add(2, new RevengeGoal(this));
+		// Cambio "Creepers Nucleares en el Techo del Nether": ven a través de las paredes.
+		targetSelector.add(3, new ActiveTargetGoal<>(this, PlayerEntity.class, 10, false, false, null) {
+			@Override
+			public boolean canStart() {
+				return DifficultyChange.CREEPER_NUCLEAR_NETHER.isActive() && super.canStart();
+			}
+		});
 	}
 
 	@Override
@@ -54,6 +61,17 @@ public class NuclearCreeperEntity extends HostileEntity {
 			return;
 		}
 		LivingEntity target = getTarget();
+		// ...y rompen los bloques que les estorban para llegar hasta ti.
+		if (target != null && horizontalCollision && age % 10 == 0 && DifficultyChange.CREEPER_NUCLEAR_NETHER.isActive()) {
+			net.minecraft.util.math.Vec3d dir = target.getPos().subtract(getPos()).normalize();
+			net.minecraft.util.math.BlockPos front = net.minecraft.util.math.BlockPos.ofFloored(getX() + dir.x, getY(), getZ() + dir.z);
+			for (int dy = 0; dy <= 1; dy++) {
+				net.minecraft.util.math.BlockPos at = front.up(dy);
+				if (!getWorld().getBlockState(at).isAir() && getWorld().getBlockState(at).getHardness(getWorld(), at) >= 0) {
+					getWorld().breakBlock(at, true);
+				}
+			}
+		}
 		if (fuse >= 0) {
 			getNavigation().stop();
 			fuse++;

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "MMM",
+    "MPM",
+    "MMM"
+  ],
+  "key": {
+    "M": {
+      "item": "minecraft:moss_block"
+    },
+    "P": {
+      "item": "dedsafio3:bolsa_primitiva"
+    }
+  },
+  "result": {
+    "id": "dedsafio3:bolsa_glebanoide",
+    "count": 1
+  }
+}

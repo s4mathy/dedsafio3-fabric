@@ -72,7 +72,20 @@ public enum DifficultyChange {
 	PARASITO("parasito", Kind.MOB),
 	CEREBRO_AMARILLO("cerebro_amarillo", Kind.MOB),
 	PARASITO_VOLADOR("parasito_volador", Kind.MOB),
-	FLASHBANG("flashbang", Kind.MOB);
+	FLASHBANG("flashbang", Kind.MOB),
+	// --- v1.7.0
+	CREEPER_NUCLEAR_NETHER("creeper_nuclear_nether", Kind.DIFFICULTY),
+	DACTILO_PANTANO("dactilo_pantano", Kind.DIFFICULTY),
+	REAPER_DEEPDARK("reaper_deepdark", Kind.DIFFICULTY),
+	FLASHBANG_LIMBO("flashbang_limbo", Kind.DIFFICULTY),
+	SPIDER_STRENGTH("spider_strength", Kind.DIFFICULTY),
+	FALL_DAMAGE_X2("fall_damage_x2", Kind.DIFFICULTY),
+	PARASITO_VOLADOR_EXPLOTA("parasito_volador_explota", Kind.DIFFICULTY),
+	SPIDER_NIGHT_SPEED("spider_night_speed", Kind.DIFFICULTY),
+	CEREBRO_AMARILLO_PLANETA("cerebro_amarillo_planeta", Kind.DIFFICULTY),
+	REAPER_PEQUENO("reaper_pequeno", Kind.MOB),
+	MEDUSA_OSEA("medusa_osea", Kind.MOB),
+	CEREBRO_ROJO("cerebro_rojo", Kind.MOB);
 
 	public enum Kind {
 		DIFFICULTY, MOB, MOMENT
