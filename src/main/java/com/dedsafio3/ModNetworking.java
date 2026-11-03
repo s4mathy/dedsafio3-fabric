@@ -15,6 +15,7 @@ public final class ModNetworking {
 		PayloadTypeRegistry.playS2C().register(RitualPayload.ID, RitualPayload.CODEC);
 		PayloadTypeRegistry.playS2C().register(SoulsPayload.ID, SoulsPayload.CODEC);
 		PayloadTypeRegistry.playS2C().register(FlashPayload.ID, FlashPayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(ReviilIntroPayload.ID, ReviilIntroPayload.CODEC);
 		// Cliente -> servidor
 		PayloadTypeRegistry.playC2S().register(MenuRequestPayload.ID, MenuRequestPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(SettingPayload.ID, SettingPayload.CODEC);

@@ -18,6 +18,7 @@
   "item.dedsafio3.espada_caotica.tooltip": "Cada golpe aplica un efecto aleatorio al objetivo.",
   "message.dedsafio3.busy": "Ya hay una ruleta girando, espera un momento.",
   "death.dedsafio3.you": "HAS MUERTO",
+  "gui.dedsafio3.reviil_intro": "MOMENTO REVIIL",
   "death.dedsafio3.other": "%s ha muerto",
   "command.dedsafio3.unknown_color": "Color desconocido: %s (usa red, orange, yellow, green, blue, purple o random)",
   "command.dedsafio3.spin": "Rueda (%2$s) iniciada para %1$s jugador(es)",

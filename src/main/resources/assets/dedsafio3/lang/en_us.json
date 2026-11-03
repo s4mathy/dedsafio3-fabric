@@ -18,6 +18,7 @@
   "item.dedsafio3.espada_caotica.tooltip": "Every hit applies a random effect to the target.",
   "message.dedsafio3.busy": "A roulette is already spinning, wait a moment.",
   "death.dedsafio3.you": "YOU DIED",
+  "gui.dedsafio3.reviil_intro": "REVIIL MOMENT",
   "death.dedsafio3.other": "%s has died",
   "command.dedsafio3.unknown_color": "Unknown color: %s (use red, orange, yellow, green, blue, purple or random)",
   "command.dedsafio3.spin": "Wheel (%2$s) started for %1$s player(s)",

@@ -97,19 +97,33 @@ public final class ReviilEvent {
 	/** El búnker espera a que dejen de caer rayos antes de empezar la cuenta atrás para desaparecer. */
 	private static boolean removalPending;
 
+	/** Momento pedido: espera a que termine la animación de introducción antes de empezar de verdad. */
+	private static Type pendingType;
+	private static ServerPlayerEntity pendingSource;
+	private static long pendingAt;
+	private static final int INTRO_TICKS = 100; // 5 s de animación
+
 	private ReviilEvent() {
 	}
 
 	public static boolean isRunning() {
-		return running || gasPhase;
+		return running || gasPhase || pendingType != null;
 	}
 
 	public static boolean isRunning(Type which) {
-		return (running || gasPhase) && type == which;
+		return ((running || gasPhase) && type == which) || pendingType == which;
 	}
 
 	public static void register() {
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			if (pendingType != null && server.getTicks() >= pendingAt) {
+				Type which = pendingType;
+				ServerPlayerEntity source = pendingSource;
+				pendingType = null;
+				pendingSource = null;
+				begin(server, source, which);
+				MenuService.refreshAll(server);
+			}
 			if (!running) {
 				return;
 			}
@@ -147,6 +161,8 @@ public final class ReviilEvent {
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
 			running = false;
 			gasPhase = false;
+			pendingType = null;
+			pendingSource = null;
 			BOLTS.clear();
 			removalPending = false;
 			BUNKER.clear();
@@ -160,7 +176,20 @@ public final class ReviilEvent {
 		});
 	}
 
+	/** Anuncia el Momento Reviil con la animación de la calavera y lo empieza cuando termina. */
 	public static void start(MinecraftServer server, ServerPlayerEntity source, Type which) {
+		if (running || gasPhase || pendingType != null) {
+			return;
+		}
+		pendingType = which;
+		pendingSource = source;
+		pendingAt = server.getTicks() + INTRO_TICKS;
+		for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+			ServerPlayNetworking.send(player, new ReviilIntroPayload(INTRO_TICKS));
+		}
+	}
+
+	private static void begin(MinecraftServer server, ServerPlayerEntity source, Type which) {
 		if (running || gasPhase) {
 			return;
 		}
@@ -269,7 +298,7 @@ public final class ReviilEvent {
 			return;
 		}
 		Vec3d inside = bunkerBox.getCenter();
-		boolean rain = server.getTicks() % 6 == 0;
+		boolean rain = server.getTicks() % 16 == 0; // antes cada 6 ticks: casi imposible llegar al búnker
 		for (ServerPlayerEntity player : new ArrayList<>(server.getPlayerManager().getPlayerList())) {
 			if (player.getServerWorld().getRegistryKey() == World.NETHER) {
 				player.teleport(bunkerWorld, inside.x, bunkerBox.minY, inside.z, player.getYaw(), player.getPitch());
@@ -284,7 +313,7 @@ public final class ReviilEvent {
 			long now = server.getTicks();
 			boolean direct = now >= DIRECT_AT.getOrDefault(player.getUuid(), 0L);
 			if (direct) {
-				DIRECT_AT.put(player.getUuid(), now + 100 + random.nextInt(100));
+				DIRECT_AT.put(player.getUuid(), now + 200 + random.nextInt(160));
 			}
 			double spread = direct ? 3.0 : 36.0;
 			double x = player.getX() + (random.nextDouble() - 0.5) * spread;
@@ -328,10 +357,12 @@ public final class ReviilEvent {
 				LightningEntity bolt = EntityType.LIGHTNING_BOLT.create(world);
 				if (bolt != null) {
 					bolt.refreshPositionAfterTeleport(player.getX(), player.getY(), player.getZ());
+					bolt.setCosmetic(true); // solo efecto visual: el rayo real dañaría la armadura
 					world.spawnEntity(bolt);
 				}
 				// Daño enorme en cada rayo: hace saltar el tótem de inmediato (uno por rayo).
-				player.damage(world.getDamageSources().lightningBolt(), 1000.0f);
+				// Daño mágico: ignora la armadura, así que no la desgasta ni la rompe.
+				player.damage(world.getDamageSources().magic(), 1000.0f);
 				if (entry.getValue() <= 1) {
 					it.remove();
 				} else {
@@ -441,6 +472,11 @@ public final class ReviilEvent {
 
 	/** Cancela el evento sin rayo. */
 	public static void stop(MinecraftServer server) {
+		if (pendingType != null) {
+			pendingType = null;
+			pendingSource = null;
+			return;
+		}
 		if (gasPhase) {
 			gasPhase = false;
 			server.getPlayerManager().broadcast(Text.translatable("message.dedsafio3.reviil_cancel"), false);
